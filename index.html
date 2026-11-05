@@ -1,0 +1,2772 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ 曼妮的魔法時間城堡 ✨</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #FFF5F7;
+            background-image: radial-gradient(#FFD1DC 1px, transparent 1px), radial-gradient(#FFE4E1 1px, #FFF5F7 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
+        .tab-active {
+            background: linear-gradient(135deg, #FF6B8B 0%, #FF8E53 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 139, 0.4);
+        }
+        .task-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .task-card:hover {
+            transform: translateY(-2px);
+        }
+        .task-done {
+            background-color: #F3F4F6 !important;
+            border-color: #E5E7EB !important;
+            opacity: 0.75;
+        }
+        .task-done .task-title {
+            text-decoration: line-through;
+            color: #9CA3AF;
+        }
+        .bounce-anim {
+            animation: bounce 0.5s ease;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+        }
+        @keyframes coinFloat {
+            0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 1; }
+            40% { transform: translateY(-35px) scale(1.25) rotate(12deg); opacity: 1; }
+            100% { transform: translateY(-85px) scale(0.9) rotate(-8deg); opacity: 0; }
+        }
+        .coin-float-fx {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            animation: coinFloat 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            filter: drop-shadow(0 4px 8px rgba(245, 158, 11, 0.45));
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #FFF5F7; }
+        ::-webkit-scrollbar-thumb { background: #FFB6C1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FF6B8B; }
+    </style>
+</head>
+<body class="min-h-screen pb-12 text-gray-800">
+
+    <!-- 頂部導航與狀態列 -->
+    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md shadow-sm border-b border-pink-100">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="text-3xl bg-pink-100 p-2 rounded-2xl shadow-inner">🦄</div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 id="header-castle-title" class="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+                            曼妮的魔法時間城堡
+                        </h1>
+                        <button onclick="switchMainView('settings')" class="text-xs bg-pink-100 hover:bg-pink-200 text-pink-700 px-2.5 py-1 rounded-full font-bold transition shadow-sm">
+                            ⚙️ 改名字/排課
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 font-medium">目標：每天晚上 10:00 前帶著微笑進入夢鄉 🌙</p>
+                </div>
+            </div>
+
+            <!-- 星星錢包與連勝紀錄 -->
+            <div class="flex items-center gap-3">
+                <div class="flex items-center bg-orange-50 border-2 border-orange-200 px-3 py-1.5 rounded-2xl">
+                    <span class="text-xl mr-1.5">🔥</span>
+                    <div>
+                        <div class="text-[10px] text-orange-600 font-bold leading-none">連續準時睡覺</div>
+                        <div class="text-sm font-black text-orange-700"><span id="streak-count">0</span> 天</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center bg-yellow-50 border-2 border-yellow-300 px-4 py-1.5 rounded-2xl shadow-sm" id="star-wallet">
+                    <span class="text-2xl mr-2">⭐</span>
+                    <div>
+                        <div class="text-[10px] text-yellow-700 font-bold leading-none">我的星星銀行</div>
+                        <div class="text-lg font-black text-yellow-600" id="total-stars">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 mt-6">
+        
+        <!-- 親職教練的溫暖悄悄話 (可收合) -->
+        <div class="bg-gradient-to-r from-purple-50 via-pink-50 to-amber-50 rounded-3xl p-5 mb-6 border border-pink-200 shadow-sm relative overflow-hidden">
+            <div class="flex items-start justify-between gap-4">
+                <div class="flex gap-3.5 items-start">
+                    <div class="text-3xl shrink-0 mt-1">💌</div>
+                    <div>
+                        <h2 class="font-bold text-purple-900 text-base md:text-lg flex items-center gap-2">
+                            <span id="coach-title-text">給曼妮寶貝與爸媽的魔法指南</span>
+                            <span class="text-xs bg-purple-200 text-purple-800 px-2.5 py-0.5 rounded-full font-semibold">親職教練小叮嚀</span>
+                        </h2>
+                        <p class="text-sm text-gray-600 mt-1 leading-relaxed" id="coach-message">
+                            親愛的曼妮，跳繩 1000 下聽起來像一座大高山對不對？別擔心！我們把它變成了「5 個小階梯」，每次只要跳 200 下就能拿到星星喔！週二、週三比較晚回家，我們把額外作業變少了；週末也有專屬的新月書屋、鋼琴與英文挑戰，完成後就能享受超長自由時間！💪✨
+                        </p>
+                    </div>
+                </div>
+                <button onclick="toggleCoachTip()" class="text-xs text-purple-500 hover:text-purple-700 font-bold shrink-0 underline">
+                    收起/展開
+                </button>
+            </div>
+        </div>
+
+        <!-- 主選單切換 (每日任務 vs 獎勵商店 vs 家長自訂設定 vs 教練規則說明) -->
+        <div class="flex flex-wrap gap-2 mb-6 bg-white p-1.5 rounded-2xl shadow-sm border border-pink-100 w-fit mx-auto md:mx-0">
+            <button onclick="switchMainView('schedule')" id="view-btn-schedule" class="px-4 py-2 rounded-xl font-bold text-xs md:text-sm transition-all tab-active">
+                📅 每日任務挑戰
+            </button>
+            <button onclick="switchMainView('shop')" id="view-btn-shop" class="px-4 py-2 rounded-xl font-bold text-xs md:text-sm text-gray-600 hover:bg-pink-50 transition-all">
+                🎁 星星許願池 (換獎品)
+            </button>
+            <button onclick="switchMainView('settings')" id="view-btn-settings" class="px-4 py-2 rounded-xl font-bold text-xs md:text-sm text-gray-600 hover:bg-pink-50 transition-all">
+                ⚙️ 家長設定 (改名/自訂任務)
+            </button>
+            <button onclick="switchMainView('rules')" id="view-btn-rules" class="px-4 py-2 rounded-xl font-bold text-xs md:text-sm text-gray-600 hover:bg-pink-50 transition-all">
+                💡 排課與激勵秘訣
+            </button>
+        </div>
+
+        <!-- ==================== 視圖 1：每日任務挑戰 ==================== -->
+        <div id="view-schedule">
+            <!-- 10月~12月 跨月魔法日曆選擇器 -->
+            <div class="bg-white rounded-3xl p-5 mb-6 shadow-sm border border-pink-100">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-2xl">🗓️</span>
+                        <div>
+                            <h3 class="font-black text-gray-800 text-base md:text-lg flex flex-wrap items-center gap-2">
+                                <span id="calendar-header-title">10月份 魔法集點日曆</span>
+                                <span class="text-xs bg-pink-100 text-pink-700 px-2.5 py-0.5 rounded-full font-bold">整學年 連續集點</span>
+                            </h3>
+                            <p class="text-xs text-gray-500">可切換 10月到隔年 8月！點擊日期即可切換當日課表，所有紀錄與星星皆連續累積喔！</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div class="bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl text-xs font-bold text-amber-800">
+                            <span id="month-stat-label">10月</span>累積：<span id="month-earned-stars" class="text-sm font-black text-amber-600">0</span> ⭐
+                            <span class="mx-1 text-amber-300">|</span>
+                            本學年總計：<span id="quarter-earned-stars" class="text-sm font-black text-orange-600">0</span> ⭐
+                        </div>
+                        <button onclick="jumpToToday()" class="text-xs bg-pink-500 hover:bg-pink-600 text-white px-3 py-1.5 rounded-xl font-bold transition shadow-sm">
+                            📍 回到今天
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 月份切換按鈕列 (10月 / 11月 / 12月) -->
+                <div id="month-btn-bar" class="flex gap-2 mb-4 bg-pink-50/70 p-1.5 rounded-2xl border border-pink-100 w-full overflow-x-auto whitespace-nowrap">
+                    <!-- 由 JS 依學年月份動態產生 -->
+                </div>
+
+                <!-- 星期標題列 -->
+                <div class="grid grid-cols-7 gap-1.5 text-center text-[11px] font-bold text-gray-400 mb-1.5 px-1">
+                    <div class="text-rose-400">日</div>
+                    <div>一</div>
+                    <div>二</div>
+                    <div>三</div>
+                    <div>四</div>
+                    <div>五</div>
+                    <div class="text-rose-400">六</div>
+                </div>
+
+                <!-- 當月日曆格子 -->
+                <div id="october-calendar-grid" class="grid grid-cols-7 gap-1.5 sm:gap-2">
+                    <!-- 由 JS 動態生成 10月/11月/12月 日期 -->
+                </div>
+            </div>
+
+            <!-- 特定期間 / 考前 14 天衝刺倒數橫幅 (當日若有特定期間任務時自動顯示) -->
+            <div id="special-period-banner" class="hidden rounded-3xl p-5 mb-6 border-2 shadow-sm transition-all">
+                <!-- 由 JS 動態渲染考前倒數或考試日鼓勵橫幅 -->
+            </div>
+
+            <!-- 星期快速預覽標籤 (顯示目前選中日期對應的星期類型) -->
+            <div class="grid grid-cols-4 sm:grid-cols-7 gap-2 mb-6">
+                <button onclick="selectFirstWeekdayOfMonth('mon')" id="day-btn-mon" class="day-btn py-2 px-1.5 rounded-2xl font-bold text-center bg-white border-2 border-pink-100 hover:border-pink-300 transition-all">
+                    <div class="text-xs opacity-75">星期一</div>
+                    <div class="text-[11px] md:text-xs font-black">16:30 到家</div>
+                    <div class="text-[10px] mt-0.5 px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 inline-block">鋼琴+英 🎹</div>
+                </button>
+                <button onclick="selectFirstWeekdayOfMonth('tue')" id="day-btn-tue" class="day-btn py-2 px-1.5 rounded-2xl font-bold text-center bg-white border-2 border-pink-100 hover:border-pink-300 transition-all">
+                    <div class="text-xs opacity-75">星期二</div>
+                    <div class="text-[11px] md:text-xs font-black">18:00 到家</div>
+                    <div class="text-[10px] mt-0.5 px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 inline-block">輕鬆日 🌿</div>
+                </button>
+                <button onclick="selectFirstWeekdayOfMonth('wed')" id="day-btn-wed" class="day-btn py-2 px-1.5 rounded-2xl font-bold text-center bg-white border-2 border-pink-100 hover:border-pink-300 transition-all">
+                    <div class="text-xs opacity-75">星期三</div>
+                    <div class="text-[11px] md:text-xs font-black">18:00 到家</div>
+                    <div class="text-[10px] mt-0.5 px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 inline-block">輕鬆日 🌿</div>
+                </button>
+                <button onclick="selectFirstWeekdayOfMonth('thu')" id="day-btn-thu" class="day-btn py-2 px-1.5 rounded-2xl font-bold text-center bg-white border-2 border-pink-100 hover:border-pink-300 transition-all">
+                    <div class="text-xs opacity-75">星期四</div>
+                    <div class="text-[11px] md:text-xs font-black">16:30 到家</div>
+                    <div class="text-[10px] mt-0.5 px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 inline-block">充裕日 🎹</div>
+                </button>
+                <button onclick="selectFirstWeekdayOfMonth('fri')" id="day-btn-fri" class="day-btn py-2 px-1.5 rounded-2xl font-bold text-center bg-white border-2 border-pink-100 hover:border-pink-300 transition-all">
+                    <div class="text-xs opacity-75">星期五</div>
+                    <div class="text-[11px] md:text-xs font-black">16:30 到家</div>
+                    <div class="text-[10px] mt-0.5 px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-700 inline-block">小週末 🎉</div>
+                </button>
+                <button onclick="selectFirstWeekdayOfMonth('sat')" id="day-btn-sat" class="day-btn py-2 px-1.5 rounded-2xl font-bold text-center bg-white border-2 border-pink-100 hover:border-pink-300 transition-all">
+                    <div class="text-xs opacity-75">星期六</div>
+                    <div class="text-[11px] md:text-xs font-black">週末假日</div>
+                    <div class="text-[10px] mt-0.5 px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700 inline-block">書屋+琴 📖</div>
+                </button>
+                <button onclick="selectFirstWeekdayOfMonth('sun')" id="day-btn-sun" class="day-btn py-2 px-1.5 rounded-2xl font-bold text-center bg-white border-2 border-pink-100 hover:border-pink-300 transition-all">
+                    <div class="text-xs opacity-75">星期日</div>
+                    <div class="text-[11px] md:text-xs font-black">週末假日</div>
+                    <div class="text-[10px] mt-0.5 px-1.5 py-0.5 rounded-full bg-sky-100 text-sky-700 inline-block">英文家教 🔤</div>
+                </button>
+            </div>
+
+            <!-- 當日進度條與摘要 -->
+            <div class="bg-white rounded-3xl p-5 mb-6 shadow-sm border border-pink-100">
+                <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span id="current-date-badge" class="text-xs font-black px-2.5 py-1 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-sm">10月15日</span>
+                            <span id="current-day-badge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-pink-100 text-pink-700">星期四</span>
+                            <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">當日已得：<strong id="daily-earned-stars">0</strong> ⭐</span>
+                        </div>
+                        <h3 id="current-day-title" class="text-lg font-black text-gray-800 mt-1.5">今日魔法任務清單</h3>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-sm font-bold text-gray-500 mr-1">當日完成度：<strong id="progress-text" class="text-pink-600">0%</strong></span>
+                        <button onclick="openEditCurrentDaySchedule()" class="text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-3 py-1.5 rounded-xl font-bold transition">
+                            ✏️ 自訂此日任務
+                        </button>
+                        <button onclick="resetCurrentDay()" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-xl font-bold transition">
+                            🔄 重置當日 (扣回星星)
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full bg-gray-100 h-4 rounded-full overflow-hidden p-0.5">
+                    <div id="progress-bar" class="bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- 跳跳繩 1000 下專屬「分段闖關卡」 (核心痛點解決方案) -->
+            <div class="bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 rounded-3xl p-5 mb-6 border-2 border-indigo-200 shadow-sm">
+                <div class="flex flex-wrap justify-between items-start gap-4 mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="text-4xl bg-white p-2.5 rounded-2xl shadow-sm">🪢</div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-black text-indigo-950">跳跳繩 1000 下大魔王挑戰！</h3>
+                                <span class="bg-indigo-600 text-white text-xs px-2.5 py-0.5 rounded-full font-bold">分段集點外掛</span>
+                            </div>
+                            <p class="text-xs md:text-sm text-indigo-700 mt-0.5">
+                                不用一次跳完！拆成 <strong>5 小組（每組 200 下，約 2~3 分鐘）</strong>，可以在下午、飯前或休息空檔分次完成喔！
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bg-white/80 px-3.5 py-2 rounded-2xl border border-indigo-100 text-right">
+                        <div class="text-[11px] text-indigo-500 font-bold">今日跳繩累積</div>
+                        <div class="text-xl font-black text-indigo-700"><span id="rope-count">0</span> / 1000 <span class="text-xs font-normal">下</span></div>
+                    </div>
+                </div>
+
+                <!-- 5 個 200 下打卡按鈕 -->
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5" id="rope-stages-container">
+                    <!-- 由 JS 動態生成 -->
+                </div>
+                <div id="rope-bonus-banner" class="hidden mt-3 bg-gradient-to-r from-amber-400 to-orange-400 text-white text-center py-2 px-4 rounded-xl font-bold text-sm shadow-sm">
+                    🎉 太神啦！今日 1000 下全部破關！額外獲得「毅力大魔王獎章 +3 ⭐」！
+                </div>
+            </div>
+
+            <!-- 時間軸任務列表 -->
+            <div class="space-y-3" id="timeline-container">
+                <!-- 由 JS 動態生成每日時間軸 -->
+            </div>
+        </div>
+
+        <!-- ==================== 視圖 2：星星許願池 (獎勵商店) ==================== -->
+        <div id="view-shop" class="hidden">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100 mb-6">
+                <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+                    <div>
+                        <h2 id="shop-header-title" class="text-xl font-black text-gray-800 flex items-center gap-2">
+                            🎁 曼妮的星星許願池（獎勵兌換商店）
+                        </h2>
+                        <p class="text-sm text-gray-500 mt-1">努力累積的星星，可以換取超棒的專屬特權喔！點擊即可兌換，亦可自由編輯或刪除獎品。</p>
+                    </div>
+                    <div class="bg-pink-50 border border-pink-200 px-4 py-2 rounded-2xl text-xs text-pink-700 font-medium">
+                        💡 包含週末全勤，每週預估可獲得約 <strong>150 ~ 170 顆 ⭐</strong>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="rewards-container">
+                    <!-- 由 JS 動態生成獎勵卡片 -->
+                </div>
+
+                <!-- 自訂新增/修改獎品表單 -->
+                <div class="mt-8 pt-6 border-t border-gray-100 bg-pink-50/40 p-4 rounded-2xl border border-pink-100">
+                    <h3 class="text-sm font-bold text-pink-900 mb-3 flex items-center justify-between">
+                        <span id="reward-form-title">➕ 和爸媽一起討論，新增專屬願望：</span>
+                        <button id="cancel-edit-reward-btn" onclick="cancelEditReward()" class="hidden text-xs text-gray-500 hover:text-gray-700 underline">取消編輯</button>
+                    </h3>
+                    <input type="hidden" id="edit-reward-id" value="">
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+                        <input type="text" id="custom-reward-icon" placeholder="圖示 (如 🍦)" maxlength="4" class="sm:col-span-2 px-3 py-2 rounded-xl border border-gray-200 text-sm text-center focus:outline-none focus:border-pink-400 bg-white" value="🎁">
+                        <input type="text" id="custom-reward-name" placeholder="願望名稱（例如：去吃喜歡的可麗餅、買新漫畫）" class="sm:col-span-4 px-4 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-pink-400 bg-white">
+                        <input type="text" id="custom-reward-desc" placeholder="備註說明（選填，如：週末下午使用）" class="sm:col-span-3 px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-pink-400 bg-white">
+                        <input type="number" id="custom-reward-cost" placeholder="星星數(如50)" class="sm:col-span-2 px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-pink-400 bg-white">
+                        <button onclick="saveCustomReward()" id="save-reward-btn" class="sm:col-span-1 bg-pink-500 hover:bg-pink-600 text-white font-bold px-3 py-2 rounded-xl text-sm transition whitespace-nowrap">
+                            儲存
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 兌換紀錄 -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-gray-800">📜 我的願望兌換紀錄</h3>
+                    <button onclick="clearHistory()" class="text-xs text-gray-400 hover:text-red-500">清空紀錄</button>
+                </div>
+                <div id="redeem-history" class="space-y-2 text-sm text-gray-600">
+                    <p class="text-gray-400 text-center py-4">目前還沒有兌換紀錄喔，快去收集星星吧！✨</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 視圖 2.5：家長設定中心 (修改名字 / 自訂每日任務 / 備份還原) ==================== -->
+        <div id="view-settings" class="hidden space-y-6">
+            <!-- 區塊 0：資料備份 & 家長密碼 -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-emerald-100">
+                <div class="flex items-center gap-2.5 mb-2">
+                    <span class="text-2xl">💾</span>
+                    <h2 class="text-lg md:text-xl font-black text-gray-800">資料備份 & 家長密碼</h2>
+                </div>
+                <p class="text-xs md:text-sm text-gray-500 mb-4">
+                    所有紀錄只存在<strong>這台裝置的這個瀏覽器</strong>裡。建議每週下載一次備份；換手機、換網址（例如搬到 GitHub）時，用「匯入備份」就能把星星和紀錄完整搬過去。
+                </p>
+                <div class="flex flex-wrap items-center gap-3 mb-2">
+                    <button onclick="exportBackup()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-black px-5 py-2.5 rounded-xl text-sm shadow-sm transition">
+                        ⬇️ 下載備份檔
+                    </button>
+                    <label class="bg-white border-2 border-emerald-300 hover:bg-emerald-50 text-emerald-700 font-black px-5 py-2 rounded-xl text-sm cursor-pointer transition">
+                        ⬆️ 匯入備份檔
+                        <input type="file" id="import-file-input" accept=".json,application/json" class="hidden" onchange="importBackup(event)">
+                    </label>
+                    <span id="last-backup-text" class="text-xs font-bold text-gray-500"></span>
+                </div>
+
+                <div class="mt-5 pt-4 border-t border-dashed border-gray-200">
+                    <h3 class="text-sm font-black text-gray-800 mb-1">🔒 家長密碼（選用）</h3>
+                    <p class="text-xs text-gray-500 mb-3">設定 4 位數密碼後，進入「家長設定」及修改／刪除許願池獎品都需要輸入密碼。（小提醒：這只是防止孩子順手亂改，並不是真正的安全加密。）</p>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <input type="password" inputmode="numeric" maxlength="4" id="setting-parent-pin" placeholder="輸入 4 位數字" class="w-36 px-3 py-2 rounded-xl border-2 border-gray-200 text-sm font-bold tracking-widest focus:outline-none focus:border-emerald-400">
+                        <button onclick="saveParentPin()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold px-4 py-2 rounded-xl text-xs transition">設定 / 更換密碼</button>
+                        <button onclick="clearParentPin()" id="clear-pin-btn" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold px-4 py-2 rounded-xl text-xs transition">取消密碼</button>
+                        <span id="pin-status-text" class="text-xs font-bold"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 區塊 A：修改孩子名字 -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100">
+                <div class="flex items-center gap-2.5 mb-2">
+                    <span class="text-2xl">👧</span>
+                    <h2 class="text-lg md:text-xl font-black text-gray-800">步驟一：修改寶貝的名字（分享給朋友超方便！）</h2>
+                </div>
+                <p class="text-xs md:text-sm text-gray-500 mb-4">
+                    輸入孩子的名字或小名後，網站標題、教練悄悄話與許願池都會自動換上專屬名字喔！
+                </p>
+                <div class="flex flex-wrap items-center gap-3">
+                    <input type="text" id="setting-child-name" placeholder="請輸入孩子的名字（例如：曼妮、小安、樂樂）" class="flex-1 min-w-[220px] px-4 py-2.5 rounded-xl border-2 border-pink-200 text-sm font-bold text-gray-800 focus:outline-none focus:border-pink-500">
+                    <button onclick="saveChildName()" class="bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-95 text-white font-black px-6 py-2.5 rounded-xl text-sm shadow-sm transition">
+                        💾 儲存寶貝名字
+                    </button>
+                </div>
+            </div>
+
+            <!-- 區塊 B：自訂週一至週日任務清單 -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+                    <div>
+                        <h2 class="text-lg md:text-xl font-black text-gray-800 flex items-center gap-2">
+                            <span>📝</span> 步驟二：自訂週一～週日的每日任務與時間表
+                        </h2>
+                        <p class="text-xs md:text-sm text-gray-500 mt-0.5">
+                            點選下方星期即可新增、修改或刪除該日的任務。修改後，10～12月日曆中所有對應的星期都會自動套用！
+                        </p>
+                    </div>
+                    <button onclick="resetDefaultScheduleConfirm()" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-2 rounded-xl font-bold transition">
+                        🔄 恢復曼妮預設課表
+                    </button>
+                </div>
+
+                <!-- 星期選擇器 -->
+                <div class="flex flex-wrap gap-2 mb-4 pb-4 border-b border-gray-100" id="settings-day-tabs">
+                    <!-- 由 JS 生成週一至週日切換鈕 -->
+                </div>
+
+                <!-- 該星期的到家時間/副標題設定 -->
+                <div class="bg-pink-50/50 p-4 rounded-2xl border border-pink-100 mb-5 flex flex-wrap items-center gap-3">
+                    <span class="text-xs font-bold text-pink-800 shrink-0">📌 當日副標題 / 到家狀態：</span>
+                    <input type="text" id="setting-day-arrival" placeholder="例如：16:30 到家（充裕日）" class="flex-1 min-w-[200px] px-3 py-1.5 rounded-xl border border-pink-200 text-sm bg-white focus:outline-none focus:border-pink-400">
+                    <button onclick="saveDayArrivalText()" class="bg-pink-500 hover:bg-pink-600 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
+                        更新狀態標題
+                    </button>
+                </div>
+
+                <!-- 該星期的任務列表 (可上下移動、編輯、刪除) -->
+                <div id="settings-tasks-list" class="space-y-2.5 mb-6">
+                    <!-- 由 JS 動態生成 -->
+                </div>
+
+                <!-- 新增 / 編輯單一任務表單 -->
+                <div class="bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 id="task-form-header" class="text-sm font-black text-indigo-950">➕ 新增任務到目前星期</h3>
+                        <button id="cancel-edit-task-btn" onclick="resetTaskForm()" class="hidden text-xs text-indigo-600 hover:underline font-bold">取消編輯</button>
+                    </div>
+                    <input type="hidden" id="edit-task-id" value="">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+                        <div class="md:col-span-3">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">時間區間</label>
+                            <input type="text" id="task-input-time" placeholder="如 17:00 - 17:50" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-indigo-400">
+                        </div>
+                        <div class="md:col-span-5">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">任務名稱（可含表情符號）</label>
+                            <input type="text" id="task-input-title" placeholder="如 🏫 完成學校今日作業" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-indigo-400">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">獎勵星星 ⭐</label>
+                            <input type="number" id="task-input-points" min="1" max="20" value="2" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-indigo-400">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">任務類型顏色</label>
+                            <select id="task-input-type" class="w-full px-2.5 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-indigo-400">
+                                <option value="school">📘 學校/主科</option>
+                                <option value="piano">🎹 才藝/雙倍星</option>
+                                <option value="extra">🌿 額外評量/閱讀</option>
+                                <option value="warmup">🪢 運動/點心</option>
+                                <option value="life">🛁 洗澡/晚餐生活</option>
+                                <option value="free">🎮 自由放鬆時間</option>
+                                <option value="sleep">🌙 準時睡覺(算連勝)</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-8">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">溫馨小提醒 / 詳細說明</label>
+                            <input type="text" id="task-input-desc" placeholder="如：專心把功課寫完，檢查簽名並收進書包！" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-indigo-400">
+                        </div>
+                        <div class="md:col-span-4">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">閃亮小徽章（選填）</label>
+                            <input type="text" id="task-input-badge" placeholder="如 🔥 雙倍星挑戰" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-indigo-400">
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button onclick="saveCustomTask()" id="save-task-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-6 py-2.5 rounded-xl text-sm shadow-sm transition">
+                            ➕ 儲存並加入課表
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 區塊 C：特定期間 / 考前複習計畫設定 -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+                    <div>
+                        <h2 class="text-lg md:text-xl font-black text-gray-800 flex items-center gap-2">
+                            <span>🎯</span> 步驟三：特定期間任務 & 考前 14 天複習計畫
+                        </h2>
+                        <p class="text-xs md:text-sm text-gray-500 mt-0.5">
+                            設定好「考試日期」或「特定日期區間」，系統會在該期間的日曆上自動標記，並在每日任務清單中自動加入專屬的複習或挑戰任務！
+                        </p>
+                    </div>
+                    <button onclick="resetDefaultSpecialPlansConfirm()" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-2 rounded-xl font-bold transition">
+                        🔄 恢復曼妮預設期中/期末考計畫
+                    </button>
+                </div>
+
+                <!-- 目前已設定的特定期間列表 -->
+                <div id="special-plans-list" class="space-y-3 mb-6">
+                    <!-- 由 JS 動態渲染 -->
+                </div>
+
+                <!-- 新增 / 修改特定期間計畫表單 -->
+                <div class="bg-rose-50/50 p-5 rounded-2xl border border-rose-200">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 id="special-plan-form-header" class="text-sm font-black text-rose-950">➕ 新增「考前 14 天複習」或「自訂期間任務」</h3>
+                        <button id="cancel-edit-plan-btn" onclick="resetSpecialPlanForm()" class="hidden text-xs text-rose-600 hover:underline font-bold">取消編輯</button>
+                    </div>
+                    <input type="hidden" id="edit-plan-id" value="">
+
+                    <!-- 快速產生器：輸入考試日自動算前 14 天 -->
+                    <div class="bg-white p-3.5 rounded-xl border border-rose-100 mb-4 flex flex-wrap items-center justify-between gap-2">
+                        <div class="text-xs text-gray-700 font-bold flex items-center gap-1.5">
+                            <span>🪄</span> <strong>考前 14 天智慧換算器：</strong>選擇考試第一天，自動幫您算好前 14 天複習區間！
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <select id="quick-exam-month" class="px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-bold bg-gray-50">
+                                <!-- 由 JS 產生月份選項 -->
+                            </select>
+                            <input type="number" id="quick-exam-day" min="1" max="31" placeholder="幾號(如20)" class="w-24 px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-bold">
+                            <button onclick="applyQuickExam14Days()" type="button" class="bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition">
+                                自動填入前 14 天區間
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+                        <div class="md:col-span-4">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">計畫名稱（顯示於日曆與橫幅）</label>
+                            <input type="text" id="plan-input-name" placeholder="如 🔥 期中考前14天衝刺複習" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-rose-400">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">開始日期</label>
+                            <div class="flex gap-1">
+                                <select id="plan-start-month" class="w-1/2 px-1.5 py-2 rounded-xl border border-gray-200 text-xs bg-white font-bold">
+                                    <!-- 由 JS 產生月份選項 -->
+                                </select>
+                                <input type="number" id="plan-start-day" min="1" max="31" value="6" class="w-1/2 px-2 py-2 rounded-xl border border-gray-200 text-xs bg-white text-center font-bold">
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">結束日期</label>
+                            <div class="flex gap-1">
+                                <select id="plan-end-month" class="w-1/2 px-1.5 py-2 rounded-xl border border-gray-200 text-xs bg-white font-bold">
+                                    <!-- 由 JS 產生月份選項 -->
+                                </select>
+                                <input type="number" id="plan-end-day" min="1" max="31" value="19" class="w-1/2 px-2 py-2 rounded-xl border border-gray-200 text-xs bg-white text-center font-bold">
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">日曆小標籤</label>
+                            <input type="text" id="plan-input-tag" placeholder="如 🔥複習" maxlength="6" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-rose-400">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">獎勵星星 ⭐</label>
+                            <input type="number" id="plan-input-points" min="1" max="20" value="3" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-rose-400">
+                        </div>
+
+                        <div class="md:col-span-3">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">每日執行時段</label>
+                            <input type="text" id="plan-input-time" placeholder="如 19:50 - 20:20" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-rose-400">
+                        </div>
+                        <div class="md:col-span-5">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">每日插入的任務標題</label>
+                            <input type="text" id="plan-input-title" placeholder="如 🎯 考前微複習（依星期複習國/數/英/社）" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-rose-400">
+                        </div>
+                        <div class="md:col-span-4">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">科目自動輪替模式</label>
+                            <select id="plan-input-mode" class="w-full px-2.5 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-rose-400">
+                                <option value="exam_cycle">📚 考前智慧輪替（依星期自動配國/數/英/社/錯題）</option>
+                                <option value="exam_day">💯 考試日專屬（檢查文具+信心滿滿應考）</option>
+                                <option value="fixed">📌 固定內容（每天顯示相同任務說明）</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-12">
+                            <label class="block text-[11px] font-bold text-gray-600 mb-1">任務詳細說明 / 鼓勵話語</label>
+                            <input type="text" id="plan-input-desc" placeholder="如：每天前進一小步，考試不用臨時抱佛腳！完成今日 25 分鐘重點複習與訂正！" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:border-rose-400">
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button onclick="saveSpecialPlan()" id="save-plan-btn" class="bg-rose-500 hover:bg-rose-600 text-white font-black px-6 py-2.5 rounded-xl text-sm shadow-sm transition">
+                            ➕ 儲存特定期間計畫
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 視圖 3：親職教練排課邏輯與規則說明 ==================== -->
+        <div id="view-rules" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100">
+                <h2 class="text-xl font-black text-pink-600 mb-4 flex items-center gap-2">
+                    🧠 兒童心理學教練的設計巧思（給爸媽看的執行秘訣）
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm leading-relaxed">
+                    <div class="bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100">
+                        <h3 class="font-bold text-indigo-900 text-base mb-2">1. 破解「跳繩 1000 下」的心理高牆</h3>
+                        <p class="text-gray-700">
+                            對 10 歲孩子來說，「1000」是一個龐大且具威脅感的數字，容易引發逃避心理。我們採用<strong>「微習慣切塊法（Chunking）」</strong>：拆成 5 組 200 下。每跳完 200 下（僅需 2 分鐘）就能按一次按鈕、聽見慶祝音效並拿 1 顆星。<strong>「即時回饋」</strong>能刺激大腦分泌多巴胺，跳完 5 組再給「+3 顆星大滿貫紅利」！
+                        </p>
+                    </div>
+                    <div class="bg-purple-50/70 p-4 rounded-2xl border border-purple-100">
+                        <h3 class="font-bold text-purple-900 text-base mb-2">2. 破解「鋼琴練習」的枯燥與抗拒</h3>
+                        <p class="text-gray-700">
+                            鋼琴需要高度專注與挫折忍受度。我們將鋼琴固定安排在<strong>週一、四、五（4:30 到家的充裕日）</strong>，且設計為<strong>「雙倍爆擊任務（🔥 點數 x2）」</strong>！別人一項任務拿 2 顆星，練琴只要 15 分鐘拿 3 顆星，再彈 10 分鐘挑戰曲再拿 3 顆星（共 6 顆星），讓練琴從「苦差事」變成「快速賺星星的捷徑」。
+                        </p>
+                    </div>
+                    <div class="bg-amber-50/70 p-4 rounded-2xl border border-amber-100">
+                        <h3 class="font-bold text-amber-900 text-base mb-2">3. 週二、週三「6:00 到家」減壓排課法</h3>
+                        <p class="text-gray-700">
+                            週二、週三孩子在安親班或課後班待到 6:00，回家時大腦電力已剩不到 30%。這兩天<strong>絕對不排鋼琴</strong>，且<strong>每天只排 1 項輕量額外作業（25分鐘內結束）</strong>，跳繩也允許「飯前跳一點、洗澡前跳一點」。保留至少 50 分鐘的自由耍廢時間，避免行程過滿導致情緒崩潰。
+                        </p>
+                    </div>
+                    <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100">
+                        <h3 class="font-bold text-emerald-900 text-base mb-2">4. 「自由時間」是神聖不可侵犯的獎勵</h3>
+                        <p class="text-gray-700">
+                            許多孩子拖延作業，是因為「寫完作業媽媽又會叫我多寫一張評量」。請向女兒保證：<strong>只要清單上的任務打勾，剩下的時間完全由她自己做主！</strong>越早寫完，自由時間就越長，這才能真正培養出內在的時間管理觀念。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 每週額外任務分配總覽表 -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100 overflow-x-auto">
+                <h3 class="text-lg font-black text-gray-800 mb-3">📊 曼妮的週一至週日「重點任務」平衡分配表</h3>
+                <table class="w-full text-left border-collapse text-xs md:text-sm">
+                    <thead>
+                        <tr class="bg-pink-50 text-pink-900 border-b border-pink-200">
+                            <th class="p-2.5 rounded-tl-xl">項目 / 星期</th>
+                            <th class="p-2.5">週一 (16:30)</th>
+                            <th class="p-2.5 bg-amber-50/60">週二 (18:00)</th>
+                            <th class="p-2.5 bg-amber-50/60">週三 (18:00)</th>
+                            <th class="p-2.5">週四 (16:30)</th>
+                            <th class="p-2.5">週五 (16:30)</th>
+                            <th class="p-2.5 bg-rose-50/60">週六 (假日)</th>
+                            <th class="p-2.5 bg-sky-50/60 rounded-tr-xl">週日 (假日)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr>
+                            <td class="p-2.5 font-bold text-gray-700">🏃‍♀️ 晨間田徑隊<br><span class="text-[11px] font-normal text-gray-500">(07:30-08:00 全勤加碼)</span></td>
+                            <td class="p-2.5">🏃‍♀️ 田徑晨訓 (+2⭐)</td>
+                            <td class="p-2.5 bg-amber-50/30">🏃‍♀️ 田徑晨訓 (+2⭐)</td>
+                            <td class="p-2.5 bg-amber-50/30">🏃‍♀️ 田徑晨訓 (+2⭐)</td>
+                            <td class="p-2.5">🏃‍♀️ 田徑晨訓 (+2⭐)</td>
+                            <td class="p-2.5 font-bold text-emerald-700">🏃‍♀️ 田徑晨訓 (+2⭐)<br><span class="text-[11px] text-orange-600">🏆 週五全勤加碼 +5⭐</span></td>
+                            <td class="p-2.5 bg-rose-50/30 text-gray-400">🌿 週末休息</td>
+                            <td class="p-2.5 bg-sky-50/30 text-gray-400">🌿 週末休息</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-gray-700">📚 額外學科作業<br><span class="text-[11px] font-normal text-gray-500">(國3+閱1 / 數4 / 社1)</span></td>
+                            <td class="p-2.5">📘 國語 (1/3)</td>
+                            <td class="p-2.5 bg-amber-50/30">🌍 社會 (1/1)</td>
+                            <td class="p-2.5 bg-amber-50/30">📐 數學 (週間1/3)</td>
+                            <td class="p-2.5">📘 國語 (2/3)<br>📐 數學 (週間2/3)</td>
+                            <td class="p-2.5">📐 數學 (週間3/3)</td>
+                            <td class="p-2.5 bg-rose-50/30 font-bold text-rose-700">📘 國語 (3/3)</td>
+                            <td class="p-2.5 bg-sky-50/30 text-emerald-600 font-bold">📐 數學 (週末1/1)<br>📖 閱讀一本書</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-gray-700">🎹 鋼琴與才藝課<br><span class="text-[11px] font-normal text-gray-500">(一~五練3次+週五加碼)</span></td>
+                            <td class="p-2.5">🎹 自主練琴 (1/3)<br>💻 英文線上課</td>
+                            <td class="p-2.5 bg-amber-50/30 text-gray-400">🌿 休息不排琴</td>
+                            <td class="p-2.5 bg-amber-50/30 text-gray-400">🌿 休息不排琴</td>
+                            <td class="p-2.5">🎹 自主練琴 (2/3)</td>
+                            <td class="p-2.5 font-bold text-purple-700">👑 週五加強練琴 (3/3)<br><span class="text-[11px] text-pink-600">(加碼送 +9⭐)</span></td>
+                            <td class="p-2.5 bg-rose-50/30 font-bold">📖 新月書屋<br>🎹 鋼琴家教</td>
+                            <td class="p-2.5 bg-sky-50/30 font-bold">🔤 英文家教</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-gray-700">🪢 跳跳繩 1000 下</td>
+                            <td class="p-2.5" colspan="7">每天皆可拆成 <strong>5 組 x 200 下</strong> 分段完成（每組 +1⭐，滿千額外 +3⭐）</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 自訂魔法確認視窗 (取代原生 confirm 避免被瀏覽器阻擋) -->
+    <div id="custom-modal" class="fixed inset-0 z-50 hidden bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border-2 border-pink-200 text-center transform transition-all">
+            <div id="modal-icon" class="text-4xl mb-3">✨</div>
+            <h3 id="modal-title" class="text-lg font-black text-gray-800 mb-2">魔法確認</h3>
+            <p id="modal-desc" class="text-sm text-gray-600 mb-6 leading-relaxed"></p>
+            <div class="flex gap-3 justify-center">
+                <button onclick="closeModal()" class="flex-1 py-2.5 px-4 rounded-xl font-bold text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 transition">
+                    先不要
+                </button>
+                <button id="modal-confirm-btn" class="flex-1 py-2.5 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-md hover:opacity-95 transition">
+                    確定執行
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 家長密碼輸入視窗 -->
+    <div id="pin-modal" class="hidden fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-xs shadow-2xl text-center">
+            <div class="text-4xl mb-2">🔒</div>
+            <h3 class="text-lg font-black text-gray-800 mb-1">家長專區</h3>
+            <p class="text-xs text-gray-500 mb-4">請輸入 4 位數家長密碼</p>
+            <input type="password" inputmode="numeric" maxlength="4" id="pin-modal-input" class="w-full text-center text-2xl tracking-[0.5em] font-black px-3 py-2.5 rounded-xl border-2 border-pink-200 focus:outline-none focus:border-pink-500 mb-2">
+            <p id="pin-modal-error" class="text-xs font-bold text-rose-500 h-4 mb-3"></p>
+            <div class="flex gap-3">
+                <button onclick="closePinModal()" class="flex-1 py-2.5 rounded-xl font-bold text-sm bg-gray-100 text-gray-600 hover:bg-gray-200 transition">取消</button>
+                <button onclick="submitPinModal()" class="flex-1 py-2.5 rounded-xl font-bold text-sm bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-md transition">確定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部狀態提示彈出框 (Toast) -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-gray-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3">
+        <span id="toast-icon" class="text-2xl">⭐</span>
+        <span id="toast-msg" class="font-bold text-sm">獲得星星！</span>
+    </div>
+
+    <script>
+        // ==================== 資料定義：週一至週日的客製化時間表 ====================
+        const defaultScheduleData = {
+            mon: {
+                name: '星期一',
+                arrival: '07:30 田徑晨訓 🏃‍♀️ + 16:30 到家（國語1/3 + 英文線上課 💻）',
+                themeColor: 'pink',
+                tasks: [
+                    { id: 'mon-track', time: '07:30 - 08:00', title: '🏃‍♀️ 晨間田徑隊活力晨訓（週間 1/5）', desc: '早起準時到校參加田徑隊練習！鍛鍊體力與速度，集滿週一至週五全勤還能拿 +5⭐ 大獎喔！', points: 2, type: 'warmup', badge: '👟 田徑小健將 +2⭐' },
+                    { id: 'mon-1', time: '16:30 - 17:00', title: '🍎 放學充電 & 第一階段跳繩', desc: '洗手、吃點心補充能量！趁身體暖暖的，先跳 2~3 組跳繩（400~600下）請至上方跳繩區打卡。', points: 1, type: 'warmup' },
+                    { id: 'mon-2', time: '17:00 - 17:50', title: '🏫 完成學校今日作業', desc: '專心把學校交代的回家功課寫完，檢查簽名並收進書包。', points: 2, type: 'school' },
+                    { id: 'mon-3', time: '17:50 - 18:15', title: '🎹 鋼琴魔法時間（1/3）— 基礎熱身曲', desc: '【雙倍星星活動】週間第 1 次練琴！彈奏基礎練習曲 15 分鐘，手指動一動！', points: 3, type: 'piano', badge: '🔥 雙倍星階段 1' },
+                    { id: 'mon-4', time: '18:15 - 18:30', title: '👑 鋼琴大魔王加碼 — 挑戰新曲目', desc: '【雙倍星星活動】再堅持 10~15 分鐘把最難的那一小節練順，直接再拿 3 顆星！', points: 3, type: 'piano', badge: '🔥 雙倍星階段 2' },
+                    { id: 'mon-5', time: '18:30 - 19:20', title: '🍱 美味晚餐 & 把剩下的跳繩跳完', desc: '飯前可先把剩下的跳繩次數跳完！開心吃飽飯、陪家人聊聊天。', points: 1, type: 'life' },
+                    { id: 'mon-6', time: '19:20 - 19:50', title: '📘 國語額外作業（每週 1/3 次）', desc: '完成國語評量或線上課程（限時 30 分鐘專注完成）。', points: 2, type: 'extra' },
+                    { id: 'mon-7', time: '19:50 - 20:25', title: '🛁 香噴噴洗澡 & 課前小休息', desc: '洗去一身汗水換上睡衣，準備好耳機與水杯迎接 8:30 的英文課！', points: 1, type: 'life' },
+                    { id: 'mon-8', time: '20:30 - 21:00', title: '💻 英文線上課（30 分鐘開口說！）', desc: '準時上線跟老師互動練習英文，專注投入就能獲得 +3 顆閃亮星星！', points: 3, type: 'extra', badge: '🌟 英文小達人 +3⭐' },
+                    { id: 'mon-9', time: '21:00 - 21:40', title: '🎮 快樂自由時間（40 分鐘！）', desc: '上完英文課太棒了！這段時間完全屬於曼妮（看書、畫畫或放鬆）。', points: 1, type: 'free' },
+                    { id: 'mon-10', time: '21:40 - 22:00', title: '🌙 睡前儀式 & 10:00 前準時熄燈躺平', desc: '刷牙、上廁所、調暗燈光。10:00 前躺好睡覺，直接領取「準時睡覺大獎」！', points: 3, type: 'sleep', badge: '💤 準時睡覺 +3⭐' }
+                ]
+            },
+            tue: {
+                name: '星期二',
+                arrival: '07:30 田徑晨訓 🏃‍♀️ + 18:00 到家（減壓日 🌿 社會1/1）',
+                themeColor: 'amber',
+                tasks: [
+                    { id: 'tue-track', time: '07:30 - 08:00', title: '🏃‍♀️ 晨間田徑隊活力晨訓（週間 2/5）', desc: '今天也準時到校參加田徑訓練！跑出健康與活力，繼續朝週五全勤大獎邁進！', points: 2, type: 'warmup', badge: '👟 田徑小健將 +2⭐' },
+                    { id: 'tue-1', time: '18:00 - 18:20', title: '🏠 平安到家 & 餐前微運動', desc: '今天比較晚回家辛苦了！洗手換衣服，趁吃飯前先跳 2 組跳繩（400下）開開胃！', points: 1, type: 'warmup' },
+                    { id: 'tue-2', time: '18:20 - 19:00', title: '🍱 美味晚餐充電時間', desc: '好好吃頓晚餐，跟爸媽分享今天學校發生的趣事。', points: 1, type: 'life' },
+                    { id: 'tue-3', time: '19:00 - 19:45', title: '🏫 完成學校今日作業', desc: '集中精神把學校功課解決掉！（如果在安親班已經寫完一部份，就能更快結束喔！）', points: 2, type: 'school' },
+                    { id: 'tue-4', time: '19:45 - 20:10', title: '🌍 社會額外作業（每週 1/1 次）', desc: '【週二減壓排課】今天只排 25 分鐘的社會評量/線上課，輕鬆過關！', points: 2, type: 'extra', badge: '🌿 輕量任務' },
+                    { id: 'tue-5', time: '20:10 - 20:45', title: '🪢 完成剩餘跳繩 + 🛁 香噴噴洗澡', desc: '把剩下的 3 組跳繩（600下）跳完，流完汗馬上沖個舒服的熱水澡！', points: 1, type: 'life' },
+                    { id: 'tue-6', time: '20:45 - 21:40', title: '🎮 快樂自由時間（55 分鐘！）', desc: '雖然 6 點才到家，但因為曼妮超有效率，還是有將近一小時的自由時間喔！', points: 1, type: 'free' },
+                    { id: 'tue-7', time: '21:40 - 22:00', title: '🌙 睡前儀式 & 10:00 前準時熄燈躺平', desc: '刷牙、收書包。10:00 前準時上床，讓身體長高高！', points: 3, type: 'sleep', badge: '💤 準時睡覺 +3⭐' }
+                ]
+            },
+            wed: {
+                name: '星期三',
+                arrival: '07:30 田徑晨訓 🏃‍♀️ + 18:00 到家（減壓日 🌿 數學週間1/3）',
+                themeColor: 'amber',
+                tasks: [
+                    { id: 'wed-track', time: '07:30 - 08:00', title: '🏃‍♀️ 晨間田徑隊活力晨訓（週間 3/5）', desc: '小週末早晨一樣精神飽滿參加田徑練習！週間已經達成一半以上囉！', points: 2, type: 'warmup', badge: '👟 田徑小健將 +2⭐' },
+                    { id: 'wed-1', time: '18:00 - 18:20', title: '🏠 平安到家 & 餐前微運動', desc: '小週末愉快！吃飯前先跳 2 組跳繩（400下）喚醒活力！', points: 1, type: 'warmup' },
+                    { id: 'wed-2', time: '18:20 - 19:00', title: '🍱 美味晚餐充電時間', desc: '享用晚餐，放鬆一下大腦。', points: 1, type: 'life' },
+                    { id: 'wed-3', time: '19:00 - 19:40', title: '🏫 完成學校今日作業', desc: '專注完成學校作業，今天已經過了一半囉！', points: 2, type: 'school' },
+                    { id: 'wed-4', time: '19:40 - 20:10', title: '📐 數學額外作業（週間 1/3 次・總第 1/4 次）', desc: '【週三減壓排課】今天沒有鋼琴也沒有國語，只需專心解完本週第 1 次數學任務！', points: 2, type: 'extra', badge: '🌿 唯一額外課' },
+                    { id: 'wed-5', time: '20:10 - 20:45', title: '🪢 完成剩餘跳繩 + 🛁 香噴噴洗澡', desc: '把剩下的跳繩跳完達成 1000 下大滿貫，接著去洗個香噴噴的澡！', points: 1, type: 'life' },
+                    { id: 'wed-6', time: '20:45 - 21:40', title: '🎮 快樂自由時間（55 分鐘！）', desc: '專屬曼妮的放鬆時光，做自己喜歡的事吧！', points: 1, type: 'free' },
+                    { id: 'wed-7', time: '21:40 - 22:00', title: '🌙 睡前儀式 & 10:00 前準時熄燈躺平', desc: '刷牙洗臉，準備迎接明天 4:30 早放學的好日子！', points: 3, type: 'sleep', badge: '💤 準時睡覺 +3⭐' }
+                ]
+            },
+            thu: {
+                name: '星期四',
+                arrival: '07:30 田徑晨訓 🏃‍♀️ + 16:30 到家（國語2/3 + 數學週間2/3）',
+                themeColor: 'pink',
+                tasks: [
+                    { id: 'thu-track', time: '07:30 - 08:00', title: '🏃‍♀️ 晨間田徑隊活力晨訓（週間 4/5）', desc: '太棒了！第 4 天準時參加田徑隊晨訓，明天再參加一天就能解鎖週五全勤大紅包！', points: 2, type: 'warmup', badge: '👟 田徑小健將 +2⭐' },
+                    { id: 'thu-1', time: '16:30 - 17:00', title: '🍎 放學充電 & 第一階段跳繩', desc: '吃點小點心，趁天色還亮先跳 2~3 組跳繩（400~600下）！', points: 1, type: 'warmup' },
+                    { id: 'thu-2', time: '17:00 - 17:45', title: '🏫 完成學校今日作業', desc: '把學校作業寫得工整漂亮，越早寫完晚上越輕鬆。', points: 2, type: 'school' },
+                    { id: 'thu-3', time: '17:45 - 18:10', title: '🎹 鋼琴魔法時間（2/3）— 基礎熱身曲', desc: '【雙倍星星活動】週間第 2 次練琴！彈琴 15~20 分鐘，穩穩拿下 3 顆星！', points: 3, type: 'piano', badge: '🔥 雙倍星階段 1' },
+                    { id: 'thu-4', time: '18:10 - 18:30', title: '👑 鋼琴大魔王加碼 — 挑戰新曲目', desc: '【雙倍星星活動】再堅持 15 分鐘，琴藝大進步，再拿 3 顆星！', points: 3, type: 'piano', badge: '🔥 雙倍星階段 2' },
+                    { id: 'thu-5', time: '18:30 - 19:15', title: '🍱 美味晚餐 & 跳完剩餘跳繩', desc: '飯前把剩下的跳繩解決掉，開開心心吃晚餐！', points: 1, type: 'life' },
+                    { id: 'thu-6', time: '19:15 - 19:40', title: '📘 國語額外作業（每週 2/3 次）', desc: '利用週四早放學的充裕時間，專注 25 分鐘完成本週第 2 次國語評量/線上課！', points: 2, type: 'extra' },
+                    { id: 'thu-7', time: '19:40 - 20:05', title: '📐 數學額外作業（週間 2/3 次・總第 2/4 次）', desc: '趁頭腦熱熱的，再花 25 分鐘完成週間第 2 次數學練習，再賺 2 顆星！', points: 2, type: 'extra', badge: '🧠 雙科闖關 +2⭐' },
+                    { id: 'thu-8', time: '20:05 - 20:35', title: '🛁 香噴噴洗澡 & 吹乾頭髮', desc: '舒服洗澡，放鬆全身肌肉。', points: 1, type: 'life' },
+                    { id: 'thu-9', time: '20:35 - 21:35', title: '🎮 快樂自由時間（60 分鐘！）', desc: '整整一小時自由時間！看看許願池還差幾顆星就能換禮物了呢？', points: 1, type: 'free' },
+                    { id: 'thu-10', time: '21:35 - 22:00', title: '🌙 睡前儀式 & 10:00 前準時熄燈躺平', desc: '刷牙、收書包，10:00 前進入甜甜夢鄉。', points: 3, type: 'sleep', badge: '💤 準時睡覺 +3⭐' }
+                ]
+            },
+            fri: {
+                name: '星期五',
+                arrival: '07:30 田徑全勤加碼 🏆 + 16:30 到家（鋼琴加碼 🎹 + 數學週間3/3）',
+                themeColor: 'purple',
+                tasks: [
+                    { id: 'fri-track', time: '07:30 - 08:00', title: '🏃‍♀️ 晨間田徑隊活力晨訓（週間 5/5・全勤加碼日！）', desc: '【週五全勤大禮包】完成週五田徑晨訓拿 +2⭐！若本週一到五皆如期參加，系統將自動加碼發送「+5⭐ 田徑全勤大滿貫獎章」喔！', points: 2, type: 'warmup', badge: '🏆 週五全勤加碼 +5⭐' },
+                    { id: 'fri-1', time: '16:30 - 17:00', title: '🍎 放學充電 & 第一階段跳繩', desc: '耶！明天放假！趁心情好先跳 3 組跳繩（600下）！', points: 1, type: 'warmup' },
+                    { id: 'fri-2', time: '17:00 - 17:50', title: '🏫 完成學校週末作業', desc: '把週末作業在週五傍晚先寫完，六日就能毫無壓力地去玩啦！', points: 2, type: 'school' },
+                    { id: 'fri-3', time: '17:50 - 18:15', title: '🎹 鋼琴魔法時間（3/3）— 週五加強熱身特訓', desc: '【週五加強加碼星】達成「一到五至少練琴 3 次」目標！今日加強練習直接升級拿 4 顆星！', points: 4, type: 'piano', badge: '🔥 週五加碼 +4⭐' },
+                    { id: 'fri-4', time: '18:15 - 18:35', title: '👑 鋼琴大魔王超級加碼 — 明日家教曲目總驗收', desc: '【週五超級爆擊星】多練 5~10 分鐘把明天家教課要彈的曲子完整順過，破天荒加碼拿 5 顆星！', points: 5, type: 'piano', badge: '💎 週五加強大獎 +5⭐' },
+                    { id: 'fri-5', time: '18:35 - 19:20', title: '🍱 週末歡樂晚餐 & 跳完剩餘跳繩', desc: '完成今天最後幾百下跳繩，享受週五的美好晚餐！', points: 1, type: 'life' },
+                    { id: 'fri-6', time: '19:20 - 19:50', title: '📐 數學額外作業（週間 3/3 次・總第 3/4 次）', desc: '週間最後一次數學任務！寫完這項，平日的額外數學就全部破關啦！', points: 2, type: 'extra', badge: '🎯 週間數學滿貫' },
+                    { id: 'fri-7', time: '19:50 - 20:20', title: '🛁 香噴噴洗澡 & 吹乾頭髮', desc: '洗個香噴噴的澡，準備迎接快樂的自由之夜。', points: 1, type: 'life' },
+                    { id: 'fri-8', time: '20:20 - 21:35', title: '🎉 週末夜自由派對時間（75 分鐘！）', desc: '恭喜完成平日挑戰與週五加強練琴！快去「星星許願池」看看能換什麼獎品吧！', points: 1, type: 'free' },
+                    { id: 'fri-9', time: '21:35 - 22:00', title: '🌙 睡前儀式 & 10:00 前準時熄燈躺平', desc: '明天早上 10:00 有新月書屋的課，準時 10:00 睡覺才能精神飽滿拿 +3 顆星喔！', points: 3, type: 'sleep', badge: '💤 準時睡覺 +3⭐' }
+                ]
+            },
+            sat: {
+                name: '星期六',
+                arrival: '快樂週末（新月書屋 📖 + 國語3/3 + 鋼琴家教 🎹）',
+                themeColor: 'rose',
+                tasks: [
+                    { id: 'sat-1', time: '08:30 - 09:30', title: '☀️ 美好週末晨間喚醒 & 活力早餐', desc: '起床刷牙洗臉、吃飽飽，準備好文具與水壺出門去上課囉！', points: 1, type: 'life' },
+                    { id: 'sat-2', time: '10:00 - 12:00', title: '📖 新月書屋實體課（2 小時知識探險）', desc: '專心聽講、踴躍發表想法，吸收滿滿的故事與知識能量！', points: 4, type: 'school', badge: '🌟 實體課全勤 +4⭐' },
+                    { id: 'sat-3', time: '12:15 - 15:10', title: '🍱 週末午餐 & 午後充電自由時光', desc: '吃完午餐休息一下！趁下午空檔先跳 2~3 組跳繩（400~600下）。', points: 1, type: 'free' },
+                    { id: 'sat-4', time: '15:10 - 15:45', title: '📘 國語額外作業（每週 3/3 次）', desc: '在家教課前專心完成本週第 3 次國語額外作業，解鎖本週國語全勤成就！', points: 2, type: 'extra', badge: '📘 國語 3/3 達成!' },
+                    { id: 'sat-5', time: '16:00 - 17:00', title: '🎹 鋼琴家教時間（1 小時大師特訓）', desc: '【週末超級雙倍星】認真跟鋼琴老師學習新技巧，展現昨晚週五加強練習的成果！', points: 5, type: 'piano', badge: '🔥 鋼琴家教大獎 +5⭐' },
+                    { id: 'sat-6', time: '17:00 - 18:00', title: '🪢 完成今日跳繩 1000 下 & 檢查週末作業', desc: '把剩下的跳繩組數跳完！如果學校還有未完成的週末作業，趁現在解決掉。', points: 2, type: 'warmup' },
+                    { id: 'sat-7', time: '18:00 - 20:00', title: '🍲 家庭歡樂晚餐 & 🛁 香噴噴洗澡', desc: '和家人一起享受週末晚餐，洗個舒服的熱水澡！', points: 1, type: 'life' },
+                    { id: 'sat-8', time: '20:00 - 21:35', title: '🎉 週六夜晚大放鬆（95 分鐘自由時間！）', desc: '週六最棒的自由時光！可以看電影、玩遊戲或做任何喜歡的事！', points: 1, type: 'free' },
+                    { id: 'sat-9', time: '21:35 - 22:00', title: '🌙 睡前儀式 & 10:00 前準時熄燈躺平', desc: '假日也維持 10:00 前睡覺的好習慣，連勝紀錄不中斷！', points: 3, type: 'sleep', badge: '💤 準時睡覺 +3⭐' }
+                ]
+            },
+            sun: {
+                name: '星期日',
+                arrival: '收心充電日（數學週末1/1 + 閱讀一本書 📚 + 英文家教 🔤）',
+                themeColor: 'sky',
+                tasks: [
+                    { id: 'sun-1', time: '09:00 - 10:30', title: '☀️ 假日晨間時光 & 第一階段跳繩', desc: '悠閒吃早餐！趁早上精神好，先跳 2~3 組跳繩（400~600下），開啟活力的一天。', points: 1, type: 'warmup' },
+                    { id: 'sun-2', time: '10:30 - 11:10', title: '📐 數學額外作業（週末 1/1 次・本週第 4/4 次）', desc: '趁著早上頭腦最清醒，把本週第 4 次數學作業解決掉，下午就能痛快去玩囉！', points: 2, type: 'extra', badge: '🧠 數學 4/4 大滿貫 +2⭐' },
+                    { id: 'sun-3', time: '11:10 - 16:00', title: '🎈 週末家庭出遊 / 自由玩耍時光', desc: '數學寫完啦！和爸媽一起出門走走、吃美食，或在家享受快樂的假日午後！', points: 1, type: 'free' },
+                    { id: 'sun-4', time: '16:00 - 16:45', title: '📖 國語文素養：沉浸閱讀一本好書（每週 1 本）', desc: '挑一本自己喜歡的課外書或故事書，安靜享受閱讀的樂趣，完成每週「國語3次＋閱讀1本」大挑戰！', points: 2, type: 'extra', badge: '📚 閱讀小博士 +2⭐' },
+                    { id: 'sun-5', time: '16:45 - 17:30', title: '🪢 完成剩餘跳繩 & 英文家教課前暖身', desc: '把今天剩下的跳繩跳完滿 1000 下！稍微翻一下英文教材為晚上的課暖身。', points: 2, type: 'warmup' },
+                    { id: 'sun-6', time: '17:30 - 18:50', title: '🍱 美味晚餐 & 🛁 課前香噴噴洗澡', desc: '提早吃飽飯並洗好澡，7 點上完英文課就可以直接放鬆不用再趕洗澡囉！', points: 1, type: 'life' },
+                    { id: 'sun-7', time: '19:00 - 20:00', title: '🔤 英文家教時間（1 小時實力升級！）', desc: '【週末超級雙倍星】跟英文家教老師專心互動學習，英文能力大躍進！', points: 5, type: 'school', badge: '🌟 英文家教大獎 +5⭐' },
+                    { id: 'sun-8', time: '20:00 - 20:20', title: '🎒 收心小儀式：檢查書包與明日學用品', desc: '把明天星期一要帶的功課、鉛筆盒、水壺收進書包，明天出門不慌張！', points: 2, type: 'school' },
+                    { id: 'sun-9', time: '20:20 - 21:35', title: '🎮 週日晚間自由放鬆（75 分鐘！）', desc: '所有週末任務都圓滿達成！享受睡前的溫馨自由時光吧！', points: 1, type: 'free' },
+                    { id: 'sun-10', time: '21:35 - 22:00', title: '🌙 睡前儀式 & 10:00 前準時熄燈躺平', desc: '準時 10:00 前進入夢鄉，帶著滿滿能量迎接新的一週！', points: 3, type: 'sleep', badge: '💤 準時睡覺 +3⭐' }
+                ]
+            }
+        };
+
+        let scheduleData = JSON.parse(JSON.stringify(defaultScheduleData));
+        let currentSettingsDayKey = 'mon';
+
+        // ==================== 預設特定期間計畫：期中考(10/20,21)、南區游泳比賽(11/12) & 期末考(12/17,18) ====================
+        const defaultSpecialPlans = [
+            {
+                id: 'plan-midterm-prep',
+                name: '🔥 期中考前 14 天衝刺複習（國/數/英/社）',
+                startMonth: 10,
+                startDay: 6,
+                endMonth: 10,
+                endDay: 19,
+                calendarTag: '🔥複習',
+                time: '19:50 - 20:20',
+                title: '🎯 期中考微複習闖關',
+                desc: '考前 14 天分段複習法（國語、數學、英文、社會）！每次專注 25~30 分鐘攻克一個小範圍，期中考輕鬆拿高分！',
+                points: 3,
+                mode: 'exam_cycle',
+                examTargetMonth: 10,
+                examTargetDay: 20
+            },
+            {
+                id: 'plan-midterm-day1',
+                name: '💯 期中考第一天（10/20 國/數/英/社）',
+                startMonth: 10,
+                startDay: 20,
+                endMonth: 10,
+                endDay: 20,
+                calendarTag: '💯期中考',
+                time: '20:00 - 20:25',
+                title: '🌟 期中考明日科目溫習 & 檢查應考文具',
+                desc: '第一天考試辛苦了！今晚只要花 20 分鐘輕鬆看一下明天要考的科目重點、削好鉛筆放進書包，就能早點休息拿 +5⭐！',
+                points: 5,
+                mode: 'exam_day'
+            },
+            {
+                id: 'plan-midterm-day2-done',
+                name: '🎉 期中考圓滿考完大解放！（10/21 考完慶祝夜）',
+                startMonth: 10,
+                startDay: 21,
+                endMonth: 10,
+                endDay: 21,
+                calendarTag: '🎉考完啦',
+                time: '19:40 - 20:30',
+                title: '🎉 慶祝期中考順利考完！開心放鬆領取努力大紅包',
+                desc: '太棒了！白天已經把期中考全部考完囉！今晚完全不用準備考試也不用檢查考卷文具，開開心心放鬆玩耍，直接領取 +5 顆榮耀星星！',
+                points: 5,
+                mode: 'fixed'
+            },
+            {
+                id: 'plan-swim-comp',
+                name: '🏊‍♀️ 南區游泳比賽榮耀登場（11/12 運動健將日）',
+                startMonth: 11,
+                startDay: 12,
+                endMonth: 11,
+                endDay: 12,
+                calendarTag: '🏊‍♀️游泳賽',
+                time: '08:00 - 16:30',
+                title: '🏅 參加「南區游泳比賽」全力以赴、挑戰自我！',
+                desc: '曼妮是最棒的水中蛟龍！在南區游泳比賽勇敢跳下水、游出自己的最佳表現，不管名次如何，勇敢參賽就是大贏家，直接獎勵 +10 顆超級星星！',
+                points: 10,
+                mode: 'fixed'
+            },
+            {
+                id: 'plan-walking-comp',
+                name: '🚶‍♀️ 南區運動會比賽「女子組競走」（11/24, 11/25）',
+                startMonth: 11,
+                startDay: 24,
+                endMonth: 11,
+                endDay: 25,
+                calendarTag: '🚶‍♀️競走賽',
+                time: '全天賽程（配合大會檢錄出賽）',
+                title: '🏅 參加南區運動會「女子組競走」全力以赴！',
+                desc: '【南區運動會榮耀登場】曼妮代表出戰女子組競走！保持穩定節奏與步伐技術、聽從裁判口令，在賽道上昂首闊步展現平日田徑晨操的成果！只要站上賽道全力衝過終點，直接領取 +10 顆超閃亮榮耀星星！',
+                points: 10,
+                mode: 'fixed'
+            },
+            {
+                id: 'plan-final-prep',
+                name: '🔥 期末考前 14 天衝刺複習（國/數/英/社）',
+                startMonth: 12,
+                startDay: 3,
+                endMonth: 12,
+                endDay: 16,
+                calendarTag: '🔥複習',
+                time: '19:50 - 20:20',
+                title: '🎯 期末考微複習闖關',
+                desc: '期末考前 14 天黃金衝刺（國語、數學、英文、社會）！每天消除一點點不懂的題目，開心迎接豐收成果！',
+                points: 3,
+                mode: 'exam_cycle',
+                examTargetMonth: 12,
+                examTargetDay: 17
+            },
+            {
+                id: 'plan-final-day1',
+                name: '💯 期末考第一天（12/17 國/數/英/社）',
+                startMonth: 12,
+                startDay: 17,
+                endMonth: 12,
+                endDay: 17,
+                calendarTag: '💯期末考',
+                time: '20:00 - 20:25',
+                title: '🌟 期末考明日科目溫習 & 檢查應考文具',
+                desc: '期末考第一天表現超棒！今晚稍微溫習一下明天要考的最後科目、準備好文具，再堅持一天就大解放囉！',
+                points: 5,
+                mode: 'exam_day'
+            },
+            {
+                id: 'plan-final-day2-done',
+                name: '🎉 期末考圓滿結束大解放！（12/18 考完慶祝夜）',
+                startMonth: 12,
+                startDay: 18,
+                endMonth: 12,
+                endDay: 18,
+                calendarTag: '🎉考完啦',
+                time: '19:40 - 20:30',
+                title: '🎉 慶祝期末考完美收官！開心迎接聖誕與跨年假期',
+                desc: '耶！白天已經把期末考全部考完啦！今晚徹底放鬆不用複習，點一下直接領取 +5 顆期末豐收大星星！',
+                points: 5,
+                mode: 'fixed'
+            }
+        ];
+
+        // 依星期自動配發的考前複習建議科目 (僅限：國語、數學、英文、社會，兼顧週二週三 18:00 到家的輕量原則)
+        const examCycleSubjectsByDay = {
+            mon: {
+                subTitle: '📘 國語重點複習（生字語詞＋課文重點）',
+                subDesc: '複習考試範圍的國語圈詞、多音字、形近字與成語，把容易寫錯的字在練習本寫 2 遍，穩穩拿下基本分！',
+                timeOverride: '19:50 - 20:15'
+            },
+            tue: {
+                subTitle: '🌿 社會重點記憶卡（週二晚歸輕量複習）',
+                subDesc: '週二 18:00 到家辛苦了！今晚只花 20 分鐘看社會課本的重點圖表與畫線處，像闖關問答一樣考考自己！',
+                timeOverride: '20:10 - 20:30'
+            },
+            wed: {
+                subTitle: '🌿 數學錯題消滅戰（週三晚歸輕量複習）',
+                subDesc: '週三輕量衝刺！把數學習作或考卷上曾經錯過的 5 題蓋住重算一次，算對就代表徹底學會囉！',
+                timeOverride: '20:10 - 20:30'
+            },
+            thu: {
+                subTitle: '🌍 社會統整練習卷 ＋ 📘 國語句型與修辭',
+                subDesc: '今天 16:30 到家時間充裕！完成一回社會複習卷與國語句型練習，不懂的地方馬上做記號問爸媽。',
+                timeOverride: '20:05 - 20:35'
+            },
+            fri: {
+                subTitle: '🔤 英文單字句型大闖關 ＋ 📐 數學應用題',
+                subDesc: '朗讀並背熟考試範圍的英文單字、自然發音與重點句型，再搭配練習 1 個單元的數學應用題！',
+                timeOverride: '19:50 - 20:20'
+            },
+            sat: {
+                subTitle: '📝 週末考前模擬小測驗（國語 ＋ 數學總複習）',
+                subDesc: '利用週末充裕時間，計時完成一份國語或數學考前複習卷並立刻訂正，找出小粗心的地方，正式考試就不怕囉！',
+                timeOverride: '14:25 - 15:05'
+            },
+            sun: {
+                subTitle: '👑 考前黃金總檢閱（英文 ＋ 社會 ＋ 四科錯題本）',
+                subDesc: '趁週日晚上英文家教前，把英文與社會的重點筆記、以及這週訂正過的四科錯題再看一遍，把滿分能量裝進腦袋裡！',
+                timeOverride: '15:15 - 15:55'
+            }
+        };
+
+        // 預設獎勵清單
+        const defaultRewards = [
+            { id: 'r1', icon: '🍦', name: '任選喜歡的點心或冰淇淋一份', cost: 25, desc: '放學或週末的小確幸獎勵！' },
+            { id: 'r2', icon: '📺', name: '自由看電視 / 玩平板延長 20 分鐘券', cost: 35, desc: '可在完成當日任務後的自由時間使用' },
+            { id: 'r3', icon: '🪢', name: '【魔法道具】今日跳繩減半卡（只需500下）', cost: 45, desc: '覺得腳痠累累時可以使用的超強免死金牌！' },
+            { id: 'r4', icon: '👑', name: '週末晚餐主廚指定權（決定全家吃什麼）', cost: 60, desc: '這頓晚餐由曼妮公主決定菜單！' },
+            { id: 'r5', icon: '🎹', name: '【魔法道具】練琴快樂放假一天券', cost: 80, desc: '可折抵週一、四、五其中一次自主練琴！' },
+            { id: 'r6', icon: '📚', name: '買一本喜歡的課外書 / 漫畫 / 小文具', cost: 100, desc: '去書店挑一樣自己喜歡的小禮物（250元內）' },
+            { id: 'r7', icon: '🎡', name: '週末家庭特別願望（看電影 / 主題樂園）', cost: 250, desc: '累積約兩週半的努力，換取超棒的家庭日行程！' }
+        ];
+
+        // ==================== 10月~12月 (跨月連續) 日期與星期對應工具 ====================
+        // ★ 學年設定：本學年從 2026 年 10 月到 2027 年 8 月（含暑假）。
+        //   明年新學年只要把 SCHOOL_YEAR_START 改成 2027 即可（月份 9~12 屬於起始年，1~8 屬於隔年）。
+        const SCHOOL_YEAR_START = 2026;
+        const MONTH_ORDER = [10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8];
+        const MONTH_ICONS = { 1: '🧧', 2: '🏮', 3: '🌸', 4: '🌷', 5: '🌿', 6: '🎓', 7: '🌊', 8: '🍉', 9: '🍎', 10: '🍁', 11: '🍂', 12: '🎄' };
+        function yearOf(monthNum) {
+            return Number(monthNum) >= 9 ? SCHOOL_YEAR_START : SCHOOL_YEAR_START + 1;
+        }
+        const SUPPORTED_MONTHS = {};
+        MONTH_ORDER.forEach(m => {
+            SUPPORTED_MONTHS[m] = {
+                name: `${m}月份`,
+                year: yearOf(m),
+                days: new Date(yearOf(m), m, 0).getDate(),
+                icon: MONTH_ICONS[m]
+            };
+        });
+        const FIRST_MONTH = MONTH_ORDER[0];
+        const dayIdxToKey = { 0: 'sun', 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri', 6: 'sat' };
+
+        // 產生月份+日期的唯一紀錄 Key，例如 "10-15"、"11-3"、"12-25"
+        function getRecordKey(monthNum, dateNum) {
+            return `${monthNum}-${dateNum}`;
+        }
+
+        // 傳入月份 (10~12) 與日期數字 (1~31)，回傳對應的星期代碼 ('mon' ~ 'sun')
+        function getDayKeyForDate(monthNum, dateNum) {
+            const d = new Date(yearOf(monthNum), monthNum - 1, dateNum);
+            return dayIdxToKey[d.getDay()];
+        }
+
+        // 將月、日轉為可比較的數值 (例如 10月6日 -> 1006)
+        function toDateValue(m, d) {
+            return yearOf(m) * 10000 + Number(m) * 100 + Number(d);
+        }
+
+        // 計算兩個日期之間相差幾天 (target - current)
+        function diffDaysBetween(m1, d1, m2, d2) {
+            const date1 = new Date(yearOf(m1), m1 - 1, d1);
+            const date2 = new Date(yearOf(m2), m2 - 1, d2);
+            return Math.round((date2 - date1) / (1000 * 60 * 60 * 24));
+        }
+
+        // 取得指定日期適用的所有「特定期間計畫」
+        function getActiveSpecialPlansForDate(monthNum, dateNum) {
+            const plans = appState.specialPlans || defaultSpecialPlans;
+            const curVal = toDateValue(monthNum, dateNum);
+            return plans.filter(p => {
+                const startVal = toDateValue(p.startMonth, p.startDay);
+                const endVal = toDateValue(p.endMonth, p.endDay);
+                return curVal >= startVal && curVal <= endVal;
+            });
+        }
+
+        // 取得指定日期完整任務清單（結合星期固定課表 ＋ 特定期間/考前複習任務）
+        function getEffectiveTasksForDate(monthNum, dateNum) {
+            const dayKey = getDayKeyForDate(monthNum, dateNum);
+            const baseData = scheduleData[dayKey];
+            const baseTasks = baseData ? [...baseData.tasks] : [];
+            const activePlans = getActiveSpecialPlansForDate(monthNum, dateNum);
+
+            if (activePlans.length === 0) return baseTasks;
+
+            const specialTasks = activePlans.map(plan => {
+                let taskTitle = plan.title;
+                let taskDesc = plan.desc;
+                let taskTime = plan.time || '19:50 - 20:20';
+                let badgeText = plan.calendarTag || '🎯 專案任務';
+
+                if (plan.mode === 'exam_cycle') {
+                    const cyc = examCycleSubjectsByDay[dayKey] || examCycleSubjectsByDay.mon;
+                    taskTitle = `${plan.title}：${cyc.subTitle}`;
+                    taskDesc = `${cyc.subDesc}（${plan.desc}）`;
+                    taskTime = cyc.timeOverride || taskTime;
+
+                    if (plan.examTargetMonth && plan.examTargetDay) {
+                        const daysLeft = diffDaysBetween(monthNum, dateNum, plan.examTargetMonth, plan.examTargetDay);
+                        if (daysLeft > 0) {
+                            badgeText = `⏳ 距離大考倒數 ${daysLeft} 天 (+${plan.points}⭐)`;
+                        }
+                    } else {
+                        const daysLeftToEnd = diffDaysBetween(monthNum, dateNum, plan.endMonth, plan.endDay) + 1;
+                        badgeText = `🔥 考前衝刺倒數 ${daysLeftToEnd} 天 (+${plan.points}⭐)`;
+                    }
+                } else if (plan.mode === 'exam_day') {
+                    badgeText = `💯 考試大吉・雙倍星 +${plan.points}⭐`;
+                } else {
+                    badgeText = `${plan.calendarTag || '🎯 期間任務'} +${plan.points}⭐`;
+                }
+
+                return {
+                    id: `sp-${plan.id}-${monthNum}-${dateNum}`,
+                    time: taskTime,
+                    title: taskTitle,
+                    desc: taskDesc,
+                    points: Number(plan.points) || 3,
+                    type: 'special',
+                    badge: badgeText,
+                    planName: plan.name
+                };
+            });
+
+            // 將特定期間複習任務插入在「快樂自由時間」或「睡前儀式」之前，讓孩子先完成複習再享受自由時間
+            const result = [];
+            let inserted = false;
+            for (const t of baseTasks) {
+                if (!inserted && (t.type === 'free' || t.type === 'sleep')) {
+                    result.push(...specialTasks);
+                    inserted = true;
+                }
+                result.push(t);
+            }
+            if (!inserted) {
+                result.push(...specialTasks);
+            }
+            return result;
+        }
+
+        // 取得指定月份與日期的獨立紀錄物件 (向下相容舊版只有數字 key 的 10月紀錄)
+        function ensureDateRecord(monthNum, dateNum) {
+            if (!appState.dailyRecords) appState.dailyRecords = {};
+            const key = getRecordKey(monthNum, dateNum);
+
+            // 若舊版已有純數字 key (例如 10月的 '15')，自動遷移至 '10-15'
+            if (monthNum === 10 && appState.dailyRecords[dateNum] && !appState.dailyRecords[key]) {
+                appState.dailyRecords[key] = appState.dailyRecords[dateNum];
+                delete appState.dailyRecords[dateNum];
+            }
+
+            if (!appState.dailyRecords[key]) {
+                appState.dailyRecords[key] = {
+                    completedTasks: {}, // { 'thu-1': true, ... }
+                    ropeProgress: [false, false, false, false, false],
+                    ropeBonusClaimed: false,
+                    trackWeeklyBonusClaimed: false
+                };
+            }
+            return appState.dailyRecords[key];
+        }
+
+        // 檢查某個日期當日是否有完成「晨間田徑隊」任務
+        function isTrackDoneOnDate(monthNum, dateNum) {
+            const key = getRecordKey(monthNum, dateNum);
+            const rec = appState.dailyRecords && appState.dailyRecords[key];
+            if (!rec || !rec.completedTasks) return false;
+            const dayKey = getDayKeyForDate(monthNum, dateNum);
+            const dayTasks = scheduleData[dayKey]?.tasks || [];
+            const trackTask = dayTasks.find(t => t.id.endsWith('-track') || t.title.includes('田徑'));
+            if (!trackTask) return false;
+            return !!rec.completedTasks[trackTask.id];
+        }
+
+        // 給定任一日期，取得該週「星期一～星期五」的月日清單與當週星期五的月日
+        function getWeekMonToFriDates(monthNum, dateNum) {
+            const d = new Date(yearOf(monthNum), monthNum - 1, dateNum);
+            const dayOfWeek = d.getDay(); // 0(日) ~ 6(六)
+            // 若是週日(0)，往前推6天到週一；否則往回推 (dayOfWeek - 1) 天到週一
+            const diffToMon = (dayOfWeek === 0) ? -6 : (1 - dayOfWeek);
+            const monDate = new Date(d);
+            monDate.setDate(d.getDate() + diffToMon);
+
+            const weekdays = [];
+            for (let i = 0; i < 5; i++) {
+                const cur = new Date(monDate);
+                cur.setDate(monDate.getDate() + i);
+                weekdays.push({ month: cur.getMonth() + 1, date: cur.getDate() });
+            }
+            return {
+                weekdays, // [週一, 週二, 週三, 週四, 週五]
+                friday: weekdays[4]
+            };
+        }
+
+        // 自動檢查並發放/收回「週一至週五田徑隊全勤 +5⭐」加碼獎勵（記錄在該週五的 record 上）
+        function checkAndSyncWeeklyTrackBonus(monthNum, dateNum) {
+            const { weekdays, friday } = getWeekMonToFriDates(monthNum, dateNum);
+            if (!SUPPORTED_MONTHS[friday.month]) return;
+
+            const friRecord = ensureDateRecord(friday.month, friday.date);
+            const allFiveDaysDone = weekdays.every(wd => {
+                if (!SUPPORTED_MONTHS[wd.month]) return false;
+                return isTrackDoneOnDate(wd.month, wd.date);
+            });
+
+            if (allFiveDaysDone && !friRecord.trackWeeklyBonusClaimed) {
+                friRecord.trackWeeklyBonusClaimed = true;
+                appState.stars += 5;
+                setTimeout(() => {
+                    playSound('bonus', 5);
+                    confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+                    showToast(`🏆 太神啦！本週一到五田徑隊 5 天全勤達成！週五加碼送 +5 ⭐！`, '🏃‍♀️');
+                    saveState();
+                    renderScheduleView();
+                }, 350);
+            } else if (!allFiveDaysDone && friRecord.trackWeeklyBonusClaimed) {
+                friRecord.trackWeeklyBonusClaimed = false;
+                appState.stars = Math.max(0, appState.stars - 5);
+            }
+        }
+
+        // 真正的「連續準時睡覺」天數：從今天往回數，遇到沒打勾的一天就停止。
+        // 今天還沒睡（尚未打勾）時從昨天開始算，避免白天顯示 0。
+        function computeSleepStreak() {
+            const cursor = new Date();
+            cursor.setHours(0, 0, 0, 0);
+            let streak = 0;
+            let isFirstDay = true;
+            for (let guard = 0; guard < 400; guard++) {
+                const m = cursor.getMonth() + 1;
+                const d = cursor.getDate();
+                if (!SUPPORTED_MONTHS[m] || SUPPORTED_MONTHS[m].year !== cursor.getFullYear()) break;
+                const dayTasks = scheduleData[getDayKeyForDate(m, d)]?.tasks || [];
+                const sleepTask = dayTasks.find(t => t.type === 'sleep');
+                if (sleepTask) {
+                    const rec = appState.dailyRecords && appState.dailyRecords[getRecordKey(m, d)];
+                    const done = !!(rec && rec.completedTasks && rec.completedTasks[sleepTask.id]);
+                    if (done) {
+                        streak++;
+                    } else if (!isFirstDay) {
+                        break;
+                    }
+                }
+                isFirstDay = false;
+                cursor.setDate(cursor.getDate() - 1);
+            }
+            return streak;
+        }
+
+        // 計算指定月份與日期已經獲得的星星總數
+        function calculateDateEarnedStars(monthNum, dateNum) {
+            const record = ensureDateRecord(monthNum, dateNum);
+            const effectiveTasks = getEffectiveTasksForDate(monthNum, dateNum);
+            let earned = 0;
+
+            // 1. 計算已完成的任務星星 (包含一般任務與特定期間考前複習任務)
+            effectiveTasks.forEach(task => {
+                if (record.completedTasks[task.id]) {
+                    earned += task.points;
+                }
+            });
+
+            // 2. 計算跳繩分段星星 (每組 +1)
+            const ropeDoneCount = record.ropeProgress.filter(Boolean).length;
+            earned += ropeDoneCount;
+
+            // 3. 計算跳繩滿千紅利 (+3)
+            if (record.ropeBonusClaimed) {
+                earned += 3;
+            }
+
+            // 4. 計算週五田徑隊一到五全勤加碼紅利 (+5)
+            if (record.trackWeeklyBonusClaimed) {
+                earned += 5;
+            }
+
+            return earned;
+        }
+
+        // 計算指定單一月份 (10、11 或 12月) 累積賺到的星星總數
+        function calculateMonthTotalEarnedStars(monthNum) {
+            const monthInfo = SUPPORTED_MONTHS[monthNum];
+            if (!monthInfo) return 0;
+            let total = 0;
+            for (let d = 1; d <= monthInfo.days; d++) {
+                total += calculateDateEarnedStars(monthNum, d);
+            }
+            return total;
+        }
+
+        // 計算 10月~12月 (整季共 92 天) 總累計獲得的星星數
+        function calculateQuarterTotalEarnedStars() {
+            return MONTH_ORDER.reduce((sum, m) => sum + calculateMonthTotalEarnedStars(m), 0);
+        }
+
+        // ==================== 狀態管理 ====================
+        let appState = {
+            childName: '曼妮', // 可自訂孩子名字
+            currentMonth: 10, // 預設 10 月 (可切換 10, 11, 12)
+            currentDate: 15,  // 預設 15 日
+            stars: 0,
+            streak: 0,
+            dailyRecords: {}, // { '10-1': { completedTasks: {}, ropeProgress: [...], ropeBonusClaimed: false }, ... }
+            customSchedule: null, // 儲存家長自訂後的週一至週日課表
+            specialPlans: defaultSpecialPlans, // 特定期間與考前14天複習計畫
+            rewards: defaultRewards,
+            history: []
+        };
+
+        // 儲存位置名稱維持舊版，舊紀錄可直接沿用
+        const STORAGE_KEY = 'magicCastleRoutine_v2_oct';
+
+        function loadState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    appState = {
+                        ...appState,
+                        ...parsed,
+                        childName: parsed.childName || '曼妮',
+                        currentMonth: SUPPORTED_MONTHS[parsed.currentMonth] ? parsed.currentMonth : FIRST_MONTH,
+                        rewards: (parsed.rewards && parsed.rewards.length > 0) ? parsed.rewards : defaultRewards,
+                        specialPlans: (parsed.specialPlans && parsed.specialPlans.length > 0) ? parsed.specialPlans : defaultSpecialPlans,
+                        dailyRecords: parsed.dailyRecords || {}
+                    };
+                    // 若為此次規則更新前的舊預設課表，自動升級為最新課表（含田徑晨訓、10/21考完慶祝、11/12游泳比賽、11/24-25女子組競走）
+                    if (!parsed.scheduleVersion || parsed.scheduleVersion < 5) {
+                        scheduleData = JSON.parse(JSON.stringify(defaultScheduleData));
+                        appState.specialPlans = JSON.parse(JSON.stringify(defaultSpecialPlans));
+                        appState.scheduleVersion = 5;
+                    } else if (parsed.customSchedule) {
+                        scheduleData = parsed.customSchedule;
+                    }
+                } catch (e) { console.error(e); }
+            } else {
+                // 自動偵測當前真實日期是否在 10~12 月
+                const now = new Date();
+                const m = now.getMonth() + 1;
+                if (SUPPORTED_MONTHS[m] && SUPPORTED_MONTHS[m].year === now.getFullYear()) {
+                    appState.currentMonth = m;
+                    appState.currentDate = now.getDate();
+                } else {
+                    appState.currentMonth = FIRST_MONTH;
+                    appState.currentDate = 1;
+                }
+                appState.scheduleVersion = 5;
+            }
+            // 確保日期不超過該月最大天數
+            const maxDays = SUPPORTED_MONTHS[appState.currentMonth].days;
+            if (appState.currentDate > maxDays) appState.currentDate = maxDays;
+            ensureDateRecord(appState.currentMonth, appState.currentDate);
+            applyChildNameUI();
+        }
+
+        function saveState() {
+            appState.customSchedule = scheduleData;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+            updateHeaderStats();
+            applyChildNameUI();
+        }
+
+        // 將孩子名字套用到全站標題、教練悄悄話與商店名稱
+        function applyChildNameUI() {
+            const name = appState.childName || '寶貝';
+            document.title = `✨ ${name}的魔法時間城堡 ✨`;
+            const headerTitle = document.getElementById('header-castle-title');
+            if (headerTitle) headerTitle.textContent = `${name}的魔法時間城堡`;
+
+            const coachTitle = document.getElementById('coach-title-text');
+            if (coachTitle) coachTitle.textContent = `給${name}寶貝與爸媽的魔法指南`;
+
+            const coachMsg = document.getElementById('coach-message');
+            if (coachMsg) {
+                coachMsg.innerHTML = `親愛的<strong>${name}</strong>，跳繩 1000 下聽起來像一座大高山對不對？別擔心！我們把它變成了「5 個小階梯」，每次只要跳 200 下就能拿到星星喔！完成每日任務後就能享受超棒的自由時間，爸媽也可以隨時在「⚙️ 家長設定」幫${name}調整專屬課表與願望清單喔！💪✨`;
+            }
+
+            const shopTitle = document.getElementById('shop-header-title');
+            if (shopTitle) shopTitle.textContent = `🎁 ${name}的星星許願池（獎勵兌換商店）`;
+
+            const nameInput = document.getElementById('setting-child-name');
+            if (nameInput && document.activeElement !== nameInput) {
+                nameInput.value = name;
+            }
+        }
+
+        // ==================== 金幣音效與視覺特效系統 (不需外部音檔) ====================
+        let sharedAudioCtx = null;
+        function getAudioContext() {
+            if (!sharedAudioCtx) {
+                sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (sharedAudioCtx.state === 'suspended') {
+                sharedAudioCtx.resume();
+            }
+            return sharedAudioCtx;
+        }
+
+        // 播放單枚經典金幣聲 (B5 -> E6 清脆叮咚聲)
+        function triggerSingleCoinDing(ctx, startTime, volume = 0.22) {
+            // 主音 (金屬清脆感)
+            const osc1 = ctx.createOscillator();
+            const gain1 = ctx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(987.77, startTime); // B5
+            osc1.frequency.setValueAtTime(1318.51, startTime + 0.075); // E6
+
+            gain1.gain.setValueAtTime(0.001, startTime);
+            gain1.gain.linearRampToValueAtTime(volume, startTime + 0.01);
+            gain1.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.48);
+
+            osc1.connect(gain1);
+            gain1.connect(ctx.destination);
+            osc1.start(startTime);
+            osc1.stop(startTime + 0.49);
+
+            // 泛音層 (增加金幣閃亮光澤感)
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(1975.53, startTime); // B6
+            osc2.frequency.setValueAtTime(2637.02, startTime + 0.075); // E7
+
+            gain2.gain.setValueAtTime(0.001, startTime);
+            gain2.gain.linearRampToValueAtTime(volume * 0.35, startTime + 0.01);
+            gain2.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.32);
+
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start(startTime);
+            osc2.stop(startTime + 0.33);
+        }
+
+        // 畫面噴出金幣與星星的浮動動畫
+        function spawnCoinVisual(points = 1) {
+            try {
+                const wallet = document.getElementById('star-wallet');
+                const rect = wallet ? wallet.getBoundingClientRect() : { left: window.innerWidth - 120, top: 30, width: 80 };
+                const count = Math.min(Math.max(points, 1), 5);
+
+                for (let i = 0; i < count; i++) {
+                    setTimeout(() => {
+                        const el = document.createElement('div');
+                        el.className = 'coin-float-fx font-black text-base md:text-lg px-2.5 py-1 rounded-full bg-gradient-to-r from-yellow-300 via-amber-400 to-orange-400 text-amber-950 border-2 border-white shadow-lg flex items-center gap-1';
+                        el.innerHTML = `<span>🪙</span><span>+${i === count - 1 ? points : 1}⭐</span>`;
+                        
+                        const offsetX = (Math.random() - 0.5) * 60;
+                        el.style.left = `${Math.max(20, rect.left + rect.width / 2 - 35 + offsetX)}px`;
+                        el.style.top = `${Math.max(30, rect.top + 25)}px`;
+                        
+                        document.body.appendChild(el);
+                        setTimeout(() => el.remove(), 950);
+                    }, i * 95);
+                }
+            } catch (e) {}
+        }
+
+        function playSound(type, coinCount = 1) {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+
+                if (type === 'coin' || type === 'check') {
+                    // 根據獲得的星星數，連續響起清脆的金幣入袋聲 (最多連響 5 聲避免過長)
+                    const repeats = Math.min(Math.max(coinCount, 1), 5);
+                    for (let i = 0; i < repeats; i++) {
+                        triggerSingleCoinDing(ctx, now + i * 0.09, 0.22);
+                    }
+                    spawnCoinVisual(coinCount);
+                } else if (type === 'bonus') {
+                    // 大滿貫或雙倍任務：先響起 3 聲快速金幣聲 + 華麗過關琶音
+                    for (let i = 0; i < 3; i++) {
+                        triggerSingleCoinDing(ctx, now + i * 0.08, 0.22);
+                    }
+                    const chordNotes = [1046.50, 1318.51, 1567.98, 2093.00]; // C6, E6, G6, C7
+                    chordNotes.forEach((freq, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'triangle';
+                        const start = now + 0.25 + idx * 0.07;
+                        osc.frequency.setValueAtTime(freq, start);
+                        gain.gain.setValueAtTime(0.18, start);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.45);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(start);
+                        osc.stop(start + 0.46);
+                    });
+                    spawnCoinVisual(coinCount || 3);
+                } else if (type === 'redeem') {
+                    // 兌換獎勵專屬：收銀機「叮！」+ 金幣瀑布傾瀉聲
+                    const cashNotes = [1318.51, 1567.98, 1760.00, 1975.53, 2637.02]; // E6, G6, A6, B6, E7
+                    cashNotes.forEach((freq, idx) => {
+                        const start = now + idx * 0.065;
+                        triggerSingleCoinDing(ctx, start, 0.2);
+                    });
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // ==================== 介面渲染與互動 ====================
+        function updateHeaderStats() {
+            const starEl = document.getElementById('total-stars');
+            starEl.textContent = appState.stars;
+            appState.streak = computeSleepStreak();
+            document.getElementById('streak-count').textContent = appState.streak;
+            
+            const wallet = document.getElementById('star-wallet');
+            wallet.classList.remove('bounce-anim');
+            void wallet.offsetWidth;
+            wallet.classList.add('bounce-anim');
+        }
+
+        function showToast(msg, icon = '⭐') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = msg;
+            document.getElementById('toast-icon').textContent = icon;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2600);
+        }
+
+        // 切換月份 (10月 / 11月 / 12月)
+        function selectMonth(monthNum) {
+            if (!SUPPORTED_MONTHS[monthNum]) return;
+            appState.currentMonth = monthNum;
+            const maxDays = SUPPORTED_MONTHS[monthNum].days;
+            if (appState.currentDate > maxDays) {
+                appState.currentDate = 1;
+            }
+            ensureDateRecord(appState.currentMonth, appState.currentDate);
+            saveState();
+            renderScheduleView();
+        }
+
+        // 切換當前月份的指定日期 (1 ~ 30/31)
+        function selectDate(dateNum) {
+            appState.currentDate = dateNum;
+            ensureDateRecord(appState.currentMonth, dateNum);
+            saveState();
+            renderScheduleView();
+        }
+
+        // 回到今天 (自動判斷今天是 10、11 或 12 月)
+        function jumpToToday() {
+            const now = new Date();
+            const m = now.getMonth() + 1;
+            if (SUPPORTED_MONTHS[m] && SUPPORTED_MONTHS[m].year === now.getFullYear()) {
+                appState.currentMonth = m;
+                appState.currentDate = now.getDate();
+            } else {
+                showToast('今天不在本學年日曆範圍內喔！', '📅');
+                return;
+            }
+            ensureDateRecord(appState.currentMonth, appState.currentDate);
+            saveState();
+            renderScheduleView();
+            showToast(`已切換至 ${appState.currentMonth}月${appState.currentDate}日！`, '📍');
+        }
+
+        // 點擊星期幾按鈕時，切換到目前所在月份中與當前選中日期最接近的該星期日期
+        function selectFirstWeekdayOfMonth(targetDayKey) {
+            const monthNum = appState.currentMonth;
+            const maxDays = SUPPORTED_MONTHS[monthNum].days;
+            let bestDate = 1;
+            let minDiff = 99;
+            for (let d = 1; d <= maxDays; d++) {
+                if (getDayKeyForDate(monthNum, d) === targetDayKey) {
+                    const diff = Math.abs(d - appState.currentDate);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        bestDate = d;
+                    }
+                }
+            }
+            selectDate(bestDate);
+        }
+
+        // 依學年月份產生月份切換按鈕
+        function renderMonthButtons(activeMonth) {
+            const bar = document.getElementById('month-btn-bar');
+            if (!bar) return;
+            bar.innerHTML = MONTH_ORDER.map(m => {
+                const info = SUPPORTED_MONTHS[m];
+                const cls = m === activeMonth
+                    ? 'shrink-0 px-3.5 py-1.5 rounded-xl font-black text-xs md:text-sm transition-all tab-active'
+                    : 'shrink-0 px-3.5 py-1.5 rounded-xl font-black text-xs md:text-sm transition-all text-gray-600 hover:bg-white';
+                const yearHint = (m === 1) ? `<span class="text-[10px] opacity-70">${info.year}</span> ` : '';
+                return `<button onclick="selectMonth(${m})" id="month-btn-${m}" class="${cls}">${yearHint}${info.icon} ${m}月</button>`;
+            }).join('');
+            const active = document.getElementById(`month-btn-${activeMonth}`);
+            if (active && active.scrollIntoView) active.scrollIntoView({ block: 'nearest', inline: 'center' });
+        }
+
+        // 渲染當前選中月份的日曆格子
+        function renderOctoberCalendar() {
+            const grid = document.getElementById('october-calendar-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const monthNum = appState.currentMonth;
+            const monthInfo = SUPPORTED_MONTHS[monthNum];
+            const totalDays = monthInfo.days;
+
+            // 更新月份標題與切換按鈕高亮
+            const headerTitle = document.getElementById('calendar-header-title');
+            if (headerTitle) {
+                headerTitle.textContent = `${monthInfo.icon} ${monthInfo.year}年${monthInfo.name} 魔法集點日曆（共 ${totalDays} 天）`;
+            }
+            const monthLabel = document.getElementById('month-stat-label');
+            if (monthLabel) {
+                monthLabel.textContent = `${monthNum}月`;
+            }
+
+            renderMonthButtons(monthNum);
+
+            // 計算該月 1 號是星期幾 (0=日, 1=一 ... 6=六)，前面補空白格
+            const firstDayOfWeek = new Date(yearOf(monthNum), monthNum - 1, 1).getDay();
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'p-2 rounded-2xl bg-gray-50/40 border border-dashed border-gray-100';
+                grid.appendChild(emptyCell);
+            }
+
+            const now = new Date();
+            const isCurrentRealMonth = (now.getMonth() + 1 === monthNum && now.getFullYear() === monthInfo.year);
+            const todayNum = isCurrentRealMonth ? now.getDate() : -1;
+
+            for (let d = 1; d <= totalDays; d++) {
+                const isSelected = (d === appState.currentDate);
+                const isToday = (d === todayNum);
+                const effectiveTasks = getEffectiveTasksForDate(monthNum, d);
+                const activePlans = getActiveSpecialPlansForDate(monthNum, d);
+                const record = ensureDateRecord(monthNum, d);
+
+                // 計算該日完成度與獲得星星
+                const totalItems = effectiveTasks.length + 5;
+                let doneCount = record.ropeProgress.filter(Boolean).length;
+                effectiveTasks.forEach(t => { if (record.completedTasks[t.id]) doneCount++; });
+                const isAllDone = (doneCount === totalItems);
+                const earnedStars = calculateDateEarnedStars(monthNum, d);
+
+                // 判斷是否為考前複習期間或考試日
+                const firstPlan = activePlans[0];
+                const isExamDay = activePlans.some(p => p.mode === 'exam_day');
+
+                const btn = document.createElement('button');
+                btn.onclick = () => selectDate(d);
+
+                let baseStyle = 'bg-white border-pink-100 hover:border-pink-300 text-gray-700';
+                if (isSelected) {
+                    baseStyle = 'tab-active border-transparent text-white';
+                } else if (isAllDone) {
+                    baseStyle = 'bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-300 text-emerald-900';
+                } else if (isExamDay) {
+                    baseStyle = 'bg-gradient-to-br from-rose-50 to-amber-50 border-rose-300 text-rose-900';
+                } else if (firstPlan) {
+                    baseStyle = 'bg-rose-50/40 border-rose-200 text-gray-800 hover:border-rose-400';
+                } else if (earnedStars > 0) {
+                    baseStyle = 'bg-amber-50/70 border-amber-200 text-gray-800';
+                }
+
+                btn.className = `relative py-1.5 px-1 rounded-2xl border-2 transition-all flex flex-col items-center justify-center min-h-[64px] ${baseStyle}`;
+                btn.innerHTML = `
+                    ${isToday ? `<span class="absolute -top-1.5 -right-1 text-[9px] font-black px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-yellow-300 text-pink-900' : 'bg-pink-500 text-white'} shadow-sm">今天</span>` : ''}
+                    <div class="text-xs sm:text-sm font-black leading-tight">${monthNum}/${d}</div>
+                    ${firstPlan ? `<div class="text-[9px] font-bold px-1 rounded mt-0.5 leading-tight ${isSelected ? 'bg-white/25 text-white' : (isExamDay ? 'bg-rose-500 text-white' : 'bg-rose-100 text-rose-700')}">${firstPlan.calendarTag || '🎯專案'}</div>` : ''}
+                    <div class="mt-0.5 text-[10px] font-bold flex items-center gap-0.5 ${isSelected ? 'text-yellow-200' : (earnedStars > 0 ? 'text-amber-600' : 'text-gray-300')}">
+                        ${isAllDone ? '👑 滿貫' : (earnedStars > 0 ? `⭐+${earnedStars}` : '—')}
+                    </div>
+                `;
+                grid.appendChild(btn);
+            }
+
+            // 更新當月與 10~12 月總累計獲得星星顯示
+            const monthEarnedEl = document.getElementById('month-earned-stars');
+            if (monthEarnedEl) {
+                monthEarnedEl.textContent = calculateMonthTotalEarnedStars(monthNum);
+            }
+            const quarterEarnedEl = document.getElementById('quarter-earned-stars');
+            if (quarterEarnedEl) {
+                quarterEarnedEl.textContent = calculateQuarterTotalEarnedStars();
+            }
+        }
+
+        // 自訂確認視窗邏輯
+        let modalConfirmCallback = null;
+        function openConfirmModal(title, desc, icon, onConfirm) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-desc').textContent = desc;
+            document.getElementById('modal-icon').textContent = icon || '✨';
+            modalConfirmCallback = onConfirm;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+            modalConfirmCallback = null;
+        }
+
+        document.getElementById('modal-confirm-btn').addEventListener('click', () => {
+            if (modalConfirmCallback) modalConfirmCallback();
+            closeModal();
+        });
+
+        function renderScheduleView() {
+            const monthNum = appState.currentMonth;
+            const dateNum = appState.currentDate;
+            const dayKey = getDayKeyForDate(monthNum, dateNum);
+            const data = scheduleData[dayKey];
+            const effectiveTasks = getEffectiveTasksForDate(monthNum, dateNum);
+            const activePlans = getActiveSpecialPlansForDate(monthNum, dateNum);
+            const record = ensureDateRecord(monthNum, dateNum);
+
+            // 渲染 10~12 月日曆
+            renderOctoberCalendar();
+
+            // 渲染「考前 14 天衝刺 / 特定期間」橫幅
+            const specialBanner = document.getElementById('special-period-banner');
+            if (specialBanner) {
+                if (activePlans.length > 0) {
+                    const p = activePlans[0];
+                    const isExamDay = (p.mode === 'exam_day');
+                    let countdownBadge = '';
+                    if (p.mode === 'exam_cycle' && p.examTargetMonth && p.examTargetDay) {
+                        const left = diffDaysBetween(monthNum, dateNum, p.examTargetMonth, p.examTargetDay);
+                        if (left > 0) countdownBadge = `距離考試還有 ${left} 天`;
+                    } else {
+                        const leftEnd = diffDaysBetween(monthNum, dateNum, p.endMonth, p.endDay) + 1;
+                        countdownBadge = `計畫倒數第 ${leftEnd} 天`;
+                    }
+
+                    specialBanner.className = `rounded-3xl p-5 mb-6 border-2 shadow-sm transition-all ${
+                        isExamDay
+                            ? 'bg-gradient-to-r from-amber-100 via-yellow-50 to-rose-100 border-amber-300'
+                            : 'bg-gradient-to-r from-rose-50 via-pink-50 to-orange-50 border-rose-200'
+                    }`;
+                    specialBanner.innerHTML = `
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <div class="flex items-start gap-3.5">
+                                <div class="text-3xl bg-white p-2.5 rounded-2xl shadow-sm shrink-0">${isExamDay ? '💯' : '🔥'}</div>
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span class="text-xs font-black px-2.5 py-0.5 rounded-full ${isExamDay ? 'bg-amber-500 text-white' : 'bg-rose-500 text-white'}">${p.name}</span>
+                                        <span class="text-xs font-bold text-rose-700 bg-white/80 px-2.5 py-0.5 rounded-full border border-rose-200">📅 期間：${p.startMonth}/${p.startDay} ~ ${p.endMonth}/${p.endDay}</span>
+                                        ${!isExamDay ? `<span class="text-xs font-black text-orange-700 bg-orange-100 px-2.5 py-0.5 rounded-full">⏳ ${countdownBadge}</span>` : ''}
+                                    </div>
+                                    <p class="text-xs md:text-sm text-gray-700 mt-1.5 font-medium">
+                                        ${isExamDay
+                                            ? `今天是<strong>${appState.childName}</strong>大顯身手的考試日！保持平常心、看清楚題目，今日專屬任務可拿 <strong>+${p.points} ⭐</strong> 喔！`
+                                            : `已為<strong>${appState.childName}</strong>自動排入今日專屬的「<strong>考前微複習任務（+${p.points} ⭐）</strong>」，每天輕鬆複習一小塊，考試超有自信！`
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                            <button onclick="switchMainView('settings')" class="text-xs bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-xl font-bold transition shrink-0">
+                                ⚙️ 調整複習計畫
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    specialBanner.className = 'hidden';
+                }
+            }
+
+            // 更新星期按鈕高亮樣式
+            ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].forEach(k => {
+                const btn = document.getElementById(`day-btn-${k}`);
+                if (!btn) return;
+                if (k === dayKey) {
+                    btn.className = 'day-btn py-2 px-1.5 rounded-2xl font-bold text-center transition-all tab-active';
+                } else {
+                    btn.className = 'day-btn py-2 px-1.5 rounded-2xl font-bold text-center bg-white border-2 border-pink-100 hover:border-pink-300 text-gray-700 transition-all';
+                }
+            });
+
+            document.getElementById('current-date-badge').textContent = `${monthNum}月${dateNum}日`;
+            document.getElementById('current-day-badge').textContent = data.name;
+            document.getElementById('current-day-title').textContent = `${monthNum}月${dateNum}日（${data.name}）：${data.arrival}`;
+            document.getElementById('daily-earned-stars').textContent = calculateDateEarnedStars(monthNum, dateNum);
+
+            // 1. 渲染當日跳繩 5 階段
+            renderRopeTracker(monthNum, dateNum);
+
+            // 2. 渲染當日時間軸任務 (包含特定期間/考前複習任務)
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = '';
+
+            let doneCount = 0;
+            const totalItems = effectiveTasks.length + 5; // 包含5組跳繩
+
+            effectiveTasks.forEach(task => {
+                const isDone = !!record.completedTasks[task.id];
+                if (isDone) doneCount++;
+
+                const typeStyles = {
+                    warmup: 'border-pink-200 bg-white',
+                    school: 'border-blue-200 bg-white',
+                    piano: 'border-purple-300 bg-gradient-to-r from-purple-50/60 to-pink-50/60',
+                    extra: 'border-emerald-200 bg-white',
+                    special: 'border-rose-400 bg-gradient-to-r from-rose-50/90 via-orange-50/80 to-amber-50/90 shadow-md',
+                    life: 'border-gray-200 bg-white',
+                    free: 'border-amber-300 bg-gradient-to-r from-amber-50/70 to-yellow-50/70',
+                    sleep: 'border-indigo-300 bg-gradient-to-r from-indigo-50/70 to-purple-50/70'
+                };
+
+                const card = document.createElement('div');
+                card.className = `task-card rounded-2xl p-4 border-2 shadow-sm flex items-center justify-between gap-4 cursor-pointer ${typeStyles[task.type] || 'bg-white border-gray-100'} ${isDone ? 'task-done' : ''}`;
+                card.onclick = () => toggleTask(task);
+
+                card.innerHTML = `
+                    <div class="flex items-start gap-3.5 flex-1">
+                        <div class="mt-1 w-7 h-7 rounded-xl border-2 flex items-center justify-center shrink-0 transition-all ${isDone ? 'bg-pink-500 border-pink-500 text-white' : 'border-pink-300 bg-white'}">
+                            ${isDone ? '✓' : ''}
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="text-xs font-black px-2.5 py-0.5 rounded-lg bg-gray-100 text-gray-700">${task.time}</span>
+                                ${task.badge ? `<span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-sm">${task.badge}</span>` : ''}
+                            </div>
+                            <h4 class="task-title font-bold text-base md:text-lg text-gray-800 mt-1">${task.title}</h4>
+                            <p class="text-xs md:text-sm text-gray-500 mt-0.5 leading-relaxed">${task.desc}</p>
+                        </div>
+                    </div>
+                    <div class="shrink-0 text-right">
+                        <div class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl font-black text-sm ${isDone ? 'bg-gray-200 text-gray-500' : 'bg-yellow-100 text-yellow-700 border border-yellow-300'}">
+                            <span>+${task.points}</span>
+                            <span>⭐</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // 計算當日總進度 (包含跳繩5階段)
+            const ropeDoneCount = record.ropeProgress.filter(Boolean).length;
+            doneCount += ropeDoneCount;
+            const percent = Math.round((doneCount / totalItems) * 100);
+            document.getElementById('progress-text').textContent = `${percent}%`;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
+
+        function renderRopeTracker(monthNum, dateNum) {
+            const record = ensureDateRecord(monthNum, dateNum);
+            const stages = record.ropeProgress;
+            const container = document.getElementById('rope-stages-container');
+            container.innerHTML = '';
+
+            let totalJumps = 0;
+            const stageLabels = ['第 1 組 (暖身)', '第 2 組 (加速)', '第 3 組 (過半!)', '第 4 組 (衝刺)', '第 5 組 (破關!)'];
+
+            stages.forEach((done, idx) => {
+                if (done) totalJumps += 200;
+                const btn = document.createElement('button');
+                btn.className = `p-3 rounded-2xl border-2 text-center transition-all flex flex-col items-center justify-center gap-1 ${
+                    done 
+                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-md scale-[0.98]' 
+                    : 'bg-white border-indigo-200 hover:border-indigo-400 text-indigo-900'
+                }`;
+                btn.onclick = () => toggleRopeStage(monthNum, dateNum, idx);
+                btn.innerHTML = `
+                    <span class="text-[11px] font-bold ${done ? 'text-indigo-200' : 'text-indigo-400'}">${stageLabels[idx]}</span>
+                    <span class="text-base font-black">${done ? '✅ 200 下' : '🪢 200 下'}</span>
+                    <span class="text-xs font-bold px-2 py-0.5 rounded-full ${done ? 'bg-indigo-500 text-yellow-300' : 'bg-yellow-100 text-yellow-700'}">+1 ⭐</span>
+                `;
+                container.appendChild(btn);
+            });
+
+            document.getElementById('rope-count').textContent = totalJumps;
+            const banner = document.getElementById('rope-bonus-banner');
+            if (totalJumps === 1000) {
+                banner.classList.remove('hidden');
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
+
+        function toggleRopeStage(monthNum, dateNum, idx) {
+            const record = ensureDateRecord(monthNum, dateNum);
+            const current = record.ropeProgress[idx];
+            record.ropeProgress[idx] = !current;
+
+            if (!current) {
+                appState.stars += 1;
+                playSound('coin', 1);
+                showToast(`叮咚！${monthNum}/${dateNum} 完成 200 下跳繩！獲得 +1 顆星星金幣！`, '🪙');
+            } else {
+                appState.stars = Math.max(0, appState.stars - 1);
+            }
+
+            // 檢查該日是否達成 5 組全滿 (1000下額外紅利 +3⭐)
+            const allDone = record.ropeProgress.every(Boolean);
+            if (allDone && !record.ropeBonusClaimed) {
+                record.ropeBonusClaimed = true;
+                appState.stars += 3;
+                setTimeout(() => {
+                    playSound('bonus', 3);
+                    confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+                    showToast(`太強了！完成 ${monthNum}/${dateNum} 的 1000 下跳繩！額外獎勵 +3 ⭐！`, '🏆');
+                    saveState();
+                    renderScheduleView();
+                }, 320);
+            } else if (!allDone && record.ropeBonusClaimed) {
+                record.ropeBonusClaimed = false;
+                appState.stars = Math.max(0, appState.stars - 3);
+            }
+
+            saveState();
+            if (isDone) {
+                delete record.completedTasks[task.id];
+                appState.stars = Math.max(0, appState.stars - task.points);
+            } else {
+                record.completedTasks[task.id] = true;
+                appState.stars += task.points;
+                
+                if (task.type === 'piano' || task.type === 'sleep' || task.type === 'special') {
+                    playSound('bonus', task.points);
+                    confetti({ particleCount: 60, spread: 60, origin: { y: 0.7 } });
+                } else {
+                    playSound('coin', task.points);
+                }
+
+                if (task.type === 'sleep') {
+                    const nowStreak = computeSleepStreak();
+                    showToast(`${monthNum}/${dateNum} 準時在 10:00 前睡覺！獲得 +${task.points} ⭐，目前連續 ${nowStreak} 天！`, '🌙');
+                } else {
+                    showToast(`叮咚！完成「${task.title}」！獲得 +${task.points} ⭐！`, '🪙');
+                }
+            }
+
+            // 若勾選或取消的是田徑隊任務，自動檢查本週一至週五是否達成 5 天全勤 (+5⭐)
+            if (task.id.endsWith('-track') || task.title.includes('田徑')) {
+                checkAndSyncWeeklyTrackBonus(monthNum, dateNum);
+            }
+
+            saveState();
+            renderScheduleView();
+        }
+
+        // 重置當日任務並「精準扣回當日已獲得的所有星星」
+        function resetCurrentDay() {
+            const monthNum = appState.currentMonth;
+            const dateNum = appState.currentDate;
+            const dayKey = getDayKeyForDate(monthNum, dateNum);
+            const data = scheduleData[dayKey];
+            const record = ensureDateRecord(monthNum, dateNum);
+            const earnedToday = calculateDateEarnedStars(monthNum, dateNum);
+
+            if (earnedToday === 0) {
+                showToast(`${monthNum}月${dateNum}日目前還沒有已打卡的星星喔！`, 'ℹ️');
+                return;
+            }
+
+            openConfirmModal(
+                `重置 ${monthNum}月${dateNum}日（${data.name}）`,
+                `確定要重置「${monthNum}月${dateNum}日」的所有打卡紀錄嗎？這將會從星星銀行中扣回當天已獲得的 ${earnedToday} 顆 ⭐ 喔！`,
+                '🔄',
+                () => {
+                    // 連續準時睡覺天數會在 updateHeaderStats() 時依紀錄自動重新計算
+
+                    // 扣回當天獲得的所有星星 (含任務、跳繩分段、跳繩滿千紅利、週五田徑全勤紅利)
+                    appState.stars = Math.max(0, appState.stars - earnedToday);
+
+                    // 清空當日紀錄
+                    const key = getRecordKey(monthNum, dateNum);
+                    appState.dailyRecords[key] = {
+                        completedTasks: {},
+                        ropeProgress: [false, false, false, false, false],
+                        ropeBonusClaimed: false,
+                        trackWeeklyBonusClaimed: false
+                    };
+
+                    // 若重置的是週一～週四，且該週五原本已經領過田徑全勤獎，也要同步收回週五的 +5⭐
+                    checkAndSyncWeeklyTrackBonus(monthNum, dateNum);
+
+                    saveState();
+                    renderScheduleView();
+                    showToast(`已重置 ${monthNum}月${dateNum}日，並從銀行扣回 ${earnedToday} 顆 ⭐！`, '🔄');
+                }
+            );
+        }
+
+        // ==================== 獎勵商店與許願池 ====================
+        function renderShopView() {
+            const container = document.getElementById('rewards-container');
+            container.innerHTML = '';
+
+            appState.rewards.forEach(r => {
+                const canAfford = appState.stars >= r.cost;
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-2xl border-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all ${
+                    canAfford ? 'bg-white border-pink-200 hover:border-pink-400 shadow-sm' : 'bg-gray-50 border-gray-200 opacity-85'
+                }`;
+                card.innerHTML = `
+                    <div class="flex items-start sm:items-center gap-3.5">
+                        <div class="text-3xl bg-pink-50 p-3 rounded-2xl shrink-0">${r.icon || '🎁'}</div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 text-base">${r.name}</h4>
+                            <p class="text-xs text-gray-500 mt-0.5">${r.desc || '專屬心願獎勵'}</p>
+                            <div class="flex items-center gap-2 mt-2">
+                                <button onclick="startEditReward('${r.id}')" class="text-[11px] text-indigo-500 hover:text-indigo-700 font-bold bg-indigo-50 px-2 py-0.5 rounded-lg">✏️ 修改</button>
+                                <button onclick="deleteReward('${r.id}')" class="text-[11px] text-rose-500 hover:text-rose-700 font-bold bg-rose-50 px-2 py-0.5 rounded-lg">🗑️ 刪除</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="redeemReward('${r.id}')" class="shrink-0 px-4 py-2.5 rounded-xl font-black text-sm transition-all ${
+                        canAfford 
+                        ? 'bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-sm hover:scale-105' 
+                        : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                    }">
+                        ${r.cost} ⭐ 兌換
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+
+            // 渲染歷史紀錄
+            const histEl = document.getElementById('redeem-history');
+            if (!appState.history || appState.history.length === 0) {
+                histEl.innerHTML = `<p class="text-gray-400 text-center py-4">目前還沒有兌換紀錄喔，快去收集星星吧！✨</p>`;
+            } else {
+                histEl.innerHTML = appState.history.map(h => `
+                    <div class="flex justify-between items-center bg-pink-50/60 px-4 py-2.5 rounded-xl border border-pink-100">
+                        <span class="font-bold text-gray-700">${h.icon} 已兌換：${h.name}</span>
+                        <span class="text-xs text-gray-500">${h.date} (-${h.cost} ⭐)</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function redeemReward(rewardId) {
+            const reward = appState.rewards.find(r => r.id === rewardId);
+            if (!reward) return;
+
+            if (appState.stars < reward.cost) {
+                showToast(`還差 ${reward.cost - appState.stars} 顆星星才能兌換喔！曼妮繼續加油！`, '💪');
+                return;
+            }
+
+            openConfirmModal(
+                '兌換心願禮物',
+                `確定要花費 ${reward.cost} 顆星星兌換「${reward.name}」嗎？兌換成功後請拿給爸爸媽媽看喔！`,
+                reward.icon || '🎁',
+                () => {
+                    appState.stars -= reward.cost;
+                    const now = new Date();
+                    const dateStr = `${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+                    appState.history.unshift({
+                        name: reward.name,
+                        cost: reward.cost,
+                        icon: reward.icon || '🎁',
+                        date: dateStr
+                    });
+
+                    playSound('redeem');
+                    confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 } });
+                    saveState();
+                    renderShopView();
+                    showToast(`叮咚！恭喜${appState.childName}成功兌換「${reward.name}」！快去跟爸媽領獎吧！`, '🎉');
+                }
+            );
+        }
+
+        function saveCustomReward() {
+            if (appState.parentPin && !parentUnlocked) { requireParent(() => saveCustomReward()); return; }
+            const idInput = document.getElementById('edit-reward-id').value;
+            const iconInput = document.getElementById('custom-reward-icon').value.trim() || '🌟';
+            const nameInput = document.getElementById('custom-reward-name').value.trim();
+            const descInput = document.getElementById('custom-reward-desc').value.trim() || '寶貝與爸媽共同約定的專屬願望';
+            const cost = parseInt(document.getElementById('custom-reward-cost').value, 10);
+
+            if (!nameInput || isNaN(cost) || cost <= 0) {
+                showToast('請輸入願望名稱與正確的星星數量喔！', '⚠️');
+                return;
+            }
+
+            if (idInput) {
+                // 編輯既有獎品
+                const idx = appState.rewards.findIndex(r => r.id === idInput);
+                if (idx !== -1) {
+                    appState.rewards[idx] = { id: idInput, icon: iconInput, name: nameInput, desc: descInput, cost: cost };
+                    showToast(`已更新願望「${nameInput}」！`, '✨');
+                }
+            } else {
+                // 新增獎品
+                appState.rewards.push({
+                    id: 'custom-' + Date.now(),
+                    icon: iconInput,
+                    name: nameInput,
+                    cost: cost,
+                    desc: descInput
+                });
+                showToast(`已新增願望「${nameInput}」！`, '🎁');
+            }
+
+            cancelEditReward();
+            saveState();
+            renderShopView();
+        }
+
+        function startEditReward(rewardId) {
+            if (appState.parentPin && !parentUnlocked) { requireParent(() => startEditReward(rewardId)); return; }
+            const reward = appState.rewards.find(r => r.id === rewardId);
+            if (!reward) return;
+            document.getElementById('edit-reward-id').value = reward.id;
+            document.getElementById('custom-reward-icon').value = reward.icon || '🎁';
+            document.getElementById('custom-reward-name').value = reward.name;
+            document.getElementById('custom-reward-desc').value = reward.desc || '';
+            document.getElementById('custom-reward-cost').value = reward.cost;
+            document.getElementById('reward-form-title').textContent = `✏️ 正在修改願望：「${reward.name}」`;
+            document.getElementById('save-reward-btn').textContent = '更新';
+            document.getElementById('cancel-edit-reward-btn').classList.remove('hidden');
+            document.getElementById('custom-reward-name').focus();
+        }
+
+        function cancelEditReward() {
+            document.getElementById('edit-reward-id').value = '';
+            document.getElementById('custom-reward-icon').value = '🎁';
+            document.getElementById('custom-reward-name').value = '';
+            document.getElementById('custom-reward-desc').value = '';
+            document.getElementById('custom-reward-cost').value = '';
+            document.getElementById('reward-form-title').textContent = '➕ 和爸媽一起討論，新增專屬願望：';
+            document.getElementById('save-reward-btn').textContent = '儲存';
+            document.getElementById('cancel-edit-reward-btn').classList.add('hidden');
+        }
+
+        function deleteReward(rewardId) {
+            if (appState.parentPin && !parentUnlocked) { requireParent(() => deleteReward(rewardId)); return; }
+            const reward = appState.rewards.find(r => r.id === rewardId);
+            if (!reward) return;
+            openConfirmModal(
+                '刪除許願池獎品',
+                `確定要從許願池中刪除「${reward.name}」嗎？`,
+                '🗑️',
+                () => {
+                    appState.rewards = appState.rewards.filter(r => r.id !== rewardId);
+                    saveState();
+                    renderShopView();
+                    showToast(`已刪除「${reward.name}」`, '🗑️');
+                }
+            );
+        }
+
+        function clearHistory() {
+            if (appState.parentPin && !parentUnlocked) { requireParent(() => clearHistory()); return; }
+            openConfirmModal(
+                '清空兌換紀錄',
+                '確定要清空所有的願望兌換紀錄嗎？',
+                '🧹',
+                () => {
+                    appState.history = [];
+                    saveState();
+                    renderShopView();
+                    showToast('已清空兌換紀錄！', '✨');
+                }
+            );
+        }
+
+        // ==================== 家長設定中心：改名字 & 自訂每日任務 ====================
+        function saveChildName() {
+            const input = document.getElementById('setting-child-name');
+            const newName = input.value.trim();
+            if (!newName) {
+                showToast('請輸入有效的名字喔！', '⚠️');
+                return;
+            }
+            appState.childName = newName;
+            saveState();
+            showToast(`太棒了！魔法城堡已專屬冠名為「${newName}」！`, '🦄');
+        }
+
+        function openEditCurrentDaySchedule() {
+            const dayKey = getDayKeyForDate(appState.currentMonth, appState.currentDate);
+            currentSettingsDayKey = dayKey;
+            switchMainView('settings');
+        }
+
+        function renderSettingsView() {
+            applyChildNameUI();
+
+            // 1. 渲染週一至週日切換按鈕
+            const tabsContainer = document.getElementById('settings-day-tabs');
+            const daysOrder = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+            tabsContainer.innerHTML = '';
+
+            daysOrder.forEach(k => {
+                const d = scheduleData[k];
+                const isActive = (k === currentSettingsDayKey);
+                const btn = document.createElement('button');
+                btn.onclick = () => {
+                    currentSettingsDayKey = k;
+                    resetTaskForm();
+                    renderSettingsView();
+                };
+                btn.className = `px-4 py-2 rounded-xl font-bold text-xs md:text-sm transition-all ${
+                    isActive ? 'tab-active' : 'bg-gray-100 text-gray-600 hover:bg-pink-50'
+                }`;
+                btn.textContent = `${d.name} (${d.tasks.length}項)`;
+                tabsContainer.appendChild(btn);
+            });
+
+            // 2. 填入當日狀態副標題
+            const currentDayObj = scheduleData[currentSettingsDayKey];
+            document.getElementById('setting-day-arrival').value = currentDayObj.arrival || '';
+
+            // 3. 渲染該星期的任務列表
+            const listEl = document.getElementById('settings-tasks-list');
+            listEl.innerHTML = '';
+
+            if (currentDayObj.tasks.length === 0) {
+                listEl.innerHTML = `<p class="text-center text-gray-400 py-4 text-sm">這一天目前沒有排任務，請從下方新增喔！</p>`;
+            } else {
+                currentDayObj.tasks.forEach((t, idx) => {
+                    const item = document.createElement('div');
+                    item.className = 'p-3.5 rounded-2xl border border-gray-200 bg-gray-50/70 flex flex-wrap items-center justify-between gap-3';
+                    item.innerHTML = `
+                        <div class="flex items-start gap-3 flex-1 min-w-[220px]">
+                            <span class="text-xs font-black px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-gray-700 shrink-0">${t.time}</span>
+                            <div>
+                                <div class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                                    <span>${t.title}</span>
+                                    <span class="text-xs font-black text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">+${t.points} ⭐</span>
+                                    ${t.badge ? `<span class="text-[10px] bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full font-bold">${t.badge}</span>` : ''}
+                                </div>
+                                <p class="text-xs text-gray-500 mt-0.5">${t.desc || ''}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button onclick="moveTaskOrder(${idx}, -1)" class="px-2 py-1 rounded-lg bg-white border border-gray-200 text-xs hover:bg-gray-100" title="往上移">⬆️</button>
+                            <button onclick="moveTaskOrder(${idx}, 1)" class="px-2 py-1 rounded-lg bg-white border border-gray-200 text-xs hover:bg-gray-100" title="往下移">⬇️</button>
+                            <button onclick="startEditTask('${t.id}')" class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600 font-bold text-xs hover:bg-indigo-100">✏️ 編輯</button>
+                            <button onclick="deleteCustomTask('${t.id}')" class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-600 font-bold text-xs hover:bg-rose-100">🗑️ 刪除</button>
+                        </div>
+                    `;
+                    listEl.appendChild(item);
+                });
+            }
+
+            // 4. 渲染特定期間 / 考前 14 天複習計畫列表
+            renderSpecialPlansSettings();
+        }
+
+        // ==================== 特定期間 & 考前 14 天複習計畫管理函式 ====================
+        function renderSpecialPlansSettings() {
+            const listEl = document.getElementById('special-plans-list');
+            if (!listEl) return;
+            listEl.innerHTML = '';
+
+            const plans = appState.specialPlans || [];
+            if (plans.length === 0) {
+                listEl.innerHTML = `<p class="text-center text-gray-400 py-4 text-sm">目前沒有設定特定期間計畫，可由下方新增喔！</p>`;
+                return;
+            }
+
+            const modeLabelMap = {
+                exam_cycle: '📚 依星期智慧輪替複習科目',
+                exam_day: '💯 考試日應戰鼓勵',
+                fixed: '📌 每日固定任務內容'
+            };
+
+            plans.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'p-4 rounded-2xl border-2 border-rose-100 bg-rose-50/30 flex flex-wrap items-center justify-between gap-3';
+                item.innerHTML = `
+                    <div class="flex-1 min-w-[240px]">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-xs font-black px-2.5 py-0.5 rounded-full bg-rose-500 text-white">${p.calendarTag || '🎯專案'}</span>
+                            <h4 class="font-black text-gray-800 text-sm md:text-base">${p.name}</h4>
+                            <span class="text-xs font-bold text-rose-700 bg-white px-2.5 py-0.5 rounded-lg border border-rose-200">
+                                🗓️ ${p.startMonth}/${p.startDay} ～ ${p.endMonth}/${p.endDay}
+                            </span>
+                            <span class="text-xs font-black text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">+${p.points} ⭐</span>
+                        </div>
+                        <div class="text-xs text-gray-600 mt-1.5 font-medium">
+                            ⏰ 時段：<strong class="text-gray-800">${p.time}</strong> ｜ 任務：<strong class="text-gray-800">${p.title}</strong>（${modeLabelMap[p.mode] || '固定內容'}）
+                        </div>
+                        <p class="text-xs text-gray-500 mt-0.5">${p.desc}</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button onclick="jumpToPlanStartDate(${p.startMonth}, ${p.startDay})" class="px-2.5 py-1.5 rounded-xl bg-white border border-rose-200 text-rose-600 font-bold text-xs hover:bg-rose-50">📅 查看日曆</button>
+                        <button onclick="startEditSpecialPlan('${p.id}')" class="px-2.5 py-1.5 rounded-xl bg-indigo-50 text-indigo-600 font-bold text-xs hover:bg-indigo-100">✏️ 修改</button>
+                        <button onclick="deleteSpecialPlan('${p.id}')" class="px-2.5 py-1.5 rounded-xl bg-rose-100 text-rose-600 font-bold text-xs hover:bg-rose-200">🗑️ 刪除</button>
+                    </div>
+                `;
+                listEl.appendChild(item);
+            });
+        }
+
+        function jumpToPlanStartDate(m, d) {
+            appState.currentMonth = Number(m);
+            appState.currentDate = Number(d);
+            ensureDateRecord(appState.currentMonth, appState.currentDate);
+            saveState();
+            switchMainView('schedule');
+            showToast(`已跳轉至 ${m}月${d}日 檢視期間任務！`, '🗓️');
+        }
+
+        // 考前 14 天自動換算器
+        function applyQuickExam14Days() {
+            const examMonth = parseInt(document.getElementById('quick-exam-month').value, 10);
+            const examDay = parseInt(document.getElementById('quick-exam-day').value, 10);
+            if (!examMonth || isNaN(examDay) || examDay < 1 || examDay > 31) {
+                showToast('請輸入正確的考試日期（例如 10 月 20 號）！', '⚠️');
+                return;
+            }
+
+            const examDate = new Date(yearOf(examMonth), examMonth - 1, examDay);
+            const startPrepDate = new Date(examDate);
+            startPrepDate.setDate(examDate.getDate() - 14);
+            const endPrepDate = new Date(examDate);
+            endPrepDate.setDate(examDate.getDate() - 1);
+
+            let sMonth = startPrepDate.getMonth() + 1;
+            let sDay = startPrepDate.getDate();
+            if (!SUPPORTED_MONTHS[sMonth]) { sMonth = FIRST_MONTH; sDay = 1; }
+            const eMonth = endPrepDate.getMonth() + 1;
+            const eDay = endPrepDate.getDate();
+
+            document.getElementById('plan-start-month').value = String(sMonth);
+            document.getElementById('plan-start-day').value = String(sDay);
+            document.getElementById('plan-end-month').value = String(eMonth);
+            document.getElementById('plan-end-day').value = String(eDay);
+
+            if (!document.getElementById('plan-input-name').value.trim()) {
+                document.getElementById('plan-input-name').value = `🔥 ${examMonth}/${examDay} 大考前 14 天衝刺複習`;
+            }
+            if (!document.getElementById('plan-input-tag').value.trim()) {
+                document.getElementById('plan-input-tag').value = '🔥複習';
+            }
+            if (!document.getElementById('plan-input-title').value.trim()) {
+                document.getElementById('plan-input-title').value = '🎯 考前微複習闖關';
+            }
+            document.getElementById('plan-input-mode').value = 'exam_cycle';
+            showToast(`已自動填入考前 14 天區間：${sMonth}/${sDay} ～ ${eMonth}/${eDay}！`, '🪄');
+        }
+
+        function saveSpecialPlan() {
+            const editId = document.getElementById('edit-plan-id').value;
+            const name = document.getElementById('plan-input-name').value.trim();
+            const startMonth = parseInt(document.getElementById('plan-start-month').value, 10);
+            const startDay = parseInt(document.getElementById('plan-start-day').value, 10);
+            const endMonth = parseInt(document.getElementById('plan-end-month').value, 10);
+            const endDay = parseInt(document.getElementById('plan-end-day').value, 10);
+            const calendarTag = document.getElementById('plan-input-tag').value.trim() || '🔥複習';
+            const points = parseInt(document.getElementById('plan-input-points').value, 10) || 3;
+            const time = document.getElementById('plan-input-time').value.trim() || '19:50 - 20:20';
+            const title = document.getElementById('plan-input-title').value.trim();
+            const mode = document.getElementById('plan-input-mode').value || 'exam_cycle';
+            const desc = document.getElementById('plan-input-desc').value.trim() || '每天累積一點點，考試輕鬆拿高分！';
+
+            if (!name || !title) {
+                showToast('請輸入「計畫名稱」與「每日任務標題」喔！', '⚠️');
+                return;
+            }
+            if (toDateValue(startMonth, startDay) > toDateValue(endMonth, endDay)) {
+                showToast('開始日期不能晚於結束日期喔！', '⚠️');
+                return;
+            }
+
+            if (!appState.specialPlans) appState.specialPlans = [];
+
+            const planObj = {
+                id: editId || ('plan-' + Date.now()),
+                name,
+                startMonth,
+                startDay,
+                endMonth,
+                endDay,
+                calendarTag,
+                points,
+                time,
+                title,
+                mode,
+                desc
+            };
+
+            if (editId) {
+                const idx = appState.specialPlans.findIndex(p => p.id === editId);
+                if (idx !== -1) appState.specialPlans[idx] = planObj;
+                showToast(`已更新特定期間計畫「${name}」！`, '✨');
+            } else {
+                appState.specialPlans.push(planObj);
+                showToast(`已新增特定期間計畫「${name}」！`, '🎯');
+            }
+
+            resetSpecialPlanForm();
+            saveState();
+            renderSettingsView();
+        }
+
+        function startEditSpecialPlan(planId) {
+            const plan = (appState.specialPlans || []).find(p => p.id === planId);
+            if (!plan) return;
+
+            document.getElementById('edit-plan-id').value = plan.id;
+            document.getElementById('plan-input-name').value = plan.name;
+            document.getElementById('plan-start-month').value = String(plan.startMonth);
+            document.getElementById('plan-start-day').value = String(plan.startDay);
+            document.getElementById('plan-end-month').value = String(plan.endMonth);
+            document.getElementById('plan-end-day').value = String(plan.endDay);
+            document.getElementById('plan-input-tag').value = plan.calendarTag || '🔥複習';
+            document.getElementById('plan-input-points').value = String(plan.points || 3);
+            document.getElementById('plan-input-time').value = plan.time || '19:50 - 20:20';
+            document.getElementById('plan-input-title').value = plan.title;
+            document.getElementById('plan-input-mode').value = plan.mode || 'exam_cycle';
+            document.getElementById('plan-input-desc').value = plan.desc || '';
+
+            document.getElementById('special-plan-form-header').textContent = `✏️ 正在修改特定期間計畫：「${plan.name}」`;
+            document.getElementById('save-plan-btn').textContent = '💾 更新期間計畫';
+            document.getElementById('cancel-edit-plan-btn').classList.remove('hidden');
+            document.getElementById('plan-input-name').focus();
+        }
+
+        function resetSpecialPlanForm() {
+            document.getElementById('edit-plan-id').value = '';
+            document.getElementById('plan-input-name').value = '';
+            document.getElementById('plan-start-month').value = '10';
+            document.getElementById('plan-start-day').value = '6';
+            document.getElementById('plan-end-month').value = '10';
+            document.getElementById('plan-end-day').value = '19';
+            document.getElementById('plan-input-tag').value = '🔥複習';
+            document.getElementById('plan-input-points').value = '3';
+            document.getElementById('plan-input-time').value = '19:50 - 20:20';
+            document.getElementById('plan-input-title').value = '';
+            document.getElementById('plan-input-mode').value = 'exam_cycle';
+            document.getElementById('plan-input-desc').value = '';
+
+            document.getElementById('special-plan-form-header').textContent = '➕ 新增「考前 14 天複習」或「自訂期間任務」';
+            document.getElementById('save-plan-btn').textContent = '➕ 儲存特定期間計畫';
+            document.getElementById('cancel-edit-plan-btn').classList.add('hidden');
+        }
+
+        function deleteSpecialPlan(planId) {
+            const plan = (appState.specialPlans || []).find(p => p.id === planId);
+            if (!plan) return;
+
+            openConfirmModal(
+                '刪除特定期間計畫',
+                `確定要刪除「${plan.name}（${plan.startMonth}/${plan.startDay} ~ ${plan.endMonth}/${plan.endDay}）」嗎？`,
+                '🗑️',
+                () => {
+                    appState.specialPlans = appState.specialPlans.filter(p => p.id !== planId);
+                    saveState();
+                    renderSettingsView();
+                    showToast(`已刪除期間計畫「${plan.name}」`, '🗑️');
+                }
+            );
+        }
+
+        function resetDefaultSpecialPlansConfirm() {
+            openConfirmModal(
+                '恢復曼妮預設期中/期末考計畫',
+                '確定要恢復預設的「10/20,21 期中考」與「12/17,18 期末考」前 14 天複習計畫嗎？',
+                '🔄',
+                () => {
+                    appState.specialPlans = JSON.parse(JSON.stringify(defaultSpecialPlans));
+                    saveState();
+                    renderSettingsView();
+                    showToast('已恢復預設的期中考與期末考複習計畫！', '✨');
+                }
+            );
+        }
+
+        function saveDayArrivalText() {
+            const val = document.getElementById('setting-day-arrival').value.trim();
+            scheduleData[currentSettingsDayKey].arrival = val || '專屬魔法日';
+            saveState();
+            renderSettingsView();
+            showToast(`已更新${scheduleData[currentSettingsDayKey].name}的狀態標題！`, '✨');
+        }
+
+        function saveCustomTask() {
+            const editId = document.getElementById('edit-task-id').value;
+            const time = document.getElementById('task-input-time').value.trim() || '彈性時間';
+            const title = document.getElementById('task-input-title').value.trim();
+            const points = parseInt(document.getElementById('task-input-points').value, 10) || 1;
+            const type = document.getElementById('task-input-type').value || 'school';
+            const desc = document.getElementById('task-input-desc').value.trim() || '認真完成任務就能獲得閃亮星星！';
+            const badge = document.getElementById('task-input-badge').value.trim();
+
+            if (!title) {
+                showToast('請輸入任務名稱喔！', '⚠️');
+                return;
+            }
+
+            const dayTasks = scheduleData[currentSettingsDayKey].tasks;
+
+            if (editId) {
+                const idx = dayTasks.findIndex(t => t.id === editId);
+                if (idx !== -1) {
+                    dayTasks[idx] = { ...dayTasks[idx], time, title, points, type, desc, badge: badge || undefined };
+                    showToast(`已更新任務「${title}」！`, '✨');
+                }
+            } else {
+                const newTask = {
+                    id: `${currentSettingsDayKey}-${Date.now()}`,
+                    time,
+                    title,
+                    points,
+                    type,
+                    desc
+                };
+                if (badge) newTask.badge = badge;
+                dayTasks.push(newTask);
+                showToast(`已在${scheduleData[currentSettingsDayKey].name}新增「${title}」！`, '➕');
+            }
+
+            resetTaskForm();
+            saveState();
+            renderSettingsView();
+        }
+
+        function startEditTask(taskId) {
+            const dayTasks = scheduleData[currentSettingsDayKey].tasks;
+            const task = dayTasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            document.getElementById('edit-task-id').value = task.id;
+            document.getElementById('task-input-time').value = task.time;
+            document.getElementById('task-input-title').value = task.title;
+            document.getElementById('task-input-points').value = task.points;
+            document.getElementById('task-input-type').value = task.type || 'school';
+            document.getElementById('task-input-desc').value = task.desc || '';
+            document.getElementById('task-input-badge').value = task.badge || '';
+
+            document.getElementById('task-form-header').textContent = `✏️ 正在編輯任務：「${task.title}」`;
+            document.getElementById('save-task-btn').textContent = '💾 儲存任務修改';
+            document.getElementById('cancel-edit-task-btn').classList.remove('hidden');
+            document.getElementById('task-input-title').focus();
+        }
+
+        function resetTaskForm() {
+            document.getElementById('edit-task-id').value = '';
+            document.getElementById('task-input-time').value = '';
+            document.getElementById('task-input-title').value = '';
+            document.getElementById('task-input-points').value = '2';
+            document.getElementById('task-input-type').value = 'school';
+            document.getElementById('task-input-desc').value = '';
+            document.getElementById('task-input-badge').value = '';
+
+            document.getElementById('task-form-header').textContent = '➕ 新增任務到目前星期';
+            document.getElementById('save-task-btn').textContent = '➕ 儲存並加入課表';
+            document.getElementById('cancel-edit-task-btn').classList.add('hidden');
+        }
+
+        function deleteCustomTask(taskId) {
+            const dayTasks = scheduleData[currentSettingsDayKey].tasks;
+            const task = dayTasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            openConfirmModal(
+                '刪除課表任務',
+                `確定要從${scheduleData[currentSettingsDayKey].name}刪除「${task.title}」嗎？`,
+                '🗑️',
+                () => {
+                    scheduleData[currentSettingsDayKey].tasks = dayTasks.filter(t => t.id !== taskId);
+                    saveState();
+                    renderSettingsView();
+                    showToast(`已刪除任務「${task.title}」`, '🗑️');
+                }
+            );
+        }
+
+        function moveTaskOrder(index, direction) {
+            const tasks = scheduleData[currentSettingsDayKey].tasks;
+            const targetIdx = index + direction;
+            if (targetIdx < 0 || targetIdx >= tasks.length) return;
+            const temp = tasks[index];
+            tasks[index] = tasks[targetIdx];
+            tasks[targetIdx] = temp;
+            saveState();
+            renderSettingsView();
+        }
+
+        function resetDefaultScheduleConfirm() {
+            openConfirmModal(
+                '恢復預設課表',
+                '確定要將週一至週日的任務恢復為「曼妮預設課表」嗎？（您自訂新增或修改的課表將會還原，但已累積的星星不會消失）',
+                '🔄',
+                () => {
+                    scheduleData = JSON.parse(JSON.stringify(defaultScheduleData));
+                    saveState();
+                    renderSettingsView();
+                    showToast('已恢復為預設課表！', '✨');
+                }
+            );
+        }
+
+        // ==================== 家長密碼 ====================
+        let parentUnlocked = false;
+        let pinPendingCallback = null;
+
+        function requireParent(callback) {
+            if (!appState.parentPin || parentUnlocked) { callback(); return; }
+            pinPendingCallback = callback;
+            const input = document.getElementById('pin-modal-input');
+            input.value = '';
+            document.getElementById('pin-modal-error').textContent = '';
+            document.getElementById('pin-modal').classList.remove('hidden');
+            setTimeout(() => input.focus(), 50);
+        }
+
+        function closePinModal() {
+            document.getElementById('pin-modal').classList.add('hidden');
+            pinPendingCallback = null;
+        }
+
+        function submitPinModal() {
+            const val = document.getElementById('pin-modal-input').value.trim();
+            if (val === appState.parentPin) {
+                parentUnlocked = true;
+                const cb = pinPendingCallback;
+                closePinModal();
+                if (cb) cb();
+            } else {
+                document.getElementById('pin-modal-error').textContent = '密碼不對喔，請再試一次';
+                document.getElementById('pin-modal-input').value = '';
+            }
+        }
+
+        document.getElementById('pin-modal-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submitPinModal();
+            if (e.key === 'Escape') closePinModal();
+        });
+
+        function saveParentPin() {
+            const input = document.getElementById('setting-parent-pin');
+            const val = input.value.trim();
+            if (!/^\d{4}$/.test(val)) {
+                showToast('請輸入 4 位數字的密碼喔！', '⚠️');
+                return;
+            }
+            appState.parentPin = val;
+            parentUnlocked = true;
+            input.value = '';
+            saveState();
+            renderPinStatus();
+            showToast('家長密碼已設定！請記住這組密碼喔～', '🔒');
+        }
+
+        function clearParentPin() {
+            openConfirmModal('取消家長密碼', '取消後，任何人都可以進入家長設定。確定嗎？', '🔓', () => {
+                delete appState.parentPin;
+                saveState();
+                renderPinStatus();
+                showToast('已取消家長密碼', '🔓');
+            });
+        }
+
+        function renderPinStatus() {
+            const el = document.getElementById('pin-status-text');
+            const clearBtn = document.getElementById('clear-pin-btn');
+            if (!el) return;
+            if (appState.parentPin) {
+                el.textContent = '✅ 已啟用密碼保護';
+                el.className = 'text-xs font-bold text-emerald-600';
+                if (clearBtn) clearBtn.classList.remove('hidden');
+            } else {
+                el.textContent = '目前未設定密碼';
+                el.className = 'text-xs font-bold text-gray-400';
+                if (clearBtn) clearBtn.classList.add('hidden');
+            }
+            const backupEl = document.getElementById('last-backup-text');
+            if (backupEl) {
+                backupEl.textContent = appState.lastBackupAt
+                    ? `上次備份：${appState.lastBackupAt}`
+                    : '⚠️ 還沒有備份過喔';
+            }
+        }
+
+        // ==================== 資料備份：匯出 / 匯入 ====================
+        function exportBackup() {
+            const now = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            appState.lastBackupAt = `${now.getFullYear()}/${pad(now.getMonth() + 1)}/${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+            saveState();
+            const payload = {
+                app: 'magicCastleRoutine',
+                exportedAt: now.toISOString(),
+                data: JSON.parse(localStorage.getItem(STORAGE_KEY))
+            };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `魔法城堡備份_${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}.json`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            renderPinStatus();
+            showToast('備份檔已下載！建議存到雲端硬碟或傳到 LINE 自己的聊天室', '💾');
+        }
+
+        function importBackup(event) {
+            const file = event.target.files && event.target.files[0];
+            event.target.value = '';
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                let data;
+                try {
+                    const parsed = JSON.parse(reader.result);
+                    // 支援本網站下載的備份檔，也支援直接貼出的 localStorage 原始內容
+                    data = (parsed && parsed.app === 'magicCastleRoutine') ? parsed.data : parsed;
+                } catch (e) {
+                    showToast('這個檔案無法讀取，請確認是魔法城堡的備份檔', '⚠️');
+                    return;
+                }
+                if (!data || typeof data !== 'object' || !('dailyRecords' in data || 'stars' in data)) {
+                    showToast('這個檔案看起來不是魔法城堡的備份檔喔', '⚠️');
+                    return;
+                }
+                const recordDays = Object.keys(data.dailyRecords || {}).length;
+                openConfirmModal(
+                    '匯入備份',
+                    `備份內容：${data.childName || '寶貝'}，星星 ${data.stars || 0} 顆、${recordDays} 天的打卡紀錄。匯入後會「取代」這台裝置目前的所有資料，確定嗎？`,
+                    '⬆️',
+                    () => {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                        showToast('匯入成功！正在重新載入…', '✅');
+                        setTimeout(() => location.reload(), 800);
+                    }
+                );
+            };
+            reader.readAsText(file);
+        }
+
+        // ==================== 視圖切換與輔助功能 ====================
+        function switchMainView(viewName) {
+            if (viewName === 'settings' && appState.parentPin && !parentUnlocked) {
+                requireParent(() => switchMainView('settings'));
+                return;
+            }
+            // 離開家長設定就自動上鎖
+            if (viewName !== 'settings') parentUnlocked = false;
+            ['schedule', 'shop', 'settings', 'rules'].forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                const btn = document.getElementById(`view-btn-${v}`);
+                if (el) el.classList.add('hidden');
+                if (btn) btn.className = 'px-4 py-2 rounded-xl font-bold text-xs md:text-sm text-gray-600 hover:bg-pink-50 transition-all';
+            });
+
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            document.getElementById(`view-btn-${viewName}`).className = 'px-4 py-2 rounded-xl font-bold text-xs md:text-sm transition-all tab-active';
+
+            if (viewName === 'shop') renderShopView();
+            if (viewName === 'schedule') renderScheduleView();
+            if (viewName === 'settings') { renderSettingsView(); renderPinStatus(); }
+        }
+
+        function toggleCoachTip() {
+            const msg = document.getElementById('coach-message');
+            msg.classList.toggle('hidden');
+        }
+
+        // 初始化啟動
+        function populateMonthSelects() {
+            ['quick-exam-month', 'plan-start-month', 'plan-end-month'].forEach(id => {
+                const sel = document.getElementById(id);
+                if (!sel) return;
+                sel.innerHTML = MONTH_ORDER.map(m => `<option value="${m}">${m}月</option>`).join('');
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            populateMonthSelects();
+            loadState();
+            updateHeaderStats();
+            renderScheduleView();
+        });
+    </script>
+</body>
+</html>
