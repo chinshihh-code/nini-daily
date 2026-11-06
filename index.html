@@ -79,9 +79,20 @@
         .rt-btn-main { background: linear-gradient(135deg, #FF6B8B 0%, #FF8E53 100%); color: #fff; box-shadow: 0 6px 16px rgba(255,107,61,0.35); }
         .rt-btn-done { background: #4F46E5; color: #fff; box-shadow: 0 6px 16px rgba(79,70,229,0.3); }
         .rt-btn-ghost { background: #fff; color: #6B5B55; border: 2px solid #EADBC8; }
-        .rt-btn-lap { background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%); color: #fff; box-shadow: 0 6px 16px rgba(99,102,241,0.35); font-size: 20px; padding: 18px 22px; }
+        .rt-btn-lap { background: linear-gradient(135deg, #FF4F9A 0%, #FF7AB6 100%); color: #fff; box-shadow: 0 6px 18px rgba(255,79,154,0.4); font-size: 22px; padding: 20px 22px; }
         .rt-seg { width: 34px; height: 10px; border-radius: 9999px; background: #EADBC8; transition: background 0.3s; }
-        .rt-seg.on { background: #8B5CF6; }
+        .rt-seg.on { background: #FF4F9A; }
+        #rt-celebrate { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; background: rgba(255, 228, 240, 0.72); backdrop-filter: blur(3px); padding: 24px; }
+        .rt-cele-card { background: #fff; border-radius: 32px; padding: 26px 22px 22px; width: min(92vw, 380px); text-align: center; border: 4px solid #FFC1DA; box-shadow: 0 20px 50px rgba(255, 79, 154, 0.25); animation: rtCelePop 0.55s cubic-bezier(0.18, 1.4, 0.4, 1); }
+        @keyframes rtCelePop { 0% { transform: scale(0.4) rotate(-6deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+        .rt-cele-emoji { font-size: 64px; line-height: 1; margin-bottom: 6px; animation: rtWiggle 0.9s ease-in-out infinite; display: inline-block; }
+        @keyframes rtWiggle { 0%, 100% { transform: rotate(-8deg) scale(1); } 50% { transform: rotate(8deg) scale(1.12); } }
+        .rt-cele-stars { display: flex; justify-content: center; gap: 6px; margin: 12px 0 6px; font-size: 34px; }
+        .rt-cele-stars span { filter: grayscale(1) opacity(0.3); transition: filter 0.3s; }
+        .rt-cele-stars span.on { filter: none; }
+        .rt-cele-stars span.new { animation: rtStarIn 0.8s cubic-bezier(0.18, 1.6, 0.4, 1) 0.25s both; filter: none; }
+        @keyframes rtStarIn { 0% { transform: scale(0) rotate(-180deg); } 100% { transform: scale(1) rotate(0); } }
+        .rt-tip { background: #fff; border: 2px dashed #FFC1DA; border-radius: 18px; padding: 10px 14px; font-size: 13px; font-weight: 700; color: #6B5B55; text-align: left; line-height: 1.6; }
         .rt-btn-warn { background: #FFE4E6; color: #E11D48; border: 2px solid #FECDD3; }
 
         /* Custom Scrollbar */
@@ -744,36 +755,76 @@
             <svg viewBox="0 0 260 260">
                 <circle cx="130" cy="130" r="122" fill="none" stroke="#A39587" stroke-width="3" />
                 <circle cx="130" cy="130" r="112" fill="none" stroke="#A39587" stroke-width="3" />
-                <circle id="rt-ring" class="rt-ring-progress" cx="130" cy="130" r="117" fill="none" stroke="#FF6B3D" stroke-width="10"
+                <circle id="rt-ring" class="rt-ring-progress" cx="130" cy="130" r="117" fill="none" stroke="#FF4F9A" stroke-width="10"
                     stroke-dasharray="735.13" stroke-dashoffset="735.13" transform="rotate(-90 130 130)" stroke-linecap="butt" />
             </svg>
-                <svg class="rt-jumper" viewBox="0 -30 200 260" aria-hidden="true">
-                    <g id="rt-body" stroke="#4A3B3B" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                <svg class="rt-jumper" viewBox="0 -40 200 270" aria-hidden="true">
+                    <defs>
+                        <radialGradient id="rtCheek"><stop offset="0" stop-color="#FF8FB8" stop-opacity="0.9"/><stop offset="1" stop-color="#FF8FB8" stop-opacity="0"/></radialGradient>
+                    </defs>
+                    <!-- 閃亮亮小星星（跳的時候會一閃一閃） -->
+                    <g id="rt-sparkles" fill="#FF4F9A">
+                        <path d="M 22 40 l 4 10 l 10 4 l -10 4 l -4 10 l -4 -10 l -10 -4 l 10 -4 z"><animate attributeName="opacity" values="0;1;0" dur="1.2s" repeatCount="indefinite"/></path>
+                        <path d="M 172 70 l 3 7 l 7 3 l -7 3 l -3 7 l -3 -7 l -7 -3 l 7 -3 z" fill="#FFC1DA"><animate attributeName="opacity" values="1;0;1" dur="0.9s" repeatCount="indefinite"/></path>
+                        <path d="M 168 0 l 3 8 l 8 3 l -8 3 l -3 8 l -3 -8 l -8 -3 l 8 -3 z" fill="#2B2220"><animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="0.4s" repeatCount="indefinite"/></path>
+                        <path d="M 30 150 l 3 7 l 7 3 l -7 3 l -3 7 l -3 -7 l -7 -3 l 7 -3 z" fill="#FFC1DA"><animate attributeName="opacity" values="0;1;0" dur="1.1s" begin="0.2s" repeatCount="indefinite"/></path>
+                    </g>
+                    <g id="rt-body" stroke-linecap="round" stroke-linejoin="round">
                         <animateTransform attributeName="transform" type="translate" dur="0.6s" repeatCount="indefinite"
                             values="0 0; 0 -4; 0 -18; 0 -4; 0 0" keyTimes="0; 0.3; 0.5; 0.7; 1" />
-                        <!-- 跳繩（畫在身體後面的那一段用淡色） -->
-                        <path stroke="#8B5CF6" stroke-width="4" d="M 64 112 Q 100 -110 136 112">
+                        <!-- 跳繩 -->
+                        <path stroke="#FF4F9A" stroke-width="4.5" fill="none" d="M 62 118 Q 100 -190 138 118">
                             <animate attributeName="d" dur="0.6s" repeatCount="indefinite"
-                                values="M 64 112 Q 100 -110 136 112; M 64 112 Q 100 112 136 112; M 64 112 Q 100 300 136 112; M 64 112 Q 100 112 136 112; M 64 112 Q 100 -110 136 112"
+                                values="M 62 118 Q 100 -190 138 118; M 62 118 Q 100 118 138 118; M 62 118 Q 100 286 138 118; M 62 118 Q 100 118 138 118; M 62 118 Q 100 -190 138 118"
                                 keyTimes="0; 0.25; 0.5; 0.75; 1" />
                         </path>
-                        <!-- 腿 -->
-                        <path d="M 100 132 L 88 160 L 90 188" />
-                        <path d="M 100 132 L 112 160 L 110 188" />
-                        <!-- 身體 -->
-                        <path d="M 100 76 L 100 134" />
+                        <!-- 雙馬尾（會跟著跳上跳下甩動） -->
+                        <g fill="#2B2220">
+                            <path d="M 66 34 C 44 40 40 72 50 92 C 56 80 60 60 72 46 Z">
+                                <animateTransform attributeName="transform" type="rotate" dur="0.6s" repeatCount="indefinite" values="0 68 40; -10 68 40; 8 68 40; 0 68 40" keyTimes="0; 0.4; 0.7; 1"/>
+                            </path>
+                            <path d="M 134 34 C 156 40 160 72 150 92 C 144 80 140 60 128 46 Z">
+                                <animateTransform attributeName="transform" type="rotate" dur="0.6s" repeatCount="indefinite" values="0 132 40; 10 132 40; -8 132 40; 0 132 40" keyTimes="0; 0.4; 0.7; 1"/>
+                            </path>
+                        </g>
+                        <!-- 腿 & 球鞋 -->
+                        <path d="M 92 148 L 90 176" stroke="#FFD9BF" stroke-width="8" />
+                        <path d="M 108 148 L 110 176" stroke="#FFD9BF" stroke-width="8" />
+                        <ellipse cx="88" cy="181" rx="10" ry="6" fill="#FF4F9A" stroke="#2B2220" stroke-width="2.5" />
+                        <ellipse cx="112" cy="181" rx="10" ry="6" fill="#FF4F9A" stroke="#2B2220" stroke-width="2.5" />
                         <!-- 手臂 -->
-                        <path d="M 100 88 L 78 104 L 64 112" />
-                        <path d="M 100 88 L 122 104 L 136 112" />
+                        <path d="M 90 104 L 72 114 L 62 118" stroke="#FFD9BF" stroke-width="7" fill="none" />
+                        <path d="M 110 104 L 128 114 L 138 118" stroke="#FFD9BF" stroke-width="7" fill="none" />
+                        <!-- 上衣（粉紅）＋百褶裙（黑） -->
+                        <path d="M 86 100 Q 100 94 114 100 L 116 128 L 84 128 Z" fill="#FF8FB8" stroke="#2B2220" stroke-width="2.5" />
+                        <path d="M 96 108 l 4 -4 l 4 4 l -4 6 z" fill="#fff" />
+                        <path d="M 82 126 L 118 126 L 126 150 L 74 150 Z" fill="#2B2220" />
+                        <path d="M 88 128 L 84 150 M 96 128 L 94 150 M 104 128 L 106 150 M 112 128 L 116 150" stroke="#55474A" stroke-width="1.5" />
                         <!-- 握把 -->
-                        <circle cx="64" cy="112" r="5" fill="#FF8E53" stroke="#4A3B3B" stroke-width="3" />
-                        <circle cx="136" cy="112" r="5" fill="#FF8E53" stroke="#4A3B3B" stroke-width="3" />
+                        <rect x="56" y="112" width="10" height="12" rx="4" fill="#2B2220" />
+                        <rect x="134" y="112" width="10" height="12" rx="4" fill="#2B2220" />
                         <!-- 頭 -->
-                        <circle cx="100" cy="50" r="24" fill="#FFB067" stroke-width="5" />
-                        <path d="M 78 42 Q 100 18 122 42" stroke="#4A3B3B" stroke-width="5" fill="#4A3B3B" />
-                        <circle cx="92" cy="52" r="2.5" fill="#4A3B3B" stroke="none" />
-                        <circle cx="108" cy="52" r="2.5" fill="#4A3B3B" stroke="none" />
-                        <path d="M 93 61 Q 100 66 107 61" stroke-width="3" />
+                        <circle cx="100" cy="54" r="38" fill="#FFE4D1" stroke="#2B2220" stroke-width="2.5" />
+                        <!-- 瀏海與頭髮 -->
+                        <path d="M 62 56 C 58 18 142 18 138 56 C 132 40 122 34 112 38 C 104 30 92 30 84 40 C 76 36 66 44 62 56 Z" fill="#2B2220" />
+                        <!-- 蝴蝶結 -->
+                        <g transform="translate(128 26) rotate(20)">
+                            <path d="M 0 0 L -12 -8 L -12 8 Z M 0 0 L 12 -8 L 12 8 Z" fill="#FF4F9A" stroke="#2B2220" stroke-width="1.5" stroke-linejoin="round" />
+                            <circle r="3.5" fill="#FF4F9A" stroke="#2B2220" stroke-width="1.5" />
+                        </g>
+                        <!-- 大眼睛（會眨眼） -->
+                        <g>
+                            <ellipse cx="86" cy="60" rx="6.5" ry="8" fill="#2B2220"><animate attributeName="ry" values="8;8;1;8;8" keyTimes="0;0.9;0.94;0.98;1" dur="3.2s" repeatCount="indefinite"/></ellipse>
+                            <ellipse cx="114" cy="60" rx="6.5" ry="8" fill="#2B2220"><animate attributeName="ry" values="8;8;1;8;8" keyTimes="0;0.9;0.94;0.98;1" dur="3.2s" repeatCount="indefinite"/></ellipse>
+                            <circle cx="88.5" cy="56.5" r="2.6" fill="#fff" />
+                            <circle cx="116.5" cy="56.5" r="2.6" fill="#fff" />
+                            <circle cx="84" cy="63" r="1.2" fill="#fff" />
+                            <circle cx="112" cy="63" r="1.2" fill="#fff" />
+                        </g>
+                        <!-- 腮紅 & 微笑 -->
+                        <circle cx="76" cy="72" r="8" fill="url(#rtCheek)" />
+                        <circle cx="124" cy="72" r="8" fill="url(#rtCheek)" />
+                        <path d="M 94 74 Q 100 80 106 74" stroke="#2B2220" stroke-width="2.5" fill="none" />
                     </g>
                 </svg>
             <div id="rt-countdown" class="rt-countdown hidden">3</div>
@@ -783,6 +834,18 @@
             <div id="rt-time" class="rt-time">0:00</div>
             <div id="rt-count" class="mt-3 inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full border-2 border-[#F5DCC3] font-black text-[#2B2220]"></div>
             <p id="rt-hint" class="text-sm font-bold text-[#8A7468] mt-2 min-h-[1.25rem]"></p>
+        </div>
+
+        <!-- 每完成一組的慶祝畫面 -->
+        <div id="rt-celebrate" class="hidden" onclick="rtHideCelebrate()">
+            <div class="rt-cele-card">
+                <div id="rt-cele-emoji" class="rt-cele-emoji">🎉</div>
+                <div id="rt-cele-title" class="text-2xl font-black text-[#2B2220]"></div>
+                <div id="rt-cele-stars" class="rt-cele-stars"></div>
+                <div id="rt-cele-progress" class="text-sm font-black text-[#FF4F9A]"></div>
+                <div id="rt-cele-msg" class="text-base font-bold text-[#6B5B55] mt-1"></div>
+                <div id="rt-cele-extra" class="text-sm font-black text-amber-600 mt-1"></div>
+            </div>
         </div>
 
         <div id="rt-result" class="hidden w-full max-w-md bg-white rounded-3xl p-4 text-center shadow-sm border-2 border-[#F5DCC3] my-2"></div>
@@ -1963,13 +2026,14 @@
             const launch = document.getElementById('rope-timer-launch');
             if (launch) {
                 const nextIdx = stages.findIndex(done => !done);
-                const best = appState.ropeBestSec;
+                const best = computeRopeBest();
                 const bestText = best ? `<span class="block text-[11px] font-bold opacity-90 mt-0.5">🏆 最快紀錄 ${formatRopeTime(best)}</span>` : '';
                 if (nextIdx === -1) {
                     launch.innerHTML = `<div class="w-full text-center py-2.5 rounded-2xl bg-indigo-50 text-indigo-700 font-bold text-sm border border-indigo-100">今天 5 組都跳完了，好厲害！${best ? `（🏆 最快紀錄 ${formatRopeTime(best)}）` : ''}</div>`;
                 } else {
-                    launch.innerHTML = `<button onclick="openRopeTimer()" class="w-full py-3 rounded-2xl font-black text-white text-base shadow-md bg-gradient-to-r from-indigo-500 to-violet-500 hover:opacity-95 transition">
-                        ⏱️ 開始計時：跳第 ${nextIdx + 1} 組 200 下${bestText}
+                    const halfText = (typeof record.ropeHalfSec === 'number') ? '（已跳 100 下，再 100 下就完成）' : ' 200 下';
+                    launch.innerHTML = `<button onclick="openRopeTimer()" class="w-full py-3 rounded-2xl font-black text-white text-base shadow-md bg-gradient-to-r from-pink-500 to-rose-400 hover:opacity-95 transition">
+                        ⏱️ 開始計時：跳第 ${nextIdx + 1} 組${halfText}${bestText}
                     </button>`;
                 }
             }
@@ -2704,16 +2768,45 @@
         }
 
         // ==================== 跳繩互動計時器 ====================
+        // 計數方式：每跳 100 下按一次「+100」。一口氣跳超過 100 下也沒關係，
+        // 停下來後照數量連按（300 下 → 連按 3 下）。3 秒內連按的會被當成同一段，
+        // 那一段的時間會平均分給這幾個 100 下，所以每組的用時依然準確。
+        // 每滿 200 下自動完成一組（+1⭐），計時繼續，不用停下來。
         const RT_RING_LEN = 735.13;          // 2 * π * 117
         const RT_DEFAULT_TARGET = 150;       // 沒有紀錄時，圓環一圈 = 2 分半
-        const RT_MIN_SECONDS = 30;           // 少於 30 秒按完成，要再按一次確認（防誤觸）
+        const RT_BURST_GAP = 3;              // 3 秒內的連按視為同一段
+        const RT_MIN_VALID_SET = 30;         // 少於 30 秒的組不列入最快紀錄
         const RT_JUMPS_PER_TAP = 100;
-        const RT_TAPS_PER_SET = 2;           // 200 下 = 按 2 次
-        const rt = { laps: [], state: 'idle', monthNum: 0, dateNum: 0, idx: 0, startedAt: 0, accumulated: 0, raf: null, confirmKey: null, wakeLock: null, countdownTimer: null };
+        const RT_TAPS_PER_SET = 2;
+        const rt = {
+            state: 'idle', monthNum: 0, dateNum: 0, startedAt: 0, accumulated: 0, raf: null,
+            wakeLock: null, countdownTimer: null, celeTimer: null,
+            taps: [], carrySec: null, targets: [], awarded: 0, prevBest: null, sessionSets: []
+        };
+
+        const RT_CHEERS = {
+            1: ['好的開始！暖身完畢 🔥', '第一組搞定，身體熱起來了！', '起跑超漂亮！繼續保持～'],
+            2: ['節奏超穩，已經 400 下了！', '越跳越順，你好棒！', '兩組完成，氣勢出來了 ✨'],
+            3: ['過半啦！剩下不到一半 💪', '600 下！已經超越昨天的自己！', '一半以上都完成了，好強！'],
+            4: ['只差最後一組，衝衝衝！', '800 下！終點就在眼前 🏁', '最後一組，你一定可以！'],
+            5: ['1000 下全破關，你是跳繩大魔王 👑', '今天的 1000 下完美達成！', '太厲害了，全部完成 🎊']
+        };
 
         function formatRopeTime(sec) {
             sec = Math.max(0, Math.floor(sec));
             return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+        }
+
+        // 從所有紀錄找出最快的一組（忽略不合理的超短時間）
+        function computeRopeBest() {
+            let best = null;
+            Object.values(appState.dailyRecords || {}).forEach(rec => {
+                (rec && rec.ropeTimes || []).forEach(t => {
+                    if (t && t >= RT_MIN_VALID_SET && (best === null || t < best)) best = t;
+                });
+            });
+            appState.ropeBestSec = best;
+            return best;
         }
 
         function rtElapsed() {
@@ -2752,16 +2845,57 @@
             if (on) svg.unpauseAnimations(); else svg.pauseAnimations();
         }
 
+        // 把按下的時間換算成「每個 100 下各花了幾秒」
+        function rtUnits() {
+            const units = [];
+            if (rt.carrySec !== null) units.push(rt.carrySec);
+            let prevEnd = 0;
+            let i = 0;
+            while (i < rt.taps.length) {
+                let j = i;
+                while (j + 1 < rt.taps.length && rt.taps[j + 1] - rt.taps[j] < RT_BURST_GAP) j++;
+                const k = j - i + 1;
+                const dur = Math.max(0, rt.taps[i] - prevEnd);
+                for (let n = 0; n < k; n++) units.push(dur / k);
+                prevEnd = rt.taps[j];
+                i = j + 1;
+            }
+            return units;
+        }
+
+        function rtTodayRecord() {
+            return ensureDateRecord(rt.monthNum, rt.dateNum);
+        }
+
+        function rtDoneCount() {
+            return rtTodayRecord().ropeProgress.filter(Boolean).length;
+        }
+
+        // 目前這一組從何時開始（給大數字和圓環用）
+        function rtCurrentSetStart() {
+            const c = rt.carrySec !== null ? 1 : 0;
+            if (rt.awarded > 0) {
+                const tapIdx = RT_TAPS_PER_SET * rt.awarded - 1 - c;
+                return rt.taps[tapIdx] || 0;
+            }
+            return c ? -rt.carrySec : 0;
+        }
+
         function openRopeTimer() {
             const monthNum = appState.currentMonth;
             const dateNum = appState.currentDate;
             const record = ensureDateRecord(monthNum, dateNum);
-            const idx = record.ropeProgress.findIndex(done => !done);
-            if (idx === -1) {
+            const targets = record.ropeProgress.map((d, i) => d ? -1 : i).filter(i => i >= 0);
+            if (!targets.length) {
                 showToast('今天 5 組都跳完囉！', '🏆');
                 return;
             }
-            Object.assign(rt, { state: 'ready', laps: [], monthNum, dateNum, idx, accumulated: 0, startedAt: 0, confirmKey: null });
+            Object.assign(rt, {
+                state: 'ready', monthNum, dateNum, accumulated: 0, startedAt: 0,
+                taps: [], targets, awarded: 0, sessionSets: [],
+                carrySec: (typeof record.ropeHalfSec === 'number') ? record.ropeHalfSec : null,
+                prevBest: computeRopeBest()
+            });
             getAudioContext(); // 在點擊當下解鎖音效
             document.getElementById('rope-timer').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -2769,29 +2903,16 @@
         }
 
         function rtTarget() {
-            return appState.ropeBestSec || RT_DEFAULT_TARGET;
+            return rt.prevBest || RT_DEFAULT_TARGET;
         }
 
         function rtUpdateDisplay() {
-            const el = rtElapsed();
-            document.getElementById('rt-time').textContent = formatRopeTime(el);
-            const target = rtTarget();
-            const ratio = Math.min(el / target, 1);
+            const setElapsed = rtElapsed() - rtCurrentSetStart();
+            document.getElementById('rt-time').textContent = formatRopeTime(setElapsed);
+            const ratio = Math.min(setElapsed / rtTarget(), 1);
             const ring = document.getElementById('rt-ring');
             ring.setAttribute('stroke-dashoffset', String(RT_RING_LEN * (1 - ratio)));
-            const over = el > target;
-            ring.setAttribute('stroke', over ? '#C4B5A5' : '#FF6B3D');
-            if (rt.state === 'running' || rt.state === 'paused') {
-                const hint = document.getElementById('rt-hint');
-                if (rt.confirmKey) return;
-                if (appState.ropeBestSec) {
-                    hint.textContent = over
-                        ? '超過紀錄也沒關係，穩穩跳完最重要！💪'
-                        : `每 100 下按一次，圓環跑完前跳完就破紀錄！`;
-                } else {
-                    hint.textContent = '每跳 100 下，就按一下紫色按鈕！';
-                }
-            }
+            ring.setAttribute('stroke', setElapsed > rtTarget() ? '#C4B5A5' : '#FF4F9A');
         }
 
         function rtLoop() {
@@ -2828,7 +2949,6 @@
         function rtResume() {
             rt.state = 'running';
             rt.startedAt = performance.now();
-            rt.confirmKey = null;
             rtKeepAwake(true);
             rtRender();
             rtLoop();
@@ -2842,176 +2962,221 @@
             rtRender();
         }
 
-        function rtRestart() {
-            if (rt.confirmKey !== 'restart') {
-                rt.confirmKey = 'restart';
-                document.getElementById('rt-hint').textContent = '要重新計時嗎？再按一次「重來」確認';
-                return;
-            }
-            cancelAnimationFrame(rt.raf);
-            Object.assign(rt, { state: 'ready', laps: [], accumulated: 0, startedAt: 0, confirmKey: null });
-            rtRender();
-        }
-
-        // 每跳 100 下按一次；按滿 2 次自動完成這一組
+        // 每跳 100 下按一次
         function rtLap() {
-            if (rt.state !== 'running') return;
-            const elapsed = rtElapsed();
-            const lastLap = rt.laps.length ? rt.laps[rt.laps.length - 1] : 0;
-            if (elapsed - lastLap < RT_MIN_SECONDS / 2 && rt.confirmKey !== 'lap') {
-                rt.confirmKey = 'lap';
-                document.getElementById('rt-hint').textContent = `才 ${Math.floor(elapsed - lastLap)} 秒耶！真的跳了 100 下嗎？再按一次確認`;
-                return;
-            }
-            rt.confirmKey = null;
-            rt.laps.push(elapsed);
-            if (rt.laps.length >= RT_TAPS_PER_SET) {
-                rt.confirmKey = 'finish'; // 已經確認過，不用再問一次
-                rtFinish();
-                return;
-            }
+            if (rt.state !== 'running' && rt.state !== 'paused') return;
+            rt.taps.push(rtElapsed());
             try {
                 const ctx = getAudioContext();
                 triggerSingleCoinDing(ctx, ctx.currentTime, 0.22);
             } catch (e) {}
-            if (navigator.vibrate) navigator.vibrate(60);
-            document.getElementById('rt-hint').textContent = `👍 ${rt.laps.length * RT_JUMPS_PER_TAP} 下！這 100 下用了 ${formatRopeTime(elapsed - lastLap)}，繼續加油！`;
-            rt.confirmKey = 'lapmsg';
-            setTimeout(() => { if (rt.confirmKey === 'lapmsg') rt.confirmKey = null; }, 2500);
-            rtRender();
+            if (navigator.vibrate) navigator.vibrate(50);
+            rtSync(true);
         }
 
         function rtUndoLap() {
-            if (!rt.laps.length) return;
-            rt.laps.pop();
-            rt.confirmKey = null;
+            if (!rt.taps.length) return;
+            rt.taps.pop();
+            rtSync(false);
             showToast('已取消上一個 100 下', '↶');
-            rtRender();
         }
 
-        function rtRenderCount() {
-            const el = document.getElementById('rt-count');
-            const n = rt.laps.length;
-            const segs = Array.from({ length: RT_TAPS_PER_SET }, (_, i) => `<span class="rt-seg ${i < n ? 'on' : ''}"></span>`).join('');
-            const done = rt.state === 'done' ? RT_TAPS_PER_SET * RT_JUMPS_PER_TAP : n * RT_JUMPS_PER_TAP;
-            el.innerHTML = `<span>🪢 ${done} / ${RT_TAPS_PER_SET * RT_JUMPS_PER_TAP} 下</span>${segs}`;
-            el.querySelectorAll('.rt-seg').forEach(seg => { if (rt.state === 'done') seg.classList.add('on'); });
-        }
-
-        function rtFinish() {
-            const elapsed = rtElapsed();
-            if (elapsed < RT_MIN_SECONDS && rt.confirmKey !== 'finish') {
-                rt.confirmKey = 'finish';
-                document.getElementById('rt-hint').textContent = `才 ${Math.floor(elapsed)} 秒耶！真的跳完 200 下了嗎？再按一次確認`;
-                return;
-            }
-            cancelAnimationFrame(rt.raf);
-            rt.accumulated = elapsed;
-            rt.state = 'done';
-            rt.confirmKey = null;
-            rtKeepAwake(false);
-
-            const sec = Math.round(elapsed);
-            const record = ensureDateRecord(rt.monthNum, rt.dateNum);
+        // 依目前的按壓紀錄，同步「完成幾組、星星、每組用時」
+        function rtSync(celebrate) {
+            const units = rtUnits();
+            const record = rtTodayRecord();
             if (!record.ropeTimes) record.ropeTimes = [null, null, null, null, null];
-            record.ropeTimes[rt.idx] = sec;
-            const prevBest = appState.ropeBestSec;
-            const isNewRecord = !prevBest || sec < prevBest;
-            if (isNewRecord) appState.ropeBestSec = sec;
+            const completable = Math.min(Math.floor(units.length / RT_TAPS_PER_SET), rt.targets.length);
+            let newlyAwarded = null;
 
-            // 自動打勾並發星星（沿用原本的跳繩打卡邏輯：+1⭐，5 組全滿再 +3⭐）
-            if (!record.ropeProgress[rt.idx]) {
-                toggleRopeStage(rt.monthNum, rt.dateNum, rt.idx);
-            } else {
-                saveState();
-                renderScheduleView();
+            // 取消按錯的 → 退回已發的組
+            while (rt.awarded > completable) {
+                rt.awarded--;
+                const idx = rt.targets[rt.awarded];
+                if (record.ropeProgress[idx]) toggleRopeStage(rt.monthNum, rt.dateNum, idx);
+                record.ropeTimes[idx] = null;
+                rt.sessionSets.pop();
             }
+            // 新完成的組 → 打勾發星星
+            while (rt.awarded < completable) {
+                const idx = rt.targets[rt.awarded];
+                if (!record.ropeProgress[idx]) toggleRopeStage(rt.monthNum, rt.dateNum, idx);
+                rt.awarded++;
+                newlyAwarded = idx;
+            }
+            // 更新本次每一組的用時
+            rt.sessionSets = [];
+            for (let n = 0; n < rt.awarded; n++) {
+                const sec = Math.round(units.slice(n * RT_TAPS_PER_SET, (n + 1) * RT_TAPS_PER_SET).reduce((a, b) => a + b, 0));
+                record.ropeTimes[rt.targets[n]] = sec;
+                rt.sessionSets.push({ idx: rt.targets[n], sec });
+            }
+            if (rt.awarded > 0) delete record.ropeHalfSec;  // 帶過來的半組已經用掉了
+            computeRopeBest();
+            saveState();
+            renderScheduleView();
 
-            const allDone = record.ropeProgress.every(Boolean);
-            const result = document.getElementById('rt-result');
-            result.innerHTML = `
-                <div class="text-4xl mb-1">${isNewRecord && prevBest ? '🏆' : '🎉'}</div>
-                <div class="text-lg font-black text-[#2B2220]">第 ${rt.idx + 1} 組完成！+1 ⭐${allDone ? '　1000 下全破關 +3 ⭐！' : ''}</div>
-                <div class="text-sm font-bold text-[#8A7468] mt-1">
-                    這組用時 <strong class="text-[#FF6B3D]">${formatRopeTime(sec)}</strong>
-                    ${isNewRecord && prevBest ? `・打破紀錄（原本 ${formatRopeTime(prevBest)}）！` : ''}
-                    ${!isNewRecord ? `・最快紀錄 ${formatRopeTime(appState.ropeBestSec)}` : ''}
-                    ${!prevBest ? '・這是你的第一個紀錄！' : ''}
-                </div>
-                ${rt.laps.length >= 2 ? `<div class="text-xs font-bold text-[#A08B7D] mt-1">前 100 下 ${formatRopeTime(rt.laps[0])}・後 100 下 ${formatRopeTime(rt.laps[1] - rt.laps[0])}</div>` : ''}`;
-            if (isNewRecord && prevBest) {
-                setTimeout(() => confetti({ particleCount: 140, spread: 90, origin: { y: 0.55 }, zIndex: 9999 }), 300);
-            } else {
-                confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 }, zIndex: 9999 });
+            if (celebrate && newlyAwarded !== null) {
+                const last = rt.sessionSets[rt.sessionSets.length - 1];
+                rtCelebrate(newlyAwarded, last ? last.sec : null);
+            }
+            if (rt.awarded >= rt.targets.length && celebrate && newlyAwarded !== null) {
+                // 今天全部完成 → 停表，慶祝畫面結束後顯示總結
+                rt.accumulated = rtElapsed();
+                rt.state = 'summary';
+                cancelAnimationFrame(rt.raf);
+                rtKeepAwake(false);
             }
             rtRender();
         }
 
-        function rtNextSet() {
-            const record = ensureDateRecord(rt.monthNum, rt.dateNum);
-            const idx = record.ropeProgress.findIndex(done => !done);
-            if (idx === -1) { ropeTimerClose(true); return; }
-            Object.assign(rt, { state: 'ready', laps: [], idx, accumulated: 0, startedAt: 0, confirmKey: null });
+        function rtConfettiBurst(big) {
+            const colors = ['#FF4F9A', '#FFC1DA', '#2B2220', '#FFD166', '#ffffff'];
+            const fire = (opts) => { try { confetti(Object.assign({ zIndex: 9999, colors }, opts)); } catch (e) {} };
+            fire({ particleCount: big ? 120 : 70, spread: 75, startVelocity: 45, origin: { x: 0.15, y: 0.75 }, angle: 60 });
+            fire({ particleCount: big ? 120 : 70, spread: 75, startVelocity: 45, origin: { x: 0.85, y: 0.75 }, angle: 120 });
+            if (big) {
+                [350, 800, 1300].forEach((delay, i) => setTimeout(() => fire({
+                    particleCount: 90, spread: 360, startVelocity: 32, ticks: 90, scalar: 1.1,
+                    origin: { x: 0.25 + i * 0.25, y: 0.3 }, shapes: ['star', 'circle']
+                }), delay));
+            }
+        }
+
+        function rtCelebrate(stageIdx, sec) {
+            const done = rtDoneCount();
+            const all = done >= 5;
+            const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+            const isRecord = sec && sec >= RT_MIN_VALID_SET && rt.prevBest && sec < rt.prevBest;
+
+            document.getElementById('rt-cele-emoji').textContent = all ? '👑' : (isRecord ? '🏆' : ['🎉', '✨', '💖', '🌟'][done % 4]);
+            document.getElementById('rt-cele-title').textContent = all ? '1000 下全部完成！' : `第 ${stageIdx + 1} 組完成！`;
+            const record = rtTodayRecord();
+            document.getElementById('rt-cele-stars').innerHTML = record.ropeProgress.map((d, i) =>
+                `<span class="${i === stageIdx ? 'new' : (d ? 'on' : '')}">⭐</span>`).join('');
+            document.getElementById('rt-cele-progress').textContent =
+                `今日進度 ${done}/5（${done * 200} / 1000 下・${done * 20}%）`;
+            document.getElementById('rt-cele-msg').textContent = pick(RT_CHEERS[Math.min(done, 5)]);
+            const extras = [`+1 ⭐`];
+            if (sec) extras.push(`這組 ${formatRopeTime(sec)}`);
+            if (isRecord) extras.push(`🏆 新紀錄！（原本 ${formatRopeTime(rt.prevBest)}）`);
+            if (all) extras.push('毅力大魔王 +3 ⭐');
+            document.getElementById('rt-cele-extra').textContent = extras.join('・');
+
+            const layer = document.getElementById('rt-celebrate');
+            layer.classList.remove('hidden');
+            const card = layer.querySelector('.rt-cele-card');
+            card.style.animation = 'none'; void card.offsetWidth; card.style.animation = '';
+
+            playSound('bonus', all ? 3 : 2);
+            if (navigator.vibrate) navigator.vibrate(all ? [80, 60, 80, 60, 160] : [60, 40, 90]);
+            rtConfettiBurst(all || isRecord);
+            if (isRecord) rt.prevBest = sec;
+
+            clearTimeout(rt.celeTimer);
+            rt.celeTimer = setTimeout(rtHideCelebrate, all ? 4200 : 2600);
+        }
+
+        function rtHideCelebrate() {
+            clearTimeout(rt.celeTimer);
+            document.getElementById('rt-celebrate').classList.add('hidden');
+        }
+
+        // 結束這一回：多跳的 100 下會保留到下次
+        function rtEndSession() {
+            cancelAnimationFrame(rt.raf);
+            const units = rtUnits();
+            const leftover = units.length - rt.awarded * RT_TAPS_PER_SET;
+            const record = rtTodayRecord();
+            if (leftover > 0 && rt.awarded < rt.targets.length) {
+                record.ropeHalfSec = Math.round(units[units.length - 1]);
+            } else if (rt.awarded > 0 || rt.carrySec === null) {
+                delete record.ropeHalfSec;
+            }
+            saveState();
+            renderScheduleView();
+            rt.accumulated = rtElapsed();
+            rt.state = 'summary';
+            rtKeepAwake(false);
             rtRender();
         }
 
-        function ropeTimerClose(force) {
-            if (!force && (rt.state === 'running' || rt.state === 'paused') && rt.confirmKey !== 'close') {
-                rt.confirmKey = 'close';
-                document.getElementById('rt-hint').textContent = '這組還沒按完成，關掉就不會計分喔！再按一次「關閉」確認';
-                return;
+        function ropeTimerClose() {
+            if (rt.state === 'running' || rt.state === 'paused') {
+                rtEndSession();
             }
             clearTimeout(rt.countdownTimer);
             cancelAnimationFrame(rt.raf);
+            rtHideCelebrate();
             rt.state = 'idle';
-            rt.confirmKey = null;
             rtKeepAwake(false);
             document.getElementById('rope-timer').classList.add('hidden');
             document.getElementById('rt-countdown').classList.add('hidden');
             document.body.style.overflow = '';
         }
 
+        function rtRenderCount() {
+            const el = document.getElementById('rt-count');
+            const unitsInSet = Math.max(0, rtUnits().length - rt.awarded * RT_TAPS_PER_SET);
+            const n = Math.min(unitsInSet, RT_TAPS_PER_SET);
+            const segs = Array.from({ length: RT_TAPS_PER_SET }, (_, i) => `<span class="rt-seg ${i < n ? 'on' : ''}"></span>`).join('');
+            el.innerHTML = rt.state === 'summary'
+                ? `<span>🪢 今日 ${rtDoneCount() * 200} / 1000 下</span>`
+                : `<span>🪢 ${n * RT_JUMPS_PER_TAP} / ${RT_TAPS_PER_SET * RT_JUMPS_PER_TAP} 下</span>${segs}`;
+        }
+
         function rtRender() {
             const s = rt.state;
-            document.getElementById('rt-title').textContent = `跳繩第 ${rt.idx + 1} 組`;
-            document.getElementById('rt-date').textContent = `${rt.monthNum}/${rt.dateNum}・今日 ${rt.idx}/5 組`;
-            document.getElementById('rt-sub').textContent = appState.ropeBestSec
-                ? `目標 200 下・🏆 最快紀錄 ${formatRopeTime(appState.ropeBestSec)}`
+            const done = rtDoneCount();
+            const curStage = rt.targets[Math.min(rt.awarded, rt.targets.length - 1)];
+            document.getElementById('rt-title').textContent = s === 'summary' ? '今天辛苦了！' : `跳繩第 ${curStage + 1} 組`;
+            document.getElementById('rt-date').textContent = `${rt.monthNum}/${rt.dateNum}・今日 ${done}/5 組`;
+            document.getElementById('rt-sub').textContent = rt.prevBest
+                ? `目標 200 下・🏆 最快紀錄 ${formatRopeTime(rt.prevBest)}`
                 : '目標 200 下・第一次挑戰，加油！';
-            document.getElementById('rt-result').classList.toggle('hidden', s !== 'done');
             rtSetJumperAnimating(s === 'running' || s === 'countdown');
 
             const hint = document.getElementById('rt-hint');
+            const result = document.getElementById('rt-result');
             const c = document.getElementById('rt-controls');
+            result.classList.toggle('hidden', !(s === 'ready' || s === 'summary'));
+            const undoBtn = rt.taps.length ? `<button onclick="rtUndoLap()" class="rt-btn rt-btn-ghost !text-sm !py-2.5">↶ 按錯了</button>` : '';
+
             if (s === 'ready') {
-                hint.textContent = '準備好跳繩，按「開始」會倒數 3 秒';
+                hint.textContent = rt.carrySec !== null ? '上次多跳的 100 下已經幫你記著，這組只要再跳 100 下！' : '';
+                result.className = 'w-full max-w-md my-2';
+                result.innerHTML = `<div class="rt-tip">
+                    🖐️ <b>數數小撇步</b>：每跳 10 下就扳一根手指，10 根手指都扳完＝100 下，按一次粉紅色按鈕！<br>
+                    🚀 <b>一口氣跳很多？</b>沒關係，停下來後照數量連按就好：跳了 300 下 → 連按 3 下。</div>`;
                 c.innerHTML = `<button onclick="rtStartCountdown()" class="rt-btn rt-btn-main w-full !text-xl !py-4">▶ 開始</button>`;
             } else if (s === 'countdown') {
                 hint.textContent = '';
                 c.innerHTML = `<button disabled class="rt-btn rt-btn-ghost w-full opacity-60">準備…</button>`;
             } else if (s === 'running') {
-                const nextTap = rt.laps.length + 1;
-                const lapLabel = nextTap >= RT_TAPS_PER_SET
-                    ? `✅ 跳到 ${nextTap * RT_JUMPS_PER_TAP} 下，完成！`
-                    : `👆 跳到 ${nextTap * RT_JUMPS_PER_TAP} 下了！`;
+                hint.textContent = '每 100 下按一次・一口氣跳很多就停下來連按幾下';
                 c.innerHTML = `
-                    <button onclick="rtLap()" class="rt-btn rt-btn-lap w-full">${lapLabel}</button>
-                    <button onclick="rtPause()" class="rt-btn rt-btn-ghost flex-1">⏸ 暫停</button>`;
+                    <button onclick="rtLap()" class="rt-btn rt-btn-lap w-full">👆 +100 下</button>
+                    <button onclick="rtPause()" class="rt-btn rt-btn-ghost flex-1">⏸ 暫停</button>
+                    ${undoBtn}`;
             } else if (s === 'paused') {
-                hint.textContent = '休息一下，喘口氣～';
+                hint.textContent = '休息一下，喘口氣～休息時也可以補按剛剛跳的下數';
                 c.innerHTML = `
-                    <button onclick="rtRestart()" class="rt-btn rt-btn-warn">↺ 重來</button>
-                    <button onclick="rtResume()" class="rt-btn rt-btn-main flex-1">▶ 繼續</button>
-                    <button onclick="rtFinish()" class="rt-btn rt-btn-done w-full">✅ 其實已經跳完 200 下了</button>
-                    ${rt.laps.length ? `<button onclick="rtUndoLap()" class="rt-btn rt-btn-ghost w-full !text-sm !py-2">↶ 按錯了，取消上一個 100 下</button>` : ''}`;
-            } else if (s === 'done') {
+                    <button onclick="rtLap()" class="rt-btn rt-btn-lap w-full !text-lg !py-3">👆 補按 +100 下</button>
+                    <button onclick="rtResume()" class="rt-btn rt-btn-main flex-1">▶ 繼續跳</button>
+                    ${undoBtn}
+                    <button onclick="rtEndSession()" class="rt-btn rt-btn-warn w-full !text-sm !py-2.5">⏹ 先跳到這裡</button>`;
+            } else if (s === 'summary') {
                 hint.textContent = '';
-                const record = ensureDateRecord(rt.monthNum, rt.dateNum);
-                const remaining = record.ropeProgress.filter(d => !d).length;
-                c.innerHTML = remaining > 0
-                    ? `<button onclick="ropeTimerClose(true)" class="rt-btn rt-btn-ghost flex-1">先休息</button>
-                       <button onclick="rtNextSet()" class="rt-btn rt-btn-main flex-[2]">▶ 跳下一組（還有 ${remaining} 組）</button>`
-                    : `<button onclick="ropeTimerClose(true)" class="rt-btn rt-btn-main w-full">🏆 今天全部完成！</button>`;
+                const record = rtTodayRecord();
+                const rows = rt.sessionSets.map(x =>
+                    `<div class="flex justify-between text-sm font-bold text-[#6B5B55] py-0.5"><span>第 ${x.idx + 1} 組</span><span>${formatRopeTime(x.sec)}</span></div>`).join('');
+                const half = typeof record.ropeHalfSec === 'number' ? `<div class="text-xs font-bold text-[#FF4F9A] mt-2">多跳的 100 下已保留，下次這組只要再跳 100 下！</div>` : '';
+                result.className = 'w-full max-w-md bg-white rounded-3xl p-4 text-center shadow-sm border-2 border-[#FFC1DA] my-2';
+                result.innerHTML = rt.sessionSets.length
+                    ? `<div class="text-base font-black text-[#2B2220] mb-1">這次完成 ${rt.sessionSets.length} 組・今日 ${done}/5</div>${rows}${half}
+                       ${appState.ropeBestSec ? `<div class="text-xs font-bold text-amber-600 mt-2">🏆 最快紀錄 ${formatRopeTime(appState.ropeBestSec)}</div>` : ''}`
+                    : `<div class="text-sm font-bold text-[#6B5B55]">這次還沒完成一整組，休息一下再來挑戰吧！</div>${half}`;
+                c.innerHTML = `<button onclick="ropeTimerClose()" class="rt-btn rt-btn-main w-full">${done >= 5 ? '🏆 今天全部完成！' : '好，先休息'}</button>`;
             }
             rtRenderCount();
             rtUpdateDisplay();
