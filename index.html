@@ -124,6 +124,13 @@
 
             <!-- 星星錢包與連勝紀錄 -->
             <div class="flex items-center gap-3">
+                <a href="news/" class="flex items-center bg-sky-50 hover:bg-sky-100 border-2 border-sky-200 px-3 py-1.5 rounded-2xl transition">
+                    <span class="text-xl mr-1.5">📰</span>
+                    <div>
+                        <div class="text-[10px] text-sky-700 font-bold leading-none">每週英文新聞</div>
+                        <div class="text-sm font-black text-sky-800">讀新聞集星星</div>
+                    </div>
+                </a>
                 <div class="flex items-center bg-orange-50 border-2 border-orange-200 px-3 py-1.5 rounded-2xl">
                     <span class="text-xl mr-1.5">🔥</span>
                     <div>
@@ -3263,6 +3270,22 @@
                 rtLoop();
             }
         });
+
+        // 從「每週英文新聞」頁回來時，同步在那邊集到的星星（同一個瀏覽器的儲存資料）
+        function syncStarsFromStorage() {
+            try {
+                const p = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+                if (!p) return;
+                if (typeof p.stars === 'number' && p.stars !== appState.stars) {
+                    appState.stars = p.stars;
+                    updateHeaderStats();
+                }
+                if (p.newsRecords) appState.newsRecords = p.newsRecords;
+            } catch (e) { console.error(e); }
+        }
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') syncStarsFromStorage(); });
+        window.addEventListener('storage', (e) => { if (e.key === STORAGE_KEY) syncStarsFromStorage(); });
+        window.addEventListener('pageshow', syncStarsFromStorage);
 
         // ==================== 家長密碼 ====================
         let parentUnlocked = false;
