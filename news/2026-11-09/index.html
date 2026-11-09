@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Kids News Weekly • 互動式國際兒童新聞英語週報</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+    }
+    .sentence-active {
+      background-color: #dbeafe !important;
+      border-color: #3b82f6 !important;
+      box-shadow: 0 4px 12px -2px rgba(59, 130, 246, 0.2);
+      transform: translateX(4px);
+    }
+    .full-article-highlight {
+      background-color: #fef08a;
+      color: #854d0e;
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .word-chip:hover {
+      background-color: #e0e7ff;
+      transform: translateY(-2px);
+    }
+    /* iPad 橫式自訂滾動條 */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* iPad 橫屏自適應分欄高度 */
+    @media (min-width: 1024px) {
+      .ipad-scroll-pane {
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+      }
+    }
+
+    /* 列印模式專屬優化樣式 (A4 學習單格式) */
+    @media print {
+      body {
+        background-color: white !important;
+        color: black !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      .ipad-scroll-pane {
+        max-height: none !important;
+        overflow: visible !important;
+      }
+      .print-page-break {
+        page-break-before: always;
+      }
+      .card-border-print {
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- 頂部導航欄 (列印時隱藏) -->
+  <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-md no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-sky-500 flex items-center justify-center text-white shadow-lg shadow-sky-500/30">
+          <i class="fa-solid fa-earth-americas text-xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-black text-lg leading-tight tracking-tight text-slate-100">Global Kids News</h1>
+            <span class="text-[11px] bg-sky-500/20 text-sky-400 font-bold px-2 py-0.5 rounded border border-sky-500/30">Week 45 • 2026</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-sky-400 font-bold">Lexile 500L–700L</span>
+            <span class="text-xs text-slate-400 hidden sm:inline">• 針對 12-18 歲青少年英語沉浸學習</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右側動作區：列印與朗讀語速 -->
+      <div class="flex items-center gap-2 sm:gap-4">
+        <div class="flex items-center gap-1.5 bg-slate-800 px-2.5 py-1.5 rounded-xl border border-slate-700">
+          <i class="fa-solid fa-gauge-high text-xs text-slate-400"></i>
+          <span class="text-xs text-slate-300 font-medium hidden sm:inline">語速:</span>
+          <select id="rateSelect" class="bg-slate-900 border-none text-xs rounded-lg px-1.5 py-0.5 font-bold text-sky-400 focus:outline-none cursor-pointer">
+            <option value="0.75">0.75x</option>
+            <option value="0.9" selected>0.9x</option>
+            <option value="1.0">1.0x</option>
+            <option value="1.15">1.15x</option>
+          </select>
+        </div>
+
+        <button onclick="printCurrentWorksheet()" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-900/30 transition flex items-center gap-2">
+          <i class="fa-solid fa-print"></i>
+          <span>列印本篇學習單</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 全域狀態提示條 (語音狀態 / 錄音回饋) -->
+  <div id="toastMessage" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-3 transition transform duration-300 no-print">
+    <i id="toastIcon" class="fa-solid fa-circle-info text-sky-400 text-lg"></i>
+    <span id="toastText" class="text-sm font-medium">提示訊息</span>
+  </div>
+
+  <!-- 主內容容器 -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 lg:p-6 space-y-4">
+
+    <!-- 故事切換列 (列印時隱藏) -->
+    <div class="bg-white p-3 sm:p-4 rounded-2xl shadow-sm border border-slate-200/80 flex flex-wrap items-center justify-between gap-3 no-print">
+      <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 shrink-0">選擇新聞：</span>
+        <div class="flex gap-2 shrink-0">
+          <button onclick="selectStory(0)" id="storyBtn-0" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-sky-500 text-white shadow-sm transition">
+            🐢 1. 海龜保護行動
+          </button>
+          <button onclick="selectStory(1)" id="storyBtn-1" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
+            🔭 2. 深空系外行星
+          </button>
+          <button onclick="selectStory(2)" id="storyBtn-2" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
+            🐘 3. 肯亞大象走廊
+          </button>
+        </div>
+      </div>
+      <div class="text-xs text-slate-400 font-medium hidden md:block">
+        💡 整合模式：全篇在同一個頁面完成閱讀、單字、測驗與口說思辨
+      </div>
+    </div>
+
+    <!-- 針對 iPad 橫向最佳化：雙欄連貫排版 -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      
+      <!-- ====================== 左欄：圖文、控制台、選項C單字庫、左下方整段全文 ====================== -->
+      <div class="lg:col-span-6 space-y-4 ipad-scroll-pane pr-1">
+        
+        <!-- 新聞主圖與標題 -->
+        <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200/80">
+          <div class="relative h-52 sm:h-60 overflow-hidden bg-slate-900 group">
+            <img id="storyImage" src="" alt="新聞主圖" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-transparent"></div>
+            <div class="absolute bottom-3 left-4 right-4 flex items-end justify-between">
+              <div>
+                <span id="storyTag" class="inline-block bg-sky-500/90 text-white text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md mb-1 backdrop-blur-sm">
+                  TAG
+                </span>
+                <p id="storyLexile" class="text-xs font-bold text-sky-200"></p>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 sm:p-5">
+            <h2 id="storyTitle" class="text-lg sm:text-xl font-black text-slate-900 leading-snug tracking-tight mb-1.5">
+              新聞標題
+            </h2>
+            <p id="storySubtitle" class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+              新聞中文概述
+            </p>
+          </div>
+        </div>
+
+        <!-- 播放與整篇跟讀錄音控制台 (列印時隱藏) -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 space-y-3 no-print">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-microphone-lines text-sky-500"></i> 全篇朗讀與口說錄音
+            </h3>
+            <span id="recordingTimer" class="text-xs font-mono font-bold text-slate-400">00:00</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button onclick="playFullArticle()" id="btnPlayAll" class="py-2 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition">
+              <i class="fa-solid fa-play"></i> 播放整篇
+            </button>
+            <button onclick="stopTTS()" class="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition">
+              <i class="fa-solid fa-stop"></i> 停止朗讀
+            </button>
+            <button id="btnRecordFull" onclick="toggleFullRecording()" class="py-2 px-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition">
+              <i class="fa-solid fa-microphone"></i> <span>整篇錄音</span>
+            </button>
+            <button id="btnPlayRecordFull" onclick="playFullRecording()" disabled class="py-2 px-3 rounded-xl bg-slate-100 text-slate-400 font-bold text-xs flex items-center justify-center gap-1.5 transition disabled:opacity-40">
+              <i class="fa-solid fa-volume-high"></i> 回聽發音
+            </button>
+          </div>
+
+          <!-- 文法解析提示 -->
+          <div class="bg-amber-50/70 border border-amber-200/60 p-2.5 rounded-xl">
+            <p class="text-xs text-amber-800 font-medium" id="grammarTipText">
+              💡 語法解析：載入中...
+            </p>
+          </div>
+        </div>
+
+        <!-- 【選項 C 實作】：折疊式核心單字庫 (可展開/收納，附即時發音與跟讀) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+          <button onclick="toggleVocabDrawer()" class="w-full p-4 flex items-center justify-between bg-white hover:bg-slate-50 transition text-left">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-spell-check"></i>
+              </div>
+              <h3 class="text-sm font-bold text-slate-800">
+                本篇核心單字庫 (Key Vocabulary)
+              </h3>
+              <span class="text-[11px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">4 Words</span>
+            </div>
+            <i id="vocabDrawerIcon" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+          </button>
+
+          <!-- 單字內容收納區 (預設展開，方便學生直接查閱) -->
+          <div id="vocabDrawerContent" class="p-4 pt-0 space-y-2.5 border-t border-slate-100">
+            <div id="storyVocabList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3">
+              <!-- 動態生成本篇專屬的 4 個重點單字 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 【左下方整段完整文章顯示區】 -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200/80 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-newspaper text-sky-600"></i>
+              <h3 class="text-sm font-bold text-slate-800">整段文章完整閱讀 (Full Article)</h3>
+            </div>
+            <button onclick="toggleArticleTranslation()" id="btnToggleTrans" class="text-xs text-sky-600 hover:text-sky-800 font-bold flex items-center gap-1 bg-sky-50 px-2 py-1 rounded-md no-print">
+              <i class="fa-solid fa-language"></i> <span id="transBtnText">顯示中文對照</span>
+            </button>
+          </div>
+
+          <!-- 整段純英文文章 (朗讀時即時逐句高亮) -->
+          <div id="fullArticleEn" class="text-sm leading-relaxed text-slate-700 bg-slate-50/70 p-3.5 rounded-xl border border-slate-100">
+            <!-- 動態生成整段英文 -->
+          </div>
+
+          <!-- 中文整段翻譯 -->
+          <div id="fullArticleZh" class="hidden text-xs sm:text-sm leading-relaxed text-slate-500 bg-amber-50/50 p-3.5 rounded-xl border border-amber-100/60">
+            <!-- 動態生成整段中文 -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ====================== 右欄：10行單句練習、本篇專屬3題測驗、思辨發表 ====================== -->
+      <div class="lg:col-span-6 space-y-4 ipad-scroll-pane pr-1">
+        
+        <!-- 逐句跟讀練習區 (10 Sentences) -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 space-y-3">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              <h3 class="text-sm sm:text-base font-extrabold text-slate-800">逐句點讀與跟讀 (10 Sentences)</h3>
+            </div>
+            <span class="text-xs text-slate-400 no-print">點擊單字可發音 / 點擊麥克風跟讀</span>
+          </div>
+
+          <div id="sentenceList" class="space-y-2.5">
+            <!-- 10 行句子動態注入 -->
+          </div>
+        </div>
+
+        <!-- 【需求 4 整合】：本篇新聞專屬 3 道選擇題 QUIZ -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200/80 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <span class="text-[11px] font-bold text-sky-600 uppercase tracking-wider">Comprehension Check</span>
+              <h3 class="text-sm sm:text-base font-black text-slate-900">閱讀理解小測驗 (3 Questions)</h3>
+            </div>
+            <div class="bg-sky-50 border border-sky-200 rounded-xl px-3 py-1 text-right">
+              <span class="text-[10px] text-sky-700 font-semibold block">本篇得分</span>
+              <span id="currentStoryScore" class="text-sm sm:text-base font-black text-sky-600">0 / 3</span>
+            </div>
+          </div>
+
+          <div id="storyQuizList" class="space-y-4 pt-1">
+            <!-- 動態生成該篇專屬的 3 題選擇題 -->
+          </div>
+        </div>
+
+        <!-- 【需求 4 整合】：思辨與口說發表區 (Critical Thinking) -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200/80 space-y-3">
+          <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+            <div class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-comments"></i>
+            </div>
+            <div>
+              <h3 class="text-sm sm:text-base font-black text-slate-900">青少年思辨觀點發表 (Critical Thinking)</h3>
+              <p class="text-xs text-slate-400">練習表達自己的獨立想法，嘗試使用推薦模板口說回答。</p>
+            </div>
+          </div>
+
+          <div id="storyDiscussionBox" class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-3">
+            <!-- 動態生成該篇專屬的思辨題目與句型 -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ====================== 列印專用隱藏區 (A4 Worksheet 學習單) ====================== -->
+    <section id="printWorksheetArea" class="hidden print-only p-4 bg-white text-black space-y-4">
+      <div class="border-b-2 border-black pb-3 flex justify-between items-end">
+        <div>
+          <h1 class="text-2xl font-black">Global Kids News • Weekly Worksheet</h1>
+          <p class="text-xs text-gray-600">Name: ____________________ Date: ____________ Score: ________ / 3</p>
+        </div>
+        <div class="text-right">
+          <span id="printLexileTag" class="text-xs font-bold border border-black px-2 py-0.5 rounded">Lexile 500L–700L</span>
+          <p class="text-[11px] text-gray-500 mt-1">Week 45 • 2026</p>
+        </div>
+      </div>
+
+      <!-- 標題與圖文 -->
+      <div class="flex gap-4 items-start pt-2">
+        <img id="printStoryImg" src="" alt="新聞插圖" class="w-48 h-32 object-cover rounded-lg border border-gray-300">
+        <div>
+          <h2 id="printStoryTitle" class="text-lg font-bold leading-snug"></h2>
+          <p id="printStorySubtitle" class="text-xs text-gray-600 mt-1"></p>
+          <div class="mt-2 text-xs text-gray-700 bg-gray-50 p-2 rounded border border-gray-200" id="printGrammar"></div>
+        </div>
+      </div>
+
+      <!-- 全文閱讀 -->
+      <div class="pt-2">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-800 border-b border-gray-300 pb-1 mb-2">📰 Full Article</h3>
+        <p id="printArticleText" class="text-sm leading-relaxed text-gray-900 text-justify"></p>
+      </div>
+
+      <!-- 核心單字清單 -->
+      <div class="pt-2">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-800 border-b border-gray-300 pb-1 mb-2">🔑 Key Vocabulary</h3>
+        <div id="printVocabGrid" class="grid grid-cols-2 gap-2 text-xs"></div>
+      </div>
+
+      <!-- 3 道理解測驗 -->
+      <div class="pt-2">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-800 border-b border-gray-300 pb-1 mb-2">📝 Reading Comprehension Quiz</h3>
+        <div id="printQuizContainer" class="space-y-3 text-xs"></div>
+      </div>
+
+      <!-- 手寫筆記欄與思辨發表 -->
+      <div class="pt-2">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-800 border-b border-gray-300 pb-1 mb-2">✍️ Critical Thinking & Notes</h3>
+        <p id="printDiscussionPrompt" class="text-xs text-gray-700 mb-2 font-medium"></p>
+        <div class="h-28 border border-dashed border-gray-400 rounded-lg p-2 text-xs text-gray-400">
+          Write down your opinion, notes, or new sentences here...
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 頁尾 (列印時隱藏) -->
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400 mt-auto no-print">
+    <p>針對 12-18 歲非母語學習者設計 • 藍思值 Lexile 500L–700L 國際兒童時事教材 • 具備列印學習單與口說跟讀功能</p>
+  </footer>
+
+  <!-- 錄音用隱藏 Audio 播放器 -->
+  <audio id="recordedAudioPlayer" class="hidden"></audio>
+
+  <script>
+    /* ================= 核心新聞資料庫 (精準 10 行, Lexile 500L-700L, 整合單字、Quiz、思辨) ================= */
+    const stories = [
+      {
+        id: "turtle",
+        title: "Young Guardians Protect Endangered Sea Turtles",
+        subtitle: "哥斯大黎加中學生守護海灘，本季成功護送 2,000 隻海龜寶寶平安入海！",
+        tag: "Marine Biology",
+        lexile: "Lexile: 590L • 10 Sentences",
+        image: "https://images.unsplash.com/photo-1762858578231-a9b23d6193c1?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
+        grammarTip: "💡 語法解析：注意 <b>However</b>（然而）表轉折，以及 <b>When</b>（當…的時候）引導的條件時間子句。",
+        sentences: [
+          { en: "Every year, hundreds of sea turtles swim to Costa Rica.", zh: "每年都有數百隻海龜游到哥斯大黎加。" },
+          { en: "They crawl onto sandy beaches under the dark night sky.", zh: "牠們在漆黑的夜空下爬上沙灘。" },
+          { en: "Female turtles dig deep nests to lay their fragile eggs.", zh: "母海龜挖出深巢來產下脆弱的卵。" },
+          { en: "However, ocean pollution causes serious problems for these gentle creatures.", zh: "然而，海洋污染對這些溫柔的生物造成了嚴重的問題。" },
+          { en: "Plastic bags floating in water look like tasty jellyfish to them.", zh: "漂浮在水中的塑膠袋在牠們眼中就像美味的水母。" },
+          { en: "Turtles swallow the trash and get very sick.", zh: "海龜吞下這些垃圾並因此生重病。" },
+          { en: "Local middle school students formed a turtle rescue team.", zh: "當地的中學生組成了一支海龜救援隊。" },
+          { en: "They patrol the beaches every weekend to clean up plastic.", zh: "他們每個週末都在海灘巡邏清理塑膠。" },
+          { en: "The teenagers also built wooden fences to guard turtle nests.", zh: "青少年們還建造了木柵欄來保護海龜巢穴。" },
+          { en: "This month, over 2,000 baby turtles reached the sea safely!", zh: "這個月，超過 2,000 隻海龜寶寶平安抵達了大海！" }
+        ],
+        vocab: [
+          { word: "endangered", pos: "adj.", phonetic: "/ɪnˈdeɪn.dʒɚd/", meaning: "瀕臨絕種的", example: "Turtles are endangered animals." },
+          { word: "fragile", pos: "adj.", phonetic: "/ˈfrædʒ.əl/", meaning: "脆弱的；易碎的", example: "Handle the fragile turtle eggs with care." },
+          { word: "pollution", pos: "n.", phonetic: "/pəˈluː.ʃən/", meaning: "污染", example: "Plastic pollution hurts ocean life." },
+          { word: "patrol", pos: "v.", phonetic: "/pəˈtroʊl/", meaning: "巡邏；巡查", example: "Students patrol the sandy beach every weekend." }
+        ],
+        quizzes: [
+          {
+            question: "1. Why is plastic trash in the ocean especially harmful to sea turtles?",
+            options: [
+              "It blocks the sun and makes ocean water too cold.",
+              "It looks like tasty jellyfish, causing turtles to swallow it and get sick.",
+              "It scares mother turtles and makes them leave their eggs behind."
+            ],
+            correct: 1,
+            explanation: "正解為 B！浮游塑膠袋外型類似水母（jellyfish），海龜誤食會導致消化阻塞與重病。"
+          },
+          {
+            question: "2. How did the middle school students protect fragile turtle nests from danger?",
+            options: [
+              "They built wooden fences around the nests and patrolled the beach.",
+              "They carried all eggs into their school classrooms.",
+              "They used huge drones to guide baby turtles into the sea."
+            ],
+            correct: 0,
+            explanation: "正解為 A！學生們週末巡邏清理垃圾，並建造木柵欄（wooden fences）防止巢穴受損。"
+          },
+          {
+            question: "3. How many baby turtles successfully reached the sea this month thanks to the rescue team?",
+            options: [
+              "About 200 baby turtles.",
+              "Exactly 500 baby turtles.",
+              "Over 2,000 baby turtles."
+            ],
+            correct: 2,
+            explanation: "正解為 C！文章最後一句：Over 2,000 baby turtles reached the sea safely!"
+          }
+        ],
+        discussion: {
+          title: "海洋保育與日常習慣 (Ocean Protection)",
+          prompt: "除了去海灘撿垃圾，我們日常生活中還能做什麼具體行動來減少流入大海的塑膠？",
+          template: "In my opinion, students can protect sea turtles by reducing single-use plastic cups and...",
+          demoSentence: "In my opinion, students can protect sea turtles by reducing single-use plastic cups and bringing reusable water bottles."
+        }
+      },
+      {
+        id: "space",
+        title: "Space Telescope Spots Atmosphere on Distant Planet",
+        subtitle: "天文學家透過韋伯望遠鏡，在 120 光年外的系外行星首度探測到水蒸氣！",
+        tag: "Astronomy & Tech",
+        lexile: "Lexile: 650L • 10 Sentences",
+        image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?fm=jpg&q=80&w=3000&auto=format&fit=crop",
+        grammarTip: "💡 語法解析：關係代名詞 <b>that / which</b>（例：a distant planet that circles a far star）用以補充說明名詞特徵。",
+        sentences: [
+          { en: "Astronomers recently shared an exciting discovery from deep space.", zh: "天文學家最近分享了來自深空的令人興奮的新發現。" },
+          { en: "A powerful space telescope examined a planet far from Earth.", zh: "一架功能強大的太空望遠鏡檢測了一顆遠離地球的行星。" },
+          { en: "An exoplanet is a world that circles a distant star.", zh: "系外行星是指圍繞遙遠恆星運行的外星世界。" },
+          { en: "Scientists analyzed starlight passing through the planet's thick atmosphere.", zh: "科學家分析了穿過該行星濃厚大氣層的恆星光芒。" },
+          { en: "The light data revealed strong evidence of water vapor.", zh: "光譜數據顯示了水蒸氣的強烈證據。" },
+          { en: "Water is one of the most important ingredients for life.", zh: "水是生命存在最重要的關鍵要素之一。" },
+          { en: "However, the surface is still too boiling hot for humans.", zh: "然而，這顆行星的地表溫度對人類來說仍然太過沸騰滾燙。" },
+          { en: "Strong radiation from its sun makes the air very stormy.", zh: "來自其母恆星的強烈輻射使大氣層狂風肆虐。" },
+          { en: "Astronomers will study twenty more planets in this galaxy sector.", zh: "天文學家將在這個星系區域繼續研究另外二十顆行星。" },
+          { en: "Each discovery brings us closer to finding a habitable planet.", zh: "每一次發現都讓我們更接近找到宜居的星球。" }
+        ],
+        vocab: [
+          { word: "astronomer", pos: "n.", phonetic: "/əˈstrɑː.nə.mɚ/", meaning: "天文學家", example: "The astronomer discovered a new star." },
+          { word: "atmosphere", pos: "n.", phonetic: "/ˈæt.məs.fɪr/", meaning: "大氣層", example: "The telescope looked through the planet's atmosphere." },
+          { word: "exoplanet", pos: "n.", phonetic: "/ˈek.soʊˌplæn.ɪt/", meaning: "系外行星", example: "An exoplanet circles another sun." },
+          { word: "habitable", pos: "adj.", phonetic: "/ˈhæb.ə.t̬ə.bəl/", meaning: "適合居住的", example: "Scientists search for a habitable new planet." }
+        ],
+        quizzes: [
+          {
+            question: "1. What is an 'exoplanet' according to the article?",
+            options: [
+              "A small moon circling around planet Mars.",
+              "A world that circles a distant star outside our solar system.",
+              "An artificial satellite launched by space agencies."
+            ],
+            correct: 1,
+            explanation: "正解為 B！文章定義：An exoplanet is a world that circles a distant star。"
+          },
+          {
+            question: "2. How did scientists find evidence of water vapor on this distant planet?",
+            options: [
+              "By analyzing the starlight passing through its thick atmosphere.",
+              "By sending an astronaut crew to land on its rocky mountains.",
+              "By collecting water samples with a robotic rover."
+            ],
+            correct: 0,
+            explanation: "正解為 A！科學家分析穿過大氣層（atmosphere）的光譜特徵偵測到水蒸氣痕跡。"
+          },
+          {
+            question: "3. Can humans live on this newly studied exoplanet right now?",
+            options: [
+              "Yes, because it has fresh liquid lakes everywhere.",
+              "No, because the planet's surface is still boiling hot.",
+              "Yes, because the air contains breathable oxygen for animals."
+            ],
+            correct: 1,
+            explanation: "正解為 B！文中明確提到：However, the surface is still too boiling hot for humans。"
+          }
+        ],
+        discussion: {
+          title: "耗資探索太空的價值 (Space Exploration)",
+          prompt: "地球目前還有貧窮與氣候問題，我們該不該繼續投入巨資發射太空望遠鏡探索系外行星？",
+          template: "Although space exploration is expensive, I believe it is valuable because...",
+          demoSentence: "Although space exploration is expensive, I believe it is valuable because it pushes science forward."
+        }
+      },
+      {
+        id: "elephant",
+        title: "Wildlife Corridors Give Kenyan Elephants Safe Passage",
+        subtitle: "打造安全綠色走廊！肯亞解決人象土地衝突，守護非洲野生動物家庭。",
+        tag: "Wildlife Conservation",
+        lexile: "Lexile: 620L • 10 Sentences",
+        image: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?fm=jpg&q=80&w=3000&auto=format&fit=crop",
+        grammarTip: "💡 語法解析：不定詞 <b>to + 原形動詞</b>（例：to connect two large parks）常表示「目的與功能」。",
+        sentences: [
+          { en: "African elephants walk hundreds of miles every year to find water.", zh: "非洲大象每年行走數百英里以尋找水源。" },
+          { en: "In Kenya, expanding towns and roads often block their paths.", zh: "在肯亞，不斷擴張的城鎮與道路經常阻斷牠們的路線。" },
+          { en: "Hungry elephants sometimes enter human farms and eat crops.", zh: "飢餓的大象有時會闖入農田吃掉農作物。" },
+          { en: "This competition causes serious conflicts between villagers and wild animals.", zh: "這種競爭導致了村民與野生動物之間的嚴重衝突。" },
+          { en: "To protect both sides, conservationists built a wildlife corridor.", zh: "為了保護雙方，保育人士修建了一條野生動物生態走廊。" },
+          { en: "This green path connects two large national parks safely.", zh: "這條綠色通道安全地連結了兩座大型國家公園。" },
+          { en: "Over 50 young orphan elephants currently live in this reserve.", zh: "目前有 50 多隻孤兒幼象生活在這個保護區中。" },
+          { en: "They learn important survival skills from caring rangers.", zh: "牠們從富有愛心的護林員那裡學習重要的生存技能。" },
+          { en: "Local farmers now use smart bee fences to deter wild elephants.", zh: "當地農民現在也使用智慧蜂箱圍欄來嚇退野象。" },
+          { en: "Now humans and wild animals can share the land peacefully.", zh: "現在人類與野生動物能夠和平共享這片土地。" }
+        ],
+        vocab: [
+          { word: "conflict", pos: "n.", phonetic: "/ˈkɑːn.flɪkt/", meaning: "衝突；爭執", example: "The green path reduces conflict between farmers and elephants." },
+          { word: "corridor", pos: "n.", phonetic: "/ˈkɔːr.ə.dɚ/", meaning: "走廊；通道", example: "Elephants walk safely through the wildlife corridor." },
+          { word: "orphan", pos: "n./adj.", phonetic: "/ˈɔːr.fən/", meaning: "孤兒；無親無故的", example: "Rangers feed the baby orphan elephant." },
+          { word: "peacefully", pos: "adv.", phonetic: "/ˈpiːs.fəl.i/", meaning: "和平地", example: "Humans and animals can live together peacefully." }
+        ],
+        quizzes: [
+          {
+            question: "1. Why did conflicts happen between elephants and villagers in Kenya?",
+            options: [
+              "Roads and farm fences blocked the elephants' traditional paths to water.",
+              "Villagers were trying to catch elephants to ride them to school.",
+              "Elephants refused to share trees with wild lions."
+            ],
+            correct: 0,
+            explanation: "正解為 A！城鎮擴張與農田圍欄阻斷了大象尋找水源的路線，導致大象闖入村莊引發人象衝突。"
+          },
+          {
+            question: "2. What is the main purpose of the newly built wildlife corridor?",
+            options: [
+              "It connects two large national parks so elephants can move safely.",
+              "It creates an indoor zoo for international tourists.",
+              "It stops elephants from migrating across the country."
+            ],
+            correct: 0,
+            explanation: "正解為 A！這條綠色走廊連結了兩座大型國家公園，讓大象能在不踩踏農作物的情況下安全遷徙。"
+          },
+          {
+            question: "3. Who helps the 50 young orphan elephants learn survival skills in the reserve?",
+            options: [
+              "Local middle school students.",
+              "Caring and dedicated wildlife rangers.",
+              "Robotic drone guardians."
+            ],
+            correct: 1,
+            explanation: "正解為 B！文章第 8 句提到：They learn important survival skills from caring rangers。"
+          }
+        ],
+        discussion: {
+          title: "人與野生動物的和諧共存 (Human-Wildlife Harmony)",
+          prompt: "農民需要土地耕作養家，野生大象需要遷徙水源，你覺得科技（如蜂箱圍欄、GPS追蹤）還能如何幫助兩者共存？",
+          template: "In my opinion, technology can help wild animals by using smart sensors to...",
+          demoSentence: "In my opinion, technology can help wild animals by using smart sensors to warn villagers early."
+        }
+      }
+    ];
+
+    /* ================= 狀態變數 ================= */
+    let currentStoryIdx = 0;
+    let isFullRecording = false;
+    let mediaRecorder = null;
+    let audioStream = null;
+    let recordedBlob = null;
+    let recordingTimerInterval = null;
+    let recordingSeconds = 0;
+    let showZhTranslation = false;
+    let isVocabDrawerOpen = true;
+
+    // 單句錄音存儲
+    let currentRecordingSentenceIdx = null;
+    let sentenceRecorder = null;
+    let sentenceAudioBlobs = {};
+
+    // Quiz 作答紀錄（按篇分開）
+    let storyAnswers = { 0: {}, 1: {}, 2: {} };
+
+    /* ================= 初始化 ================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      renderStory(0);
+    });
+
+    /* ================= 故事選擇與完整頁面渲染 ================= */
+    function selectStory(idx) {
+      stopTTS();
+      currentStoryIdx = idx;
+      for (let i = 0; i < stories.length; i++) {
+        const btn = document.getElementById(`storyBtn-${i}`);
+        if (i === idx) {
+          btn.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-sky-500 text-white shadow-sm transition";
+        } else {
+          btn.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
+        }
+      }
+      renderStory(idx);
+    }
+
+    function renderStory(idx) {
+      const data = stories[idx];
+
+      // 1. 基本資訊
+      document.getElementById('storyImage').src = data.image;
+      document.getElementById('storyTag').textContent = data.tag;
+      document.getElementById('storyLexile').textContent = data.lexile;
+      document.getElementById('storyTitle').textContent = data.title;
+      document.getElementById('storySubtitle').textContent = data.subtitle;
+      document.getElementById('grammarTipText').innerHTML = data.grammarTip;
+
+      // 2. 左下方整段完整文章
+      renderFullArticleBox(data);
+
+      // 3. 【選項 C】折疊式本篇核心單字庫渲染
+      renderStoryVocab(data.vocab);
+
+      // 4. 右側 10 句清單渲染
+      renderSentenceList(data.sentences);
+
+      // 5. 【需求 4】本篇專屬 3 道 Quiz 測驗渲染
+      renderStoryQuiz(idx);
+
+      // 6. 【需求 4】本篇專屬思辨討論區渲染
+      renderStoryDiscussion(data.discussion);
+    }
+
+    /* 渲染左下方整段文章 */
+    function renderFullArticleBox(data) {
+      const enContainer = document.getElementById('fullArticleEn');
+      const zhContainer = document.getElementById('fullArticleZh');
+
+      let enParagraphHtml = data.sentences.map((s, sIdx) => {
+        return `<span id="full-text-sent-${sIdx}" class="transition-all duration-200">${s.en}</span>`;
+      }).join(' ');
+
+      let zhParagraphHtml = data.sentences.map((s) => s.zh).join(' ');
+
+      enContainer.innerHTML = enParagraphHtml;
+      zhContainer.innerHTML = zhParagraphHtml;
+    }
+
+    function toggleArticleTranslation() {
+      showZhTranslation = !showZhTranslation;
+      const zhBox = document.getElementById('fullArticleZh');
+      const btnText = document.getElementById('transBtnText');
+      if (showZhTranslation) {
+        zhBox.classList.remove('hidden');
+        btnText.textContent = "隱藏中文對照";
+      } else {
+        zhBox.classList.add('hidden');
+        btnText.textContent = "顯示中文對照";
+      }
+    }
+
+    /* 【選項 C】單字庫展開/折疊與內容生成 */
+    function toggleVocabDrawer() {
+      isVocabDrawerOpen = !isVocabDrawerOpen;
+      const content = document.getElementById('vocabDrawerContent');
+      const icon = document.getElementById('vocabDrawerIcon');
+      if (isVocabDrawerOpen) {
+        content.classList.remove('hidden');
+        icon.className = "fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200";
+      } else {
+        content.classList.add('hidden');
+        icon.className = "fa-solid fa-chevron-right text-slate-400 text-xs transition-transform duration-200";
+      }
+    }
+
+    function renderStoryVocab(vocabList) {
+      const container = document.getElementById('storyVocabList');
+      container.innerHTML = '';
+
+      vocabList.forEach((v) => {
+        const item = document.createElement('div');
+        item.className = "bg-slate-50 border border-slate-200/90 hover:border-indigo-300 p-2.5 rounded-xl transition flex flex-col justify-between";
+        item.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-1.5 py-0.2 rounded">${v.pos}</span>
+              <span class="text-[11px] text-slate-400 font-mono">${v.phonetic}</span>
+            </div>
+            <h4 class="text-sm font-black text-slate-900">${v.word}</h4>
+            <p class="text-xs font-bold text-slate-600">${v.meaning}</p>
+            <p class="text-[11px] text-slate-500 italic mt-1 line-clamp-1" title="${v.example}">"${v.example}"</p>
+          </div>
+          <div class="mt-2 pt-2 border-t border-slate-200/60 flex items-center gap-1.5">
+            <button onclick="speakWord('${v.word}')" class="flex-1 py-1 px-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-[11px] font-bold transition flex items-center justify-center gap-1">
+              <i class="fa-solid fa-volume-high text-[10px]"></i> 發音
+            </button>
+            <button onclick="recordAndEchoWord('${v.word}')" class="py-1 px-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[11px] font-bold transition flex items-center gap-1" title="跟讀此單字">
+              <i class="fa-solid fa-microphone text-[10px]"></i> 跟讀
+            </button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    /* 渲染 10 行句子 */
+    function renderSentenceList(sentences) {
+      const listContainer = document.getElementById('sentenceList');
+      listContainer.innerHTML = '';
+
+      sentences.forEach((item, sIdx) => {
+        const box = document.createElement('div');
+        box.id = `sentence-box-${sIdx}`;
+        box.className = "bg-slate-50/70 p-3 sm:p-3.5 rounded-xl border border-slate-200 hover:border-sky-300 transition duration-150 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5";
+
+        const words = item.en.split(' ');
+        const wordsHtml = words.map(w => {
+          const clean = w.replace(/[.,!?;:"()]/g, '');
+          return `<span class="word-chip cursor-pointer inline-block px-0.5 rounded text-slate-900 font-semibold transition" onclick="event.stopPropagation(); speakWord('${clean}')" title="點擊發音: ${clean}">${w}</span>`;
+        }).join(' ');
+
+        box.innerHTML = `
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-[10px] font-bold text-sky-600 bg-sky-100/60 px-1.5 py-0.5 rounded">#${sIdx + 1}</span>
+              <p class="text-sm sm:text-[15px] leading-relaxed text-slate-900">${wordsHtml}</p>
+            </div>
+            <p class="text-xs text-slate-500 font-normal pl-6">${item.zh}</p>
+          </div>
+          <div class="flex items-center gap-1 self-end sm:self-center shrink-0">
+            <button onclick="playSingleSentence(${sIdx})" class="p-1.5 w-8 h-8 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-600 transition flex items-center justify-center" title="朗讀此句">
+              <i class="fa-solid fa-volume-high text-xs"></i>
+            </button>
+            <button id="btnRecSentence-${sIdx}" onclick="toggleSentenceRecord(${sIdx})" class="p-1.5 w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition flex items-center justify-center" title="單句跟讀錄音">
+              <i class="fa-solid fa-microphone text-xs"></i>
+            </button>
+            <button id="btnPlaySentence-${sIdx}" onclick="playSentenceRecording(${sIdx})" disabled class="p-1.5 w-8 h-8 rounded-lg bg-slate-200 text-slate-400 transition flex items-center justify-center disabled:opacity-40" title="回聽自己錄音">
+              <i class="fa-solid fa-play text-xs"></i>
+            </button>
+          </div>
+        `;
+        listContainer.appendChild(box);
+      });
+    }
+
+    /* 【需求 4】：渲染本篇新聞專屬 3 道 Quiz 測驗 */
+    function renderStoryQuiz(storyIdx) {
+      const container = document.getElementById('storyQuizList');
+      container.innerHTML = '';
+
+      const quizzes = stories[storyIdx].quizzes;
+      const currentAnswers = storyAnswers[storyIdx] || {};
+
+      quizzes.forEach((q, qIdx) => {
+        const item = document.createElement('div');
+        item.className = "bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-2";
+
+        const isAnswered = currentAnswers[qIdx] !== undefined;
+
+        let optionsHtml = '';
+        q.options.forEach((opt, optIdx) => {
+          let optClass = "border-slate-200 bg-white hover:bg-slate-100 text-slate-700";
+          let badgeClass = "bg-slate-100 text-slate-600";
+
+          if (isAnswered) {
+            if (optIdx === q.correct) {
+              optClass = "bg-emerald-50 border-emerald-500 text-emerald-900";
+              badgeClass = "bg-emerald-200 text-emerald-800";
+            } else if (currentAnswers[qIdx] === optIdx) {
+              optClass = "bg-rose-50 border-rose-400 text-rose-900";
+              badgeClass = "bg-rose-200 text-rose-800";
+            }
+          }
+
+          optionsHtml += `
+            <button onclick="checkStoryQuizAnswer(${storyIdx}, ${qIdx}, ${optIdx})" ${isAnswered ? 'disabled' : ''} class="w-full text-left p-2.5 rounded-lg border ${optClass} font-medium text-xs transition flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full ${badgeClass} text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">${String.fromCharCode(65 + optIdx)}</span>
+              <span>${opt}</span>
+            </button>
+          `;
+        });
+
+        let feedbackHtml = '';
+        if (isAnswered) {
+          const isCorrect = currentAnswers[qIdx] === q.correct;
+          feedbackHtml = `
+            <div class="p-2.5 rounded-lg text-xs font-medium ${isCorrect ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'} flex items-start gap-2 mt-1.5">
+              <i class="fa-solid ${isCorrect ? 'fa-circle-check text-emerald-600' : 'fa-circle-xmark text-rose-600'} text-sm mt-0.5"></i>
+              <div><b>${isCorrect ? '正確！' : '加油！'}</b> ${q.explanation}</div>
+            </div>
+          `;
+        }
+
+        item.innerHTML = `
+          <h4 class="text-xs sm:text-sm font-bold text-slate-900">${q.question}</h4>
+          <div class="space-y-1.5 pt-1">
+            ${optionsHtml}
+          </div>
+          ${feedbackHtml}
+        `;
+        container.appendChild(item);
+      });
+
+      updateStoryQuizScore(storyIdx);
+    }
+
+    function checkStoryQuizAnswer(storyIdx, qIdx, selectedIdx) {
+      storyAnswers[storyIdx][qIdx] = selectedIdx;
+      renderStoryQuiz(storyIdx);
+
+      const q = stories[storyIdx].quizzes[qIdx];
+      if (selectedIdx === q.correct) {
+        showToast("答對了！Great job! 🎉", "success");
+      } else {
+        showToast("再試試看！仔細閱讀解析。", "info");
+      }
+    }
+
+    function updateStoryQuizScore(storyIdx) {
+      const quizzes = stories[storyIdx].quizzes;
+      const answers = storyAnswers[storyIdx];
+      let correctCount = 0;
+      quizzes.forEach((q, idx) => {
+        if (answers[idx] === q.correct) {
+          correctCount++;
+        }
+      });
+      document.getElementById('currentStoryScore').textContent = `${correctCount} / ${quizzes.length}`;
+    }
+
+    /* 【需求 4】：渲染本篇新聞專屬思辨發表區 */
+    function renderStoryDiscussion(discData) {
+      const container = document.getElementById('storyDiscussionBox');
+      container.innerHTML = `
+        <div>
+          <h4 class="text-xs sm:text-sm font-bold text-slate-900 mb-1">${discData.title}</h4>
+          <p class="text-xs text-slate-600 leading-relaxed mb-3">${discData.prompt}</p>
+          <div class="bg-white p-3 rounded-lg border border-slate-200 space-y-1">
+            <span class="text-[11px] font-bold text-indigo-600 block">推薦句型模板 (Sentence Starter)：</span>
+            <p class="text-xs font-mono text-slate-700 leading-relaxed">"${discData.template}"</p>
+          </div>
+        </div>
+        <div class="pt-2">
+          <button onclick="speakSentence('${discData.demoSentence.replace(/'/g, "\\'")}')" class="w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-volume-high"></i> 示範此思辨句型發音
+          </button>
+        </div>
+      `;
+    }
+
+    /* ================= 【需求 2】：列印本篇學習單功能 (Print Worksheet) ================= */
+    function printCurrentWorksheet() {
+      const story = stories[currentStoryIdx];
+
+      // 填入列印模板內容
+      document.getElementById('printStoryImg').src = story.image;
+      document.getElementById('printStoryTitle').textContent = story.title;
+      document.getElementById('printStorySubtitle').textContent = story.subtitle;
+      document.getElementById('printGrammar').innerHTML = story.grammarTip;
+      document.getElementById('printLexileTag').textContent = story.lexile;
+
+      // 全文填入
+      document.getElementById('printArticleText').textContent = story.sentences.map(s => s.en).join(' ');
+
+      // 單字填入
+      const printVocabGrid = document.getElementById('printVocabGrid');
+      printVocabGrid.innerHTML = '';
+      story.vocab.forEach(v => {
+        const d = document.createElement('div');
+        d.className = "border border-gray-300 p-2 rounded";
+        d.innerHTML = `<b>${v.word}</b> <span class="text-gray-500 font-mono">(${v.pos} ${v.phonetic})</span>: ${v.meaning}`;
+        printVocabGrid.appendChild(d);
+      });
+
+      // 3 題 Quiz 填入
+      const printQuizContainer = document.getElementById('printQuizContainer');
+      printQuizContainer.innerHTML = '';
+      story.quizzes.forEach((q, idx) => {
+        const div = document.createElement('div');
+        div.className = "space-y-1";
+        const opts = q.options.map((opt, oIdx) => `<div>${String.fromCharCode(65 + oIdx)}. [  ] ${opt}</div>`).join('');
+        div.innerHTML = `
+          <div class="font-bold">${idx + 1}. ${q.question}</div>
+          <div class="pl-3 space-y-0.5 text-gray-700">${opts}</div>
+        `;
+        printQuizContainer.appendChild(div);
+      });
+
+      // 思辨提示
+      document.getElementById('printDiscussionPrompt').textContent = `Discussion Question: ${story.discussion.prompt}`;
+
+      // 觸發瀏覽器列印
+      window.print();
+    }
+
+    /* ================= 語音朗讀 TTS (Web Speech API) ================= */
+    const synth = window.speechSynthesis;
+
+    function getEnglishVoice() {
+      const voices = synth.getVoices();
+      return voices.find(v => v.lang === 'en-US' && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha'))) 
+        || voices.find(v => v.lang.startsWith('en')) 
+        || null;
+    }
+
+    function speakWord(word) {
+      stopTTS();
+      const utterance = new SpeechSynthesisUtterance(word);
+      utterance.rate = 0.85;
+      const voice = getEnglishVoice();
+      if (voice) utterance.voice = voice;
+      synth.speak(utterance);
+      showToast(`正在朗讀單字: "${word}"`, "info");
+    }
+
+    function speakSentence(text, onEndCallback = null) {
+      stopTTS();
+      const utterance = new SpeechSynthesisUtterance(text);
+      const rate = parseFloat(document.getElementById('rateSelect').value) || 0.9;
+      utterance.rate = rate;
+      const voice = getEnglishVoice();
+      if (voice) utterance.voice = voice;
+      if (onEndCallback) {
+        utterance.onend = onEndCallback;
+      }
+      synth.speak(utterance);
+    }
+
+    function stopTTS() {
+      if (synth.speaking) {
+        synth.cancel();
+      }
+      clearSentenceHighlights();
+    }
+
+    function clearSentenceHighlights() {
+      for (let i = 0; i < 10; i++) {
+        const box = document.getElementById(`sentence-box-${i}`);
+        if (box) box.classList.remove('sentence-active');
+        const fullSpan = document.getElementById(`full-text-sent-${i}`);
+        if (fullSpan) fullSpan.classList.remove('full-article-highlight');
+      }
+    }
+
+    function playSingleSentence(idx) {
+      stopTTS();
+      clearSentenceHighlights();
+
+      const box = document.getElementById(`sentence-box-${idx}`);
+      if (box) box.classList.add('sentence-active');
+
+      const fullSpan = document.getElementById(`full-text-sent-${idx}`);
+      if (fullSpan) fullSpan.classList.add('full-article-highlight');
+
+      const sentenceText = stories[currentStoryIdx].sentences[idx].en;
+      speakSentence(sentenceText, () => {
+        clearSentenceHighlights();
+      });
+    }
+
+    let isPlayingFull = false;
+    let fullPlayIndex = 0;
+
+    function playFullArticle() {
+      stopTTS();
+      isPlayingFull = true;
+      fullPlayIndex = 0;
+      playNextSentenceInSequence();
+    }
+
+    function playNextSentenceInSequence() {
+      const currentStory = stories[currentStoryIdx];
+      if (!isPlayingFull || fullPlayIndex >= currentStory.sentences.length) {
+        isPlayingFull = false;
+        clearSentenceHighlights();
+        showToast("整篇新聞朗讀完畢！", "success");
+        return;
+      }
+
+      clearSentenceHighlights();
+      const box = document.getElementById(`sentence-box-${fullPlayIndex}`);
+      if (box) {
+        box.classList.add('sentence-active');
+        box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      const fullSpan = document.getElementById(`full-text-sent-${fullPlayIndex}`);
+      if (fullSpan) {
+        fullSpan.classList.add('full-article-highlight');
+      }
+
+      const text = currentStory.sentences[fullPlayIndex].en;
+      speakSentence(text, () => {
+        fullPlayIndex++;
+        setTimeout(() => {
+          if (isPlayingFull) playNextSentenceInSequence();
+        }, 500);
+      });
+    }
+
+    /* ================= 錄音跟讀功能 (MediaRecorder) ================= */
+    async function toggleFullRecording() {
+      const btn = document.getElementById('btnRecordFull');
+      const timerEl = document.getElementById('recordingTimer');
+
+      if (!isFullRecording) {
+        try {
+          audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(audioStream);
+          const chunks = [];
+
+          mediaRecorder.ondataavailable = e => {
+            if (e.data.size > 0) chunks.push(e.data);
+          };
+
+          mediaRecorder.onstop = () => {
+            recordedBlob = new Blob(chunks, { type: 'audio/webm' });
+            const audioUrl = URL.createObjectURL(recordedBlob);
+            const player = document.getElementById('recordedAudioPlayer');
+            player.src = audioUrl;
+
+            const playBtn = document.getElementById('btnPlayRecordFull');
+            playBtn.disabled = false;
+            playBtn.classList.remove('bg-slate-100', 'text-slate-400');
+            playBtn.classList.add('bg-emerald-500', 'hover:bg-emerald-600', 'text-white');
+            showToast("全篇錄音完成！可點擊『回聽發音』檢視。", "success");
+          };
+
+          mediaRecorder.start();
+          isFullRecording = true;
+          recordingSeconds = 0;
+          btn.innerHTML = `<i class="fa-solid fa-stop"></i> <span>停止錄音</span>`;
+          btn.classList.replace('bg-rose-500', 'bg-slate-800');
+
+          recordingTimerInterval = setInterval(() => {
+            recordingSeconds++;
+            const mins = String(Math.floor(recordingSeconds / 60)).padStart(2, '0');
+            const secs = String(recordingSeconds % 60).padStart(2, '0');
+            timerEl.textContent = `${mins}:${secs}`;
+          }, 1000);
+
+          showToast("開始錄音... 請大聲朗讀新聞！", "info");
+
+        } catch (err) {
+          showToast("無法存取麥克風，請檢查權限設定！", "error");
+        }
+      } else {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+          mediaRecorder.stop();
+        }
+        if (audioStream) {
+          audioStream.getTracks().forEach(t => t.stop());
+        }
+        clearInterval(recordingTimerInterval);
+        isFullRecording = false;
+        btn.innerHTML = `<i class="fa-solid fa-microphone"></i> <span>整篇錄音</span>`;
+        btn.classList.replace('bg-slate-800', 'bg-rose-500');
+      }
+    }
+
+    function playFullRecording() {
+      const player = document.getElementById('recordedAudioPlayer');
+      if (player && player.src) {
+        player.play();
+        showToast("正在播放你的全篇錄音...", "info");
+      }
+    }
+
+    async function toggleSentenceRecord(sIdx) {
+      const btn = document.getElementById(`btnRecSentence-${sIdx}`);
+      const playBtn = document.getElementById(`btnPlaySentence-${sIdx}`);
+
+      if (currentRecordingSentenceIdx === null) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          sentenceRecorder = new MediaRecorder(stream);
+          const chunks = [];
+
+          sentenceRecorder.ondataavailable = e => chunks.push(e.data);
+          sentenceRecorder.onstop = () => {
+            const blob = new Blob(chunks, { type: 'audio/webm' });
+            sentenceAudioBlobs[sIdx] = blob;
+            playBtn.disabled = false;
+            playBtn.classList.remove('bg-slate-200', 'text-slate-400');
+            playBtn.classList.add('bg-emerald-100', 'text-emerald-700', 'hover:bg-emerald-200');
+            showToast(`第 ${sIdx + 1} 句錄音完成！點擊旁邊 ▶ 即可回聽。`, "success");
+            stream.getTracks().forEach(t => t.stop());
+          };
+
+          sentenceRecorder.start();
+          currentRecordingSentenceIdx = sIdx;
+          btn.innerHTML = `<i class="fa-solid fa-stop text-xs"></i>`;
+          btn.className = "p-1.5 w-8 h-8 rounded-lg bg-slate-900 text-white transition flex items-center justify-center animate-pulse";
+          showToast(`請跟讀第 ${sIdx + 1} 句...`, "info");
+        } catch (e) {
+          showToast("無法啟用麥克風，請確認權限設定！", "error");
+        }
+      } else if (currentRecordingSentenceIdx === sIdx) {
+        sentenceRecorder.stop();
+        currentRecordingSentenceIdx = null;
+        btn.innerHTML = `<i class="fa-solid fa-microphone text-xs"></i>`;
+        btn.className = "p-1.5 w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition flex items-center justify-center";
+      } else {
+        showToast("請先結束上一句的錄音！", "info");
+      }
+    }
+
+    function playSentenceRecording(sIdx) {
+      if (sentenceAudioBlobs[sIdx]) {
+        const url = URL.createObjectURL(sentenceAudioBlobs[sIdx]);
+        const audio = new Audio(url);
+        audio.play();
+        showToast(`正在播放第 ${sIdx + 1} 句的跟讀回放...`, "info");
+      }
+    }
+
+    function recordAndEchoWord(word) {
+      speakWord(word);
+      setTimeout(() => {
+        showToast(`聽完 "${word}" 後，請大聲模仿念出三次！`, "info");
+      }, 700);
+    }
+
+    /* ================= 提示 Toast 元件 ================= */
+    let toastTimeout = null;
+    function showToast(text, type = "info") {
+      const toast = document.getElementById('toastMessage');
+      const toastText = document.getElementById('toastText');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastText.textContent = text;
+      
+      if (type === "success") {
+        toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-lg";
+      } else if (type === "error") {
+        toastIcon.className = "fa-solid fa-triangle-exclamation text-rose-400 text-lg";
+      } else {
+        toastIcon.className = "fa-solid fa-circle-info text-sky-400 text-lg";
+      }
+
+      toast.classList.remove('hidden');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+  </script>
+<script>window.KWN_ARTICLES=["Young Guardians Protect Endangered Sea Turtles", "Space Telescope Spots Atmosphere on Distant Planet", "Wildlife Corridors Give Kenyan Elephants Safe Passage"]</script>
+<script src="../stars.js"></script>
+</body>
+</html>
