@@ -1,6 +1,7 @@
 /* Kids World News 星星集點：每完成一篇 +2⭐，一週三篇都完成再 +2⭐
    星星直接存進打卡網站（魔法時間城堡）的星星銀行（同一個瀏覽器的 localStorage）。
    用法：在每週新聞頁 </body> 前加上 <script src="../stars.js"></script>
+   另外加上 <script src="../rec-save.js"></script>（錄音下載）
    可選：<script>window.KWN_ARTICLES=["篇名1","篇名2","篇名3"]</script> 放在它前面。 */
 (function () {
   var KEY = 'magicCastleRoutine_v2_oct';
