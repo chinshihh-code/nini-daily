@@ -177,6 +177,11 @@
                 </span>
                 <p id="storyLexile" class="text-xs font-bold text-sky-200"></p>
               </div>
+              <!-- 新聞來源連結按鈕 -->
+              <a id="storySourceLink" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-bold backdrop-blur-md transition border border-white/20 shadow-sm" title="前往原文/權威機構來源">
+                <i class="fa-solid fa-arrow-up-right-from-square text-[11px]"></i>
+                <span id="storySourceName">新聞來源</span>
+              </a>
             </div>
           </div>
           <div class="p-4 sm:p-5">
@@ -350,7 +355,10 @@
       <div class="flex gap-4 items-center bg-slate-50 p-3 rounded-xl border border-slate-200">
         <img id="printStoryImg" src="" alt="新聞插圖" class="w-44 h-28 object-cover rounded-lg border border-slate-300 shrink-0">
         <div class="flex-1 min-w-0">
-          <span class="text-[10px] font-black tracking-wider uppercase bg-sky-100 text-sky-800 px-2 py-0.5 rounded">Story Spotlight</span>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-black tracking-wider uppercase bg-sky-100 text-sky-800 px-2 py-0.5 rounded">Story Spotlight</span>
+            <span id="printSourceName" class="text-[10px] font-semibold text-slate-500"></span>
+          </div>
           <h2 id="printStoryTitle" class="text-base font-black text-slate-900 leading-snug mt-1"></h2>
           <p id="printStorySubtitle" class="text-xs text-slate-600 mt-1 leading-normal"></p>
         </div>
@@ -413,6 +421,8 @@
         subtitle: "哥斯大黎加中學生守護海灘，本季成功護送 2,000 隻海龜寶寶平安入海！",
         tag: "Marine Biology",
         lexile: "Lexile: 590L • 10 Sentences",
+        sourceName: "WWF Sea Turtle Conservation",
+        sourceUrl: "https://www.worldwildlife.org/species/sea-turtle",
         image: "https://images.unsplash.com/photo-1762858578231-a9b23d6193c1?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
         grammarTip: "💡 語法解析：注意 <b>However</b>（然而）表轉折，以及 <b>When</b>（當…的時候）引導的條件時間子句。",
         sentences: [
@@ -478,6 +488,8 @@
         subtitle: "天文學家透過韋伯望遠鏡，在 120 光年外的系外行星首度探測到水蒸氣！",
         tag: "Astronomy & Tech",
         lexile: "Lexile: 650L • 10 Sentences",
+        sourceName: "NASA Exoplanet Exploration",
+        sourceUrl: "https://science.nasa.gov/mission/webb/",
         image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?fm=jpg&q=80&w=3000&auto=format&fit=crop",
         grammarTip: "💡 語法解析：關係代名詞 <b>that / which</b>（例：a distant planet that circles a far star）用以補充說明名詞特徵。",
         sentences: [
@@ -543,6 +555,8 @@
         subtitle: "打造安全綠色走廊！肯亞解決人象土地衝突，守護非洲野生動物家庭。",
         tag: "Wildlife Conservation",
         lexile: "Lexile: 620L • 10 Sentences",
+        sourceName: "Sheldrick Wildlife Trust",
+        sourceUrl: "https://www.sheldrickwildlifetrust.org/",
         image: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?fm=jpg&q=80&w=3000&auto=format&fit=crop",
         grammarTip: "💡 語法解析：不定詞 <b>to + 原形動詞</b>（例：to connect two large parks）常表示「目的與功能」。",
         sentences: [
@@ -653,6 +667,12 @@
       document.getElementById('storyTitle').textContent = data.title;
       document.getElementById('storySubtitle').textContent = data.subtitle;
       document.getElementById('grammarTipText').innerHTML = data.grammarTip;
+
+      // 新聞來源設定
+      const sourceBtn = document.getElementById('storySourceLink');
+      const sourceNameEl = document.getElementById('storySourceName');
+      sourceBtn.href = data.sourceUrl;
+      sourceNameEl.textContent = `來源: ${data.sourceName}`;
 
       // 2. 左下方整段完整文章
       renderFullArticleBox(data);
@@ -896,6 +916,7 @@
       document.getElementById('printStoryTitle').textContent = story.title;
       document.getElementById('printStorySubtitle').textContent = story.subtitle;
       document.getElementById('printLexileTag').textContent = story.lexile;
+      document.getElementById('printSourceName').textContent = `Source: ${story.sourceName}`;
 
       // 全文填入
       document.getElementById('printArticleText').textContent = story.sentences.map(s => s.en).join(' ');
