@@ -24,8 +24,8 @@
   }
   function count(r) { var c = 0; for (var i = 1; i <= N; i++) if (r.done[i]) c++; return c; }
 
-  var css = '#kwn-fab{position:fixed;right:18px;bottom:18px;z-index:99999;background:#FFC857;color:#1F2A44;border:0;border-radius:999px;padding:14px 20px;font:800 18px/1 "Nunito","Noto Sans TC",system-ui,sans-serif;box-shadow:0 6px 18px rgba(31,42,68,.25);cursor:pointer}' +
-    '#kwn-panel{position:fixed;right:18px;bottom:82px;z-index:99999;width:min(360px,calc(100vw - 36px));background:#FFF8EC;color:#1F2A44;border:3px solid #FFC857;border-radius:22px;padding:18px;font:16px/1.5 "Nunito","Noto Sans TC",system-ui,sans-serif;box-shadow:0 10px 30px rgba(31,42,68,.25);display:none}' +
+  var css = '#kwn-fab{position:fixed;left:18px;bottom:18px;z-index:99999;background:#FFC857;color:#1F2A44;border:0;border-radius:999px;padding:14px 20px;font:800 18px/1 "Nunito","Noto Sans TC",system-ui,sans-serif;box-shadow:0 6px 18px rgba(31,42,68,.25);cursor:pointer}' +
+    '#kwn-panel{position:fixed;left:18px;bottom:82px;z-index:99999;width:min(360px,calc(100vw - 36px));background:#FFF8EC;color:#1F2A44;border:3px solid #FFC857;border-radius:22px;padding:18px;font:16px/1.5 "Nunito","Noto Sans TC",system-ui,sans-serif;box-shadow:0 10px 30px rgba(31,42,68,.25);display:none}' +
     '#kwn-panel h4{margin:0 0 4px;font-size:20px;font-weight:800}#kwn-panel .kwn-sub{color:#4A5568;font-size:14px;margin-bottom:12px}' +
     '#kwn-panel .kwn-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:2px solid #F0E3CC;border-radius:14px;padding:10px 12px;margin-bottom:8px}' +
     '#kwn-panel .kwn-t{font-weight:700;font-size:15px}#kwn-panel button.kwn-b{border:0;border-radius:12px;padding:8px 12px;font:800 15px "Nunito","Noto Sans TC",sans-serif;cursor:pointer;background:#CFE0FF;color:#1B4A9C;white-space:nowrap}' +
