@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kids World News · 每週英文新聞</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500..700&family=Nunito:wght@400..800&family=Noto+Sans+TC:wght@400;700&display=swap">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#FFF8EC;color:#1F2A44;font-family:'Nunito','Noto Sans TC',Arial,sans-serif}
+header{background:#1F2A44;color:#FFF8EC;padding:36px 20px 40px;text-align:center}
+h1{font-family:'Fredoka',Arial,sans-serif;font-size:44px;margin:0}
+header p{color:#C9D6EE;font-size:18px;margin:8px 0 0}
+main{max-width:760px;margin:0 auto;padding:28px 20px 60px}
+h2{font-family:'Fredoka','Noto Sans TC',Arial,sans-serif;font-size:26px;margin:0 0 14px}
+.list{display:flex;flex-direction:column;gap:14px}
+.issue{display:flex;align-items:center;gap:16px;background:#fff;border:2px solid #F0E3CC;border-radius:20px;padding:18px 20px;text-decoration:none;color:#1F2A44}
+.issue:hover{border-color:#2563C9}
+.issue .d{flex:0 0 auto;background:#FFC857;border-radius:14px;padding:8px 12px;font-family:'Fredoka',Arial,sans-serif;font-weight:700;text-align:center;line-height:1.1}
+.issue .d small{display:block;font-size:13px;font-weight:600}
+.issue .t{font-weight:800;font-size:19px}
+.issue .s{color:#4A5568;font-size:15px;margin-top:2px}
+.issue.latest{border-color:#FF8A4C;background:#FFF4EA}
+.new{display:inline-block;background:#FF8A4C;color:#1F2A44;font-size:12px;font-weight:800;border-radius:99px;padding:2px 10px;margin-left:8px;vertical-align:middle}
+.empty{background:#fff;border:2px dashed #F0E3CC;border-radius:20px;padding:28px;text-align:center;color:#4A5568}
+.back{display:inline-block;margin-top:28px;color:#2563C9;font-weight:800;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+<h1>Kids World News</h1>
+<p>每週國際英文新聞 · 每週 3 篇 · 朗讀、跟讀、小測驗</p>
+</header>
+<main>
+<h2>📰 歷期新聞</h2>
+<div class="list" id="issues">
+<!-- ISSUES START: newest first. One <a class="issue"> per week. -->
+<!-- ISSUES END -->
+</div>
+<div class="empty" id="empty">第一期新聞即將上線！</div>
+<a class="back" href="../">← 回到打卡網站</a>
+</main>
+<script>
+(function(){var l=document.querySelectorAll('#issues .issue');if(l.length){document.getElementById('empty').style.display='none';l[0].classList.add('latest');var t=l[0].querySelector('.t');if(t)t.insertAdjacentHTML('beforeend','<span class="new">NEW</span>');}})();
+</script>
+</body>
+</html>
