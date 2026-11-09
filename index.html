@@ -2,7 +2,12 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#FFF5F7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="魔法城堡">
     <title>✨ 曼妮的魔法時間城堡 ✨</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -24,8 +29,33 @@
         .task-card {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .task-card:hover {
-            transform: translateY(-2px);
+        @media (hover: hover) {
+            .task-card:hover { transform: translateY(-2px); }
+        }
+        .task-card:active { transform: scale(0.985); }
+        html { -webkit-text-size-adjust: 100%; }
+        body { -webkit-tap-highlight-color: transparent; }
+        button, a { touch-action: manipulation; }
+
+        /* ===== 手機 / iPad 版面優化 ===== */
+        /* 底部導覽列 (手機) */
+        .bnav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 7px 0 6px; font-size: 11px; font-weight: 800; color: #9CA3AF; position: relative; }
+        .bnav-btn .bnav-ico { font-size: 22px; line-height: 1; transition: transform 0.2s; filter: grayscale(0.4); }
+        .bnav-btn.active { color: #EC4899; }
+        .bnav-btn.active .bnav-ico { transform: translateY(-2px) scale(1.12); filter: none; }
+        .bnav-btn.active::before { content: ''; position: absolute; top: 0; left: 30%; right: 30%; height: 3px; border-radius: 0 0 4px 4px; background: linear-gradient(90deg, #FF6B8B, #FF8E53); }
+
+        /* 給爸媽的指南：預設收起，點一下展開 */
+        #coach-message:not(.coach-flip) { display: none; }
+        @media (max-width: 767px) {
+            /* 防止 iOS 點輸入框時自動放大畫面 */
+            input, select, textarea { font-size: 16px !important; }
+            /* 日曆：手機預設只顯示「本週」一列 */
+            #october-calendar-grid.cal-compact > .cal-off { display: none; }
+            #calendar-card.cal-compact-mode #month-btn-bar { display: none; }
+        }
+        @media (min-width: 768px) {
+            #cal-week-nav { display: none !important; }
         }
         .task-done {
             background-color: #F3F4F6 !important;
@@ -102,79 +132,79 @@
         ::-webkit-scrollbar-thumb:hover { background: #FF6B8B; }
     </style>
 </head>
-<body class="min-h-screen pb-12 text-gray-800">
+<body class="min-h-screen pb-28 md:pb-12 text-gray-800">
 
     <!-- 頂部導航與狀態列 -->
-    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md shadow-sm border-b border-pink-100">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
-            <div class="flex items-center gap-3">
-                <div class="text-3xl bg-pink-100 p-2 rounded-2xl shadow-inner">🦄</div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h1 id="header-castle-title" class="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md shadow-sm border-b border-pink-100" style="padding-top: env(safe-area-inset-top);">
+        <div class="max-w-4xl md:max-w-6xl mx-auto px-3 md:px-4 py-2 md:py-3 flex justify-between items-center gap-2 md:gap-3">
+            <div class="flex items-center gap-2 md:gap-3 min-w-0">
+                <div class="text-2xl md:text-3xl bg-pink-100 p-1.5 md:p-2 rounded-2xl shadow-inner shrink-0">🦄</div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <h1 id="header-castle-title" class="text-base md:text-2xl font-black truncate bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
                             曼妮的魔法時間城堡
                         </h1>
-                        <button onclick="switchMainView('settings')" class="text-xs bg-pink-100 hover:bg-pink-200 text-pink-700 px-2.5 py-1 rounded-full font-bold transition shadow-sm">
+                        <button onclick="switchMainView('settings')" class="hidden lg:inline-block shrink-0 text-xs bg-pink-100 hover:bg-pink-200 text-pink-700 px-2.5 py-1 rounded-full font-bold transition shadow-sm">
                             ⚙️ 改名字/排課
                         </button>
                     </div>
-                    <p class="text-xs text-gray-500 font-medium">目標：每天晚上 10:00 前帶著微笑進入夢鄉 🌙</p>
+                    <p class="text-[11px] md:text-xs text-gray-500 font-medium truncate">10:00 前帶著微笑進入夢鄉 🌙</p>
                 </div>
             </div>
 
             <!-- 星星錢包與連勝紀錄 -->
-            <div class="flex items-center gap-3">
-                <a href="news/" class="flex items-center bg-sky-50 hover:bg-sky-100 border-2 border-sky-200 px-3 py-1.5 rounded-2xl transition">
+            <div class="flex items-center gap-1.5 md:gap-3 shrink-0">
+                <a href="news/" class="hidden md:flex items-center bg-sky-50 hover:bg-sky-100 border-2 border-sky-200 px-3 py-1.5 rounded-2xl transition">
                     <span class="text-xl mr-1.5">📰</span>
                     <div>
                         <div class="text-[10px] text-sky-700 font-bold leading-none">每週英文新聞</div>
                         <div class="text-sm font-black text-sky-800">讀新聞集星星</div>
                     </div>
                 </a>
-                <div class="flex items-center bg-orange-50 border-2 border-orange-200 px-3 py-1.5 rounded-2xl">
-                    <span class="text-xl mr-1.5">🔥</span>
+                <div class="flex items-center bg-orange-50 border-2 border-orange-200 px-2 md:px-3 py-1 md:py-1.5 rounded-2xl" title="連續準時睡覺">
+                    <span class="text-base md:text-xl mr-1 md:mr-1.5">🔥</span>
                     <div>
-                        <div class="text-[10px] text-orange-600 font-bold leading-none">連續準時睡覺</div>
-                        <div class="text-sm font-black text-orange-700"><span id="streak-count">0</span> 天</div>
+                        <div class="hidden md:block text-[10px] text-orange-600 font-bold leading-none">連續準時睡覺</div>
+                        <div class="text-sm font-black text-orange-700 whitespace-nowrap"><span id="streak-count">0</span> 天</div>
                     </div>
                 </div>
 
-                <div class="flex items-center bg-yellow-50 border-2 border-yellow-300 px-4 py-1.5 rounded-2xl shadow-sm" id="star-wallet">
-                    <span class="text-2xl mr-2">⭐</span>
+                <div class="flex items-center bg-yellow-50 border-2 border-yellow-300 px-2.5 md:px-4 py-1 md:py-1.5 rounded-2xl shadow-sm" id="star-wallet" title="我的星星銀行">
+                    <span class="text-lg md:text-2xl mr-1 md:mr-2">⭐</span>
                     <div>
-                        <div class="text-[10px] text-yellow-700 font-bold leading-none">我的星星銀行</div>
-                        <div class="text-lg font-black text-yellow-600" id="total-stars">0</div>
+                        <div class="hidden md:block text-[10px] text-yellow-700 font-bold leading-none">我的星星銀行</div>
+                        <div class="text-base md:text-lg font-black text-yellow-600 leading-tight" id="total-stars">0</div>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 mt-6">
-        
-        <!-- 親職教練的溫暖悄悄話 (可收合) -->
-        <div class="bg-gradient-to-r from-purple-50 via-pink-50 to-amber-50 rounded-3xl p-5 mb-6 border border-pink-200 shadow-sm relative overflow-hidden">
-            <div class="flex items-start justify-between gap-4">
-                <div class="flex gap-3.5 items-start">
-                    <div class="text-3xl shrink-0 mt-1">💌</div>
-                    <div>
-                        <h2 class="font-bold text-purple-900 text-base md:text-lg flex items-center gap-2">
-                            <span id="coach-title-text">給曼妮寶貝與爸媽的魔法指南</span>
-                            <span class="text-xs bg-purple-200 text-purple-800 px-2.5 py-0.5 rounded-full font-semibold">親職教練小叮嚀</span>
+    <main class="max-w-4xl md:max-w-6xl mx-auto px-3 md:px-4 mt-3 md:mt-6">
+
+        <!-- 親職教練的溫暖悄悄話 (可收合；手機預設收起) -->
+        <div id="coach-card" class="bg-gradient-to-r from-purple-50 via-pink-50 to-amber-50 rounded-2xl md:rounded-3xl px-3.5 py-2.5 md:p-5 mb-3 md:mb-6 border border-pink-200 shadow-sm relative overflow-hidden">
+            <div class="flex items-start justify-between gap-3 md:gap-4 cursor-pointer" onclick="toggleCoachTip()">
+                <div class="flex gap-2.5 md:gap-3.5 items-start min-w-0">
+                    <div class="text-xl md:text-3xl shrink-0 md:mt-1">💌</div>
+                    <div class="min-w-0">
+                        <h2 class="font-bold text-purple-900 text-sm md:text-lg flex items-center gap-2 md:mt-0 mt-0.5">
+                            <span id="coach-title-text" class="truncate">給曼妮寶貝與爸媽的魔法指南</span>
+                            <span class="hidden md:inline text-xs bg-purple-200 text-purple-800 px-2.5 py-0.5 rounded-full font-semibold shrink-0">親職教練小叮嚀</span>
                         </h2>
                         <p class="text-sm text-gray-600 mt-1 leading-relaxed" id="coach-message">
                             親愛的曼妮，跳繩 1000 下聽起來像一座大高山對不對？別擔心！我們把它變成了「5 個小階梯」，每次只要跳 200 下就能拿到星星喔！週二、週三比較晚回家，我們把額外作業變少了；週末也有專屬的新月書屋、鋼琴與英文挑戰，完成後就能享受超長自由時間！💪✨
                         </p>
                     </div>
                 </div>
-                <button onclick="toggleCoachTip()" class="text-xs text-purple-500 hover:text-purple-700 font-bold shrink-0 underline">
-                    收起/展開
+                <button onclick="event.stopPropagation(); toggleCoachTip()" class="text-xs text-purple-500 hover:text-purple-700 font-bold shrink-0 underline mt-0.5 md:mt-0">
+                    <span id="coach-toggle-label">展開</span>
                 </button>
             </div>
         </div>
 
-        <!-- 主選單切換 (每日任務 vs 獎勵商店 vs 家長自訂設定 vs 教練規則說明) -->
-        <div class="flex flex-wrap gap-2 mb-6 bg-white p-1.5 rounded-2xl shadow-sm border border-pink-100 w-fit mx-auto md:mx-0">
+        <!-- 主選單切換 (平板/電腦顯示；手機改用底部導覽列) -->
+        <div class="hidden md:flex flex-wrap gap-2 mb-6 bg-white p-1.5 rounded-2xl shadow-sm border border-pink-100 w-fit">
             <button onclick="switchMainView('schedule')" id="view-btn-schedule" class="px-4 py-2 rounded-xl font-bold text-xs md:text-sm transition-all tab-active">
                 📅 每日任務挑戰
             </button>
@@ -191,38 +221,44 @@
 
         <!-- ==================== 視圖 1：每日任務挑戰 ==================== -->
         <div id="view-schedule">
-            <!-- 10月~12月 跨月魔法日曆選擇器 -->
-            <div class="bg-white rounded-3xl p-5 mb-6 shadow-sm border border-pink-100">
-                <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
-                    <div class="flex items-center gap-2.5">
-                        <span class="text-2xl">🗓️</span>
-                        <div>
-                            <h3 class="font-black text-gray-800 text-base md:text-lg flex flex-wrap items-center gap-2">
+        <div class="md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] md:gap-5 md:items-start">
+          <!-- 左欄 (平板固定)：日曆 + 星期預覽 -->
+          <div class="md:sticky md:top-24 md:self-start">
+            <!-- 跨月魔法日曆 (手機預設只顯示本週，可展開整月) -->
+            <div id="calendar-card" class="bg-white rounded-2xl md:rounded-3xl p-3 md:p-5 mb-3 md:mb-5 shadow-sm border border-pink-100">
+                <div class="flex flex-wrap justify-between items-center gap-2 md:gap-3 mb-2.5 md:mb-4">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="text-xl md:text-2xl">🗓️</span>
+                        <div class="min-w-0">
+                            <h3 class="font-black text-gray-800 text-sm md:text-base flex flex-wrap items-center gap-2">
                                 <span id="calendar-header-title">10月份 魔法集點日曆</span>
-                                <span class="text-xs bg-pink-100 text-pink-700 px-2.5 py-0.5 rounded-full font-bold">整學年 連續集點</span>
                             </h3>
-                            <p class="text-xs text-gray-500">可切換 10月到隔年 8月！點擊日期即可切換當日課表，所有紀錄與星星皆連續累積喔！</p>
+                            <p class="hidden lg:block text-xs text-gray-500">點擊日期即可切換當日課表，所有紀錄與星星皆連續累積喔！</p>
                         </div>
                     </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <div class="bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl text-xs font-bold text-amber-800">
-                            <span id="month-stat-label">10月</span>累積：<span id="month-earned-stars" class="text-sm font-black text-amber-600">0</span> ⭐
-                            <span class="mx-1 text-amber-300">|</span>
-                            本學年總計：<span id="quarter-earned-stars" class="text-sm font-black text-orange-600">0</span> ⭐
-                        </div>
-                        <button onclick="jumpToToday()" class="text-xs bg-pink-500 hover:bg-pink-600 text-white px-3 py-1.5 rounded-xl font-bold transition shadow-sm">
-                            📍 回到今天
+                    <div class="flex items-center gap-1.5 md:gap-2">
+                        <button id="cal-expand-btn" onclick="toggleCalendarExpand()" class="md:hidden text-xs bg-pink-50 text-pink-700 border border-pink-200 px-2.5 py-1.5 rounded-xl font-bold">
+                            📅 整月
+                        </button>
+                        <button onclick="jumpToToday()" class="text-xs bg-pink-500 hover:bg-pink-600 text-white px-2.5 md:px-3 py-1.5 rounded-xl font-bold transition shadow-sm whitespace-nowrap">
+                            📍 今天
                         </button>
                     </div>
                 </div>
 
-                <!-- 月份切換按鈕列 (10月 / 11月 / 12月) -->
-                <div id="month-btn-bar" class="flex gap-2 mb-4 bg-pink-50/70 p-1.5 rounded-2xl border border-pink-100 w-full overflow-x-auto whitespace-nowrap">
+                <div class="bg-amber-50 border border-amber-200 px-2.5 py-1.5 rounded-xl text-[11px] md:text-xs font-bold text-amber-800 mb-2.5 md:mb-4 flex flex-wrap items-center gap-x-1">
+                    <span><span id="month-stat-label">10月</span>累積：<span id="month-earned-stars" class="text-sm font-black text-amber-600">0</span> ⭐</span>
+                    <span class="mx-1 text-amber-300">|</span>
+                    <span>本學年總計：<span id="quarter-earned-stars" class="text-sm font-black text-orange-600">0</span> ⭐</span>
+                </div>
+
+                <!-- 月份切換按鈕列 -->
+                <div id="month-btn-bar" class="flex gap-2 mb-3 md:mb-4 bg-pink-50/70 p-1.5 rounded-2xl border border-pink-100 w-full overflow-x-auto whitespace-nowrap">
                     <!-- 由 JS 依學年月份動態產生 -->
                 </div>
 
                 <!-- 星期標題列 -->
-                <div class="grid grid-cols-7 gap-1.5 text-center text-[11px] font-bold text-gray-400 mb-1.5 px-1">
+                <div class="grid grid-cols-7 gap-1 sm:gap-1.5 text-center text-[11px] font-bold text-gray-400 mb-1 px-0.5">
                     <div class="text-rose-400">日</div>
                     <div>一</div>
                     <div>二</div>
@@ -233,18 +269,20 @@
                 </div>
 
                 <!-- 當月日曆格子 -->
-                <div id="october-calendar-grid" class="grid grid-cols-7 gap-1.5 sm:gap-2">
-                    <!-- 由 JS 動態生成 10月/11月/12月 日期 -->
+                <div id="october-calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-1.5 lg:gap-2">
+                    <!-- 由 JS 動態生成 -->
+                </div>
+
+                <!-- 手機：上一週 / 下一週 -->
+                <div id="cal-week-nav" class="flex md:hidden justify-between items-center mt-2 text-xs font-bold">
+                    <button onclick="shiftWeek(-1)" class="px-3 py-1.5 rounded-xl bg-gray-50 text-gray-600 border border-gray-200 active:bg-pink-50">◀ 上一週</button>
+                    <span id="cal-week-label" class="text-gray-400"></span>
+                    <button onclick="shiftWeek(1)" class="px-3 py-1.5 rounded-xl bg-gray-50 text-gray-600 border border-gray-200 active:bg-pink-50">下一週 ▶</button>
                 </div>
             </div>
 
-            <!-- 特定期間 / 考前 14 天衝刺倒數橫幅 (當日若有特定期間任務時自動顯示) -->
-            <div id="special-period-banner" class="hidden rounded-3xl p-5 mb-6 border-2 shadow-sm transition-all">
-                <!-- 由 JS 動態渲染考前倒數或考試日鼓勵橫幅 -->
-            </div>
-
-            <!-- 星期快速預覽標籤 (顯示目前選中日期對應的星期類型) -->
-            <div class="grid grid-cols-4 sm:grid-cols-7 gap-2 mb-6">
+            <!-- 星期快速預覽標籤 (大螢幕才顯示) -->
+            <div class="hidden lg:grid grid-cols-4 gap-2 mb-5">
                 <button onclick="selectFirstWeekdayOfMonth('mon')" id="day-btn-mon" class="day-btn py-2 px-1.5 rounded-2xl font-bold text-center bg-white border-2 border-pink-100 hover:border-pink-300 transition-all">
                     <div class="text-xs opacity-75">星期一</div>
                     <div class="text-[11px] md:text-xs font-black">16:30 到家</div>
@@ -281,73 +319,84 @@
                     <div class="text-[10px] mt-0.5 px-1.5 py-0.5 rounded-full bg-sky-100 text-sky-700 inline-block">英文家教 🔤</div>
                 </button>
             </div>
+          </div>
 
-            <!-- 當日進度條與摘要 -->
-            <div class="bg-white rounded-3xl p-5 mb-6 shadow-sm border border-pink-100">
-                <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
-                    <div>
-                        <div class="flex items-center gap-2">
+          <!-- 右欄：當日進度 + 跳繩 + 任務清單 -->
+          <div class="min-w-0">
+            <!-- 特定期間 / 考前 14 天衝刺倒數橫幅 -->
+            <div id="special-period-banner" class="hidden rounded-3xl p-5 mb-6 border-2 shadow-sm transition-all"></div>
+
+            <!-- 當日進度條與摘要 (手機捲動時固定在頂部) -->
+            <div id="day-progress-card" class="sticky z-20 md:static bg-white/95 backdrop-blur-md rounded-2xl md:rounded-3xl p-3 md:p-5 mb-3 md:mb-5 shadow-sm border border-pink-100" style="top: calc(58px + env(safe-area-inset-top));">
+                <div class="flex justify-between items-start gap-2 mb-2">
+                    <div class="min-w-0">
+                        <div class="flex flex-wrap items-center gap-1.5">
                             <span id="current-date-badge" class="text-xs font-black px-2.5 py-1 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-sm">10月15日</span>
                             <span id="current-day-badge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-pink-100 text-pink-700">星期四</span>
-                            <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">當日已得：<strong id="daily-earned-stars">0</strong> ⭐</span>
+                            <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-full border border-amber-200 whitespace-nowrap">已得 <strong id="daily-earned-stars">0</strong> ⭐</span>
                         </div>
-                        <h3 id="current-day-title" class="text-lg font-black text-gray-800 mt-1.5">今日魔法任務清單</h3>
+                        <h3 id="current-day-title" class="hidden md:block text-lg font-black text-gray-800 mt-1.5">今日魔法任務清單</h3>
                     </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <span class="text-sm font-bold text-gray-500 mr-1">當日完成度：<strong id="progress-text" class="text-pink-600">0%</strong></span>
-                        <button onclick="openEditCurrentDaySchedule()" class="text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-3 py-1.5 rounded-xl font-bold transition">
-                            ✏️ 自訂此日任務
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button onclick="openEditCurrentDaySchedule()" title="自訂此日任務" class="text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-2 md:px-3 py-1.5 rounded-xl font-bold transition">
+                            ✏️<span class="hidden lg:inline"> 自訂此日任務</span>
                         </button>
-                        <button onclick="resetCurrentDay()" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-xl font-bold transition">
-                            🔄 重置當日 (扣回星星)
+                        <button onclick="resetCurrentDay()" title="重置當日 (扣回星星)" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2 md:px-3 py-1.5 rounded-xl font-bold transition">
+                            🔄<span class="hidden lg:inline"> 重置當日</span>
                         </button>
                     </div>
                 </div>
-                <div class="w-full bg-gray-100 h-4 rounded-full overflow-hidden p-0.5">
-                    <div id="progress-bar" class="bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                <div class="flex items-center gap-2">
+                    <div class="flex-1 bg-gray-100 h-3.5 md:h-4 rounded-full overflow-hidden p-0.5">
+                        <div id="progress-bar" class="bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <strong id="progress-text" class="text-sm font-black text-pink-600 w-10 text-right">0%</strong>
                 </div>
             </div>
 
-            <!-- 跳跳繩 1000 下專屬「分段闖關卡」 (核心痛點解決方案) -->
-            <div class="bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 rounded-3xl p-5 mb-6 border-2 border-indigo-200 shadow-sm">
-                <div class="flex flex-wrap justify-between items-start gap-4 mb-4">
-                    <div class="flex items-center gap-3">
-                        <div class="text-4xl bg-white p-2.5 rounded-2xl shadow-sm">🪢</div>
-                        <div>
+            <!-- 跳跳繩 1000 下「分段闖關卡」 -->
+            <div class="bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 rounded-2xl md:rounded-3xl p-3 md:p-5 mb-3 md:mb-5 border-2 border-indigo-200 shadow-sm">
+                <div class="flex justify-between items-center gap-2 md:gap-4 mb-2.5 md:mb-4">
+                    <div class="flex items-center gap-2 md:gap-3 min-w-0">
+                        <div class="text-2xl md:text-4xl bg-white p-1.5 md:p-2.5 rounded-xl md:rounded-2xl shadow-sm shrink-0">🪢</div>
+                        <div class="min-w-0">
                             <div class="flex items-center gap-2">
-                                <h3 class="text-lg font-black text-indigo-950">跳跳繩 1000 下大魔王挑戰！</h3>
-                                <span class="bg-indigo-600 text-white text-xs px-2.5 py-0.5 rounded-full font-bold">分段集點外掛</span>
+                                <h3 class="text-sm md:text-lg font-black text-indigo-950">跳繩 1000 下挑戰！</h3>
+                                <span class="hidden lg:inline bg-indigo-600 text-white text-xs px-2.5 py-0.5 rounded-full font-bold">分段集點外掛</span>
                             </div>
-                            <p class="text-xs md:text-sm text-indigo-700 mt-0.5">
-                                不用一次跳完！拆成 <strong>5 小組（每組 200 下，約 2~3 分鐘）</strong>，可以在下午、飯前或休息空檔分次完成喔！
+                            <p class="hidden lg:block text-sm text-indigo-700 mt-0.5">
+                                不用一次跳完！拆成 <strong>5 小組（每組 200 下，約 2~3 分鐘）</strong>，可以分次完成喔！
                             </p>
+                            <p class="lg:hidden text-[11px] text-indigo-600 font-bold">5 組 × 200 下，可以分次跳</p>
                         </div>
                     </div>
-                    <div class="bg-white/80 px-3.5 py-2 rounded-2xl border border-indigo-100 text-right">
-                        <div class="text-[11px] text-indigo-500 font-bold">今日跳繩累積</div>
-                        <div class="text-xl font-black text-indigo-700"><span id="rope-count">0</span> / 1000 <span class="text-xs font-normal">下</span></div>
+                    <div class="bg-white/80 px-2.5 md:px-3.5 py-1 md:py-2 rounded-xl md:rounded-2xl border border-indigo-100 text-right shrink-0">
+                        <div class="text-[10px] md:text-[11px] text-indigo-500 font-bold">今日累積</div>
+                        <div class="text-base md:text-xl font-black text-indigo-700 whitespace-nowrap"><span id="rope-count">0</span><span class="text-xs font-bold text-indigo-400">/1000</span></div>
                     </div>
                 </div>
 
                 <!-- 5 個 200 下打卡按鈕 -->
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5" id="rope-stages-container">
+                <div class="grid grid-cols-5 gap-1.5 md:gap-2" id="rope-stages-container">
                     <!-- 由 JS 動態生成 -->
                 </div>
-                <div id="rope-timer-launch" class="mt-3"></div>
+                <div id="rope-timer-launch" class="mt-2.5 md:mt-3"></div>
                 <div id="rope-bonus-banner" class="hidden mt-3 bg-gradient-to-r from-amber-400 to-orange-400 text-white text-center py-2 px-4 rounded-xl font-bold text-sm shadow-sm">
                     🎉 太神啦！今日 1000 下全部破關！額外獲得「毅力大魔王獎章 +3 ⭐」！
                 </div>
             </div>
 
             <!-- 時間軸任務列表 -->
-            <div class="space-y-3" id="timeline-container">
+            <div class="space-y-2.5 md:space-y-3" id="timeline-container">
                 <!-- 由 JS 動態生成每日時間軸 -->
             </div>
+          </div>
+        </div>
         </div>
 
         <!-- ==================== 視圖 2：星星許願池 (獎勵商店) ==================== -->
         <div id="view-shop" class="hidden">
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100 mb-6">
+            <div class="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-pink-100 mb-6">
                 <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
                     <div>
                         <h2 id="shop-header-title" class="text-xl font-black text-gray-800 flex items-center gap-2">
@@ -384,7 +433,7 @@
             </div>
 
             <!-- 兌換紀錄 -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100">
+            <div class="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-pink-100">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="font-bold text-gray-800">📜 我的願望兌換紀錄</h3>
                     <button onclick="clearHistory()" class="text-xs text-gray-400 hover:text-red-500">清空紀錄</button>
@@ -430,7 +479,7 @@
             </div>
 
             <!-- 區塊 A：修改孩子名字 -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100">
+            <div class="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-pink-100">
                 <div class="flex items-center gap-2.5 mb-2">
                     <span class="text-2xl">👧</span>
                     <h2 class="text-lg md:text-xl font-black text-gray-800">步驟一：修改寶貝的名字（分享給朋友超方便！）</h2>
@@ -447,7 +496,7 @@
             </div>
 
             <!-- 區塊 B：自訂週一至週日任務清單 -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100">
+            <div class="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-pink-100">
                 <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
                     <div>
                         <h2 class="text-lg md:text-xl font-black text-gray-800 flex items-center gap-2">
@@ -531,7 +580,7 @@
             </div>
 
             <!-- 區塊 C：特定期間 / 考前複習計畫設定 -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100">
+            <div class="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-pink-100">
                 <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
                     <div>
                         <h2 class="text-lg md:text-xl font-black text-gray-800 flex items-center gap-2">
@@ -639,7 +688,7 @@
 
         <!-- ==================== 視圖 3：親職教練排課邏輯與規則說明 ==================== -->
         <div id="view-rules" class="hidden space-y-6">
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100">
+            <div class="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-pink-100">
                 <h2 class="text-xl font-black text-pink-600 mb-4 flex items-center gap-2">
                     🧠 兒童心理學教練的設計巧思（給爸媽看的執行秘訣）
                 </h2>
@@ -672,7 +721,7 @@
             </div>
 
             <!-- 每週額外任務分配總覽表 -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-pink-100 overflow-x-auto">
+            <div class="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-pink-100 overflow-x-auto">
                 <h3 class="text-lg font-black text-gray-800 mb-3">📊 曼妮的週一至週日「重點任務」平衡分配表</h3>
                 <table class="w-full text-left border-collapse text-xs md:text-sm">
                     <thead>
@@ -949,7 +998,18 @@
     </div>
 
     <!-- 底部狀態提示彈出框 (Toast) -->
-    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-gray-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3">
+    <!-- 手機底部導覽列 (iPhone) -->
+    <nav id="bottom-nav" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-pink-100 shadow-[0_-4px_16px_rgba(255,107,139,0.12)]" style="padding-bottom: env(safe-area-inset-bottom);">
+        <div class="grid grid-cols-5 max-w-md mx-auto">
+            <button onclick="switchMainView('schedule')" data-view="schedule" class="bnav-btn active"><span class="bnav-ico">📅</span><span>任務</span></button>
+            <button onclick="switchMainView('shop')" data-view="shop" class="bnav-btn"><span class="bnav-ico">🎁</span><span>許願池</span></button>
+            <a href="news/" class="bnav-btn"><span class="bnav-ico">📰</span><span>英文新聞</span></a>
+            <button onclick="switchMainView('rules')" data-view="rules" class="bnav-btn"><span class="bnav-ico">💡</span><span>秘訣</span></button>
+            <button onclick="switchMainView('settings')" data-view="settings" class="bnav-btn"><span class="bnav-ico">⚙️</span><span>家長</span></button>
+        </div>
+    </nav>
+
+    <div id="toast" class="fixed left-3 right-3 md:left-auto md:right-5 bottom-[calc(76px+env(safe-area-inset-bottom))] md:bottom-5 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-gray-900 text-white px-4 md:px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3">
         <span id="toast-icon" class="text-2xl">⭐</span>
         <span id="toast-msg" class="font-bold text-sm">獲得星星！</span>
     </div>
@@ -1774,6 +1834,28 @@
             renderScheduleView();
         }
 
+        // ===== 手機日曆：本週 / 整月 切換 =====
+        let calendarExpanded = false;
+        function toggleCalendarExpand() {
+            calendarExpanded = !calendarExpanded;
+            renderOctoberCalendar();
+        }
+        // 上一週 / 下一週 (可跨月)
+        function shiftWeek(delta) {
+            const m = appState.currentMonth;
+            const target = new Date(yearOf(m), m - 1, appState.currentDate + delta * 7);
+            const nm = target.getMonth() + 1;
+            if (!SUPPORTED_MONTHS[nm] || SUPPORTED_MONTHS[nm].year !== target.getFullYear()) {
+                showToast('已經到日曆的最邊邊囉！', '📅');
+                return;
+            }
+            appState.currentMonth = nm;
+            appState.currentDate = target.getDate();
+            ensureDateRecord(nm, appState.currentDate);
+            saveState();
+            renderScheduleView();
+        }
+
         // 回到今天 (自動判斷今天是 10、11 或 12 月)
         function jumpToToday() {
             const now = new Date();
@@ -1838,7 +1920,7 @@
             // 更新月份標題與切換按鈕高亮
             const headerTitle = document.getElementById('calendar-header-title');
             if (headerTitle) {
-                headerTitle.textContent = `${monthInfo.icon} ${monthInfo.year}年${monthInfo.name} 魔法集點日曆（共 ${totalDays} 天）`;
+                headerTitle.innerHTML = `${monthInfo.icon} ${monthInfo.year}年${monthInfo.name}<span class="hidden lg:inline"> 魔法集點日曆</span>`;
             }
             const monthLabel = document.getElementById('month-stat-label');
             if (monthLabel) {
@@ -1852,8 +1934,27 @@
             for (let i = 0; i < firstDayOfWeek; i++) {
                 const emptyCell = document.createElement('div');
                 emptyCell.className = 'p-2 rounded-2xl bg-gray-50/40 border border-dashed border-gray-100';
+                emptyCell.dataset.row = 0;
                 grid.appendChild(emptyCell);
             }
+
+            // 手機版：只顯示選中日期所在的那一週
+            const selectedRow = Math.floor((firstDayOfWeek + appState.currentDate - 1) / 7);
+            const compact = !calendarExpanded;
+            grid.classList.toggle('cal-compact', compact);
+            const calCard = document.getElementById('calendar-card');
+            if (calCard) calCard.classList.toggle('cal-compact-mode', compact);
+            const expandBtn = document.getElementById('cal-expand-btn');
+            if (expandBtn) expandBtn.textContent = compact ? '📅 整月' : '🔼 收起';
+            if (compact) {
+                grid.querySelectorAll('[data-row]').forEach(c => {
+                    if (Number(c.dataset.row) !== selectedRow) c.classList.add('cal-off');
+                });
+            }
+            const weekLabel = document.getElementById('cal-week-label');
+            if (weekLabel) weekLabel.textContent = compact ? `${monthNum}月 第 ${selectedRow + 1} 週` : '';
+            const weekNav = document.getElementById('cal-week-nav');
+            if (weekNav) weekNav.style.display = compact ? '' : 'none';
 
             const now = new Date();
             const isCurrentRealMonth = (now.getMonth() + 1 === monthNum && now.getFullYear() === monthInfo.year);
@@ -1878,7 +1979,10 @@
                 const isExamDay = activePlans.some(p => p.mode === 'exam_day');
 
                 const btn = document.createElement('button');
-                btn.onclick = () => selectDate(d);
+                btn.onclick = () => { calendarExpanded = false; selectDate(d); };
+                const row = Math.floor((firstDayOfWeek + d - 1) / 7);
+                btn.dataset.row = row;
+                if (compact && row !== selectedRow) btn.classList.add('cal-off');
 
                 let baseStyle = 'bg-white border-pink-100 hover:border-pink-300 text-gray-700';
                 if (isSelected) {
@@ -1893,11 +1997,11 @@
                     baseStyle = 'bg-amber-50/70 border-amber-200 text-gray-800';
                 }
 
-                btn.className = `relative py-1.5 px-1 rounded-2xl border-2 transition-all flex flex-col items-center justify-center min-h-[64px] ${baseStyle}`;
+                btn.className = `relative py-1.5 px-0.5 sm:px-1 rounded-xl sm:rounded-2xl border-2 transition-all flex flex-col items-center justify-center min-h-[54px] sm:min-h-[64px] ${baseStyle}${(compact && row !== selectedRow) ? ' cal-off' : ''}`;
                 btn.innerHTML = `
                     ${isToday ? `<span class="absolute -top-1.5 -right-1 text-[9px] font-black px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-yellow-300 text-pink-900' : 'bg-pink-500 text-white'} shadow-sm">今天</span>` : ''}
-                    <div class="text-xs sm:text-sm font-black leading-tight">${monthNum}/${d}</div>
-                    ${firstPlan ? `<div class="text-[9px] font-bold px-1 rounded mt-0.5 leading-tight ${isSelected ? 'bg-white/25 text-white' : (isExamDay ? 'bg-rose-500 text-white' : 'bg-rose-100 text-rose-700')}">${firstPlan.calendarTag || '🎯專案'}</div>` : ''}
+                    <div class="text-sm sm:text-base font-black leading-tight">${d}</div>
+                    ${firstPlan ? `<div class="text-[9px] font-bold px-0.5 rounded mt-0.5 leading-tight max-w-full overflow-hidden whitespace-nowrap text-ellipsis ${isSelected ? 'bg-white/25 text-white' : (isExamDay ? 'bg-rose-500 text-white' : 'bg-rose-100 text-rose-700')}">${firstPlan.calendarTag || '🎯專案'}</div>` : ''}
                     <div class="mt-0.5 text-[10px] font-bold flex items-center gap-0.5 ${isSelected ? 'text-yellow-200' : (earnedStars > 0 ? 'text-amber-600' : 'text-gray-300')}">
                         ${isAllDone ? '👑 滿貫' : (earnedStars > 0 ? `⭐+${earnedStars}` : '—')}
                     </div>
@@ -1963,7 +2067,7 @@
                         countdownBadge = `計畫倒數第 ${leftEnd} 天`;
                     }
 
-                    specialBanner.className = `rounded-3xl p-5 mb-6 border-2 shadow-sm transition-all ${
+                    specialBanner.className = `rounded-2xl md:rounded-3xl p-3 md:p-5 mb-3 md:mb-5 border-2 shadow-sm transition-all ${
                         isExamDay
                             ? 'bg-gradient-to-r from-amber-100 via-yellow-50 to-rose-100 border-amber-300'
                             : 'bg-gradient-to-r from-rose-50 via-pink-50 to-orange-50 border-rose-200'
@@ -1971,7 +2075,7 @@
                     specialBanner.innerHTML = `
                         <div class="flex flex-wrap items-center justify-between gap-3">
                             <div class="flex items-start gap-3.5">
-                                <div class="text-3xl bg-white p-2.5 rounded-2xl shadow-sm shrink-0">${isExamDay ? '💯' : '🔥'}</div>
+                                <div class="text-2xl md:text-3xl bg-white p-1.5 md:p-2.5 rounded-xl md:rounded-2xl shadow-sm shrink-0">${isExamDay ? '💯' : '🔥'}</div>
                                 <div>
                                     <div class="flex flex-wrap items-center gap-2">
                                         <span class="text-xs font-black px-2.5 py-0.5 rounded-full ${isExamDay ? 'bg-amber-500 text-white' : 'bg-rose-500 text-white'}">${p.name}</span>
@@ -2038,25 +2142,25 @@
                 };
 
                 const card = document.createElement('div');
-                card.className = `task-card rounded-2xl p-4 border-2 shadow-sm flex items-center justify-between gap-4 cursor-pointer ${typeStyles[task.type] || 'bg-white border-gray-100'} ${isDone ? 'task-done' : ''}`;
+                card.className = `task-card rounded-2xl p-3 md:p-4 border-2 shadow-sm flex items-center justify-between gap-2.5 md:gap-4 cursor-pointer select-none ${typeStyles[task.type] || 'bg-white border-gray-100'} ${isDone ? 'task-done' : ''}`;
                 card.onclick = () => toggleTask(task);
 
                 card.innerHTML = `
-                    <div class="flex items-start gap-3.5 flex-1">
-                        <div class="mt-1 w-7 h-7 rounded-xl border-2 flex items-center justify-center shrink-0 transition-all ${isDone ? 'bg-pink-500 border-pink-500 text-white' : 'border-pink-300 bg-white'}">
+                    <div class="flex items-start gap-2.5 md:gap-3.5 flex-1 min-w-0">
+                        <div class="mt-0.5 md:mt-1 w-8 h-8 md:w-7 md:h-7 rounded-xl border-2 flex items-center justify-center shrink-0 font-black transition-all ${isDone ? 'bg-pink-500 border-pink-500 text-white' : 'border-pink-300 bg-white'}">
                             ${isDone ? '✓' : ''}
                         </div>
-                        <div class="flex-1">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="text-xs font-black px-2.5 py-0.5 rounded-lg bg-gray-100 text-gray-700">${task.time}</span>
-                                ${task.badge ? `<span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-sm">${task.badge}</span>` : ''}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-1.5 md:gap-2">
+                                <span class="text-[11px] md:text-xs font-black px-2 md:px-2.5 py-0.5 rounded-lg bg-gray-100 text-gray-700">${task.time}</span>
+                                ${task.badge ? `<span class="text-[11px] md:text-xs font-bold px-2 md:px-2.5 py-0.5 rounded-full bg-gradient-to-r from-pink-500 to-orange-400 text-white shadow-sm">${task.badge}</span>` : ''}
                             </div>
-                            <h4 class="task-title font-bold text-base md:text-lg text-gray-800 mt-1">${task.title}</h4>
-                            <p class="text-xs md:text-sm text-gray-500 mt-0.5 leading-relaxed">${task.desc}</p>
+                            <h4 class="task-title font-bold text-[15px] md:text-lg text-gray-800 mt-1 leading-snug">${task.title}</h4>
+                            ${task.desc ? `<p class="text-xs md:text-sm text-gray-500 mt-0.5 leading-relaxed ${isDone ? 'hidden md:block' : ''}">${task.desc}</p>` : ''}
                         </div>
                     </div>
                     <div class="shrink-0 text-right">
-                        <div class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl font-black text-sm ${isDone ? 'bg-gray-200 text-gray-500' : 'bg-yellow-100 text-yellow-700 border border-yellow-300'}">
+                        <div class="inline-flex items-center gap-0.5 md:gap-1 px-2 md:px-3 py-1 md:py-1.5 rounded-xl font-black text-xs md:text-sm whitespace-nowrap ${isDone ? 'bg-gray-200 text-gray-500' : 'bg-yellow-100 text-yellow-700 border border-yellow-300'}">
                             <span>+${task.points}</span>
                             <span>⭐</span>
                         </div>
@@ -2080,22 +2184,24 @@
             container.innerHTML = '';
 
             let totalJumps = 0;
-            const stageLabels = ['第 1 組 (暖身)', '第 2 組 (加速)', '第 3 組 (過半!)', '第 4 組 (衝刺)', '第 5 組 (破關!)'];
+            const stageTags = ['暖身', '加速', '過半!', '衝刺', '破關!'];
 
             stages.forEach((done, idx) => {
                 if (done) totalJumps += 200;
                 const btn = document.createElement('button');
-                btn.className = `p-3 rounded-2xl border-2 text-center transition-all flex flex-col items-center justify-center gap-1 ${
+                btn.className = `py-2 px-0.5 md:p-3 rounded-xl md:rounded-2xl border-2 text-center transition-all flex flex-col items-center justify-center gap-0.5 md:gap-1 min-h-[76px] ${
                     done 
                     ? 'bg-indigo-600 border-indigo-600 text-white shadow-md scale-[0.98]' 
                     : 'bg-white border-indigo-200 hover:border-indigo-400 text-indigo-900'
                 }`;
                 btn.onclick = () => toggleRopeStage(monthNum, dateNum, idx);
                 btn.innerHTML = `
-                    <span class="text-[11px] font-bold ${done ? 'text-indigo-200' : 'text-indigo-400'}">${stageLabels[idx]}</span>
-                    <span class="text-base font-black">${done ? '✅ 200 下' : '🪢 200 下'}</span>
-                    <span class="text-xs font-bold px-2 py-0.5 rounded-full ${done ? 'bg-indigo-500 text-yellow-300' : 'bg-yellow-100 text-yellow-700'}">+1 ⭐</span>
-                    ${(done && record.ropeTimes && record.ropeTimes[idx]) ? `<span class="text-[11px] font-bold text-indigo-100">⏱️ ${formatRopeTime(record.ropeTimes[idx])}</span>` : ''}
+                    <span class="text-[10px] md:text-[11px] font-bold leading-tight ${done ? 'text-indigo-200' : 'text-indigo-400'}">第${idx + 1}組<span class="hidden lg:inline"> (${stageTags[idx]})</span></span>
+                    <span class="text-lg md:text-base leading-none">${done ? '✅' : '🪢'}</span>
+                    <span class="text-xs md:text-sm font-black leading-tight">200<span class="hidden lg:inline"> 下</span></span>
+                    ${(done && record.ropeTimes && record.ropeTimes[idx])
+                        ? `<span class="text-[10px] md:text-[11px] font-bold text-indigo-100 leading-tight">⏱️${formatRopeTime(record.ropeTimes[idx])}</span>`
+                        : `<span class="text-[10px] md:text-xs font-bold px-1.5 md:px-2 py-0.5 rounded-full ${done ? 'bg-indigo-500 text-yellow-300' : 'bg-yellow-100 text-yellow-700'}">+1⭐</span>`}
                 `;
                 container.appendChild(btn);
             });
@@ -2112,7 +2218,7 @@
                     launch.innerHTML = `<div class="w-full text-center py-2.5 rounded-2xl bg-indigo-50 text-indigo-700 font-bold text-sm border border-indigo-100">今天 5 組都跳完了，好厲害！${best ? `（🏆 最快紀錄 ${formatRopeTime(best)}）` : ''}</div>`;
                 } else {
                     const halfText = (typeof record.ropeHalfSec === 'number') ? '（已跳 100 下，再 100 下就完成）' : ' 200 下';
-                    launch.innerHTML = `<button onclick="openRopeTimer()" class="w-full py-3 rounded-2xl font-black text-white text-base shadow-md bg-gradient-to-r from-pink-500 to-rose-400 hover:opacity-95 transition">
+                    launch.innerHTML = `<button onclick="openRopeTimer()" class="w-full py-2.5 md:py-3 rounded-2xl font-black text-white text-[15px] md:text-base shadow-md bg-gradient-to-r from-pink-500 to-rose-400 hover:opacity-95 transition">
                         ⏱️ 開始計時：跳第 ${nextIdx + 1} 組${halfText}${bestText}
                     </button>`;
                 }
@@ -3445,6 +3551,11 @@
             document.getElementById(`view-${viewName}`).classList.remove('hidden');
             document.getElementById(`view-btn-${viewName}`).className = 'px-4 py-2 rounded-xl font-bold text-xs md:text-sm transition-all tab-active';
 
+            document.querySelectorAll('#bottom-nav [data-view]').forEach(b => {
+                b.classList.toggle('active', b.dataset.view === viewName);
+            });
+            window.scrollTo(0, 0);
+
             if (viewName === 'shop') renderShopView();
             if (viewName === 'schedule') renderScheduleView();
             if (viewName === 'settings') { renderSettingsView(); renderPinStatus(); }
@@ -3452,7 +3563,9 @@
 
         function toggleCoachTip() {
             const msg = document.getElementById('coach-message');
-            msg.classList.toggle('hidden');
+            msg.classList.toggle('coach-flip');
+            const label = document.getElementById('coach-toggle-label');
+            if (label) label.textContent = msg.classList.contains('coach-flip') ? '收起' : '展開';
         }
 
         // 初始化啟動
