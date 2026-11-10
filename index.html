@@ -70,6 +70,7 @@
             /* 手機：只看本週時，累積星星改成一行小字 */
             /* 手機：只看本週時先收起累積星星（按「整月」就會出現） */
             #calendar-card.cal-compact-mode #cal-stats-bar { display: none; }
+            #october-calendar-grid { margin-top: 8px; }
             /* 手機：當日進度縮成一行 */
             #day-progress-card { display: flex; align-items: center; gap: 8px; padding: 10px 12px; }
             #day-progress-card > div:first-child { margin-bottom: 0; flex-shrink: 0; }
@@ -2034,9 +2035,9 @@
 
                 btn.className = `relative py-1.5 px-0.5 sm:px-1 rounded-xl sm:rounded-2xl border-2 transition-all flex flex-col items-center justify-center min-h-[48px] sm:min-h-[64px] ${baseStyle}${(compact && row !== selectedRow) ? ' cal-off' : ''}`;
                 btn.innerHTML = `
-                    ${isToday ? `<span class="absolute -top-1.5 -right-1 cal-mini font-black px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-yellow-300 text-pink-900' : 'bg-pink-500 text-white'} shadow-sm">今天</span>` : ''}
+                    ${isToday ? `<span class="absolute -top-3 -right-1 cal-mini font-black px-1.5 py-0.2 rounded-full leading-tight ${isSelected ? 'bg-yellow-300 text-pink-900' : 'bg-pink-500 text-white'} shadow-sm">今天</span>` : ''}
                     <div class="text-sm sm:text-base font-black leading-tight">${d}</div>
-                    ${firstPlan ? `<div class="cal-mini font-bold px-0.5 rounded mt-0.5 leading-tight max-w-full overflow-hidden whitespace-nowrap text-ellipsis ${isSelected ? 'bg-white/25 text-white' : (isExamDay ? 'bg-rose-500 text-white' : 'bg-rose-100 text-rose-700')}">${firstPlan.calendarTag || '🎯專案'}</div>` : ''}
+                    ${firstPlan ? `<div class="cal-mini font-bold px-0.5 rounded mt-0.5 leading-tight max-w-full overflow-hidden whitespace-nowrap ${isSelected ? 'bg-white/25 text-white' : (isExamDay ? 'bg-rose-500 text-white' : 'bg-rose-100 text-rose-700')}">${firstPlan.calendarTag || '🎯專案'}</div>` : ''}
                     <div class="mt-0.5 cal-mini font-bold flex items-center gap-0.5 ${isSelected ? 'text-yellow-200' : (earnedStars > 0 ? 'text-amber-600' : 'text-gray-300')} ${(firstPlan && !isAllDone && earnedStars === 0) ? 'hidden md:flex' : ''}">
                         ${isAllDone ? '👑 滿貫' : (earnedStars > 0 ? `⭐+${earnedStars}` : '—')}
                     </div>
