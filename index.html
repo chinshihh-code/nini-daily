@@ -68,9 +68,13 @@
             main { display: flex; flex-direction: column; }
             main > #coach-card { order: 99; margin-top: 12px; }
             /* 手機：只看本週時，累積星星改成一行小字 */
-            #calendar-card.cal-compact-mode #cal-stats-bar { background: none; border: 0; padding: 0 2px; margin: 6px 0 0; justify-content: center; }
-            #calendar-card.cal-compact-mode #cal-stats-bar { order: 5; }
-            #calendar-card.cal-compact-mode { display: flex; flex-direction: column; }
+            /* 手機：只看本週時先收起累積星星（按「整月」就會出現） */
+            #calendar-card.cal-compact-mode #cal-stats-bar { display: none; }
+            /* 手機：當日進度縮成一行 */
+            #day-progress-card { display: flex; align-items: center; gap: 8px; padding: 10px 12px; }
+            #day-progress-card > div:first-child { margin-bottom: 0; flex-shrink: 0; }
+            #day-progress-card > div:last-child { flex: 1; min-width: 0; }
+            #current-day-badge { display: none; }
         }
         .task-done {
             background-color: #F3F4F6 !important;
@@ -383,20 +387,20 @@
             <div class="bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 rounded-2xl md:rounded-3xl p-3 md:p-5 mb-3 md:mb-5 border-2 border-indigo-200 shadow-sm">
                 <div class="flex justify-between items-center gap-2 md:gap-4 mb-2.5 md:mb-4">
                     <div class="flex items-center gap-2 md:gap-3 min-w-0">
-                        <div class="text-2xl md:text-4xl bg-white p-1.5 md:p-2.5 rounded-xl md:rounded-2xl shadow-sm shrink-0">🪢</div>
+                        <div class="hidden md:block text-2xl md:text-4xl bg-white p-1.5 md:p-2.5 rounded-xl md:rounded-2xl shadow-sm shrink-0">🪢</div>
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">
-                                <h3 class="text-sm md:text-lg font-black text-indigo-950">跳繩 1000 下挑戰！</h3>
+                                <h3 class="text-sm md:text-lg font-black text-indigo-950"><span class="md:hidden">🪢 </span>跳繩 1000 下挑戰！</h3>
                                 <span class="hidden lg:inline bg-indigo-600 text-white text-xs px-2.5 py-0.5 rounded-full font-bold">分段集點外掛</span>
                             </div>
                             <p class="hidden lg:block text-sm text-indigo-700 mt-0.5">
                                 不用一次跳完！拆成 <strong>5 小組（每組 200 下，約 2~3 分鐘）</strong>，可以分次完成喔！
                             </p>
-                            <p class="lg:hidden text-[11px] text-indigo-600 font-bold">5 組 × 200 下，每組 +1⭐</p>
+                            <p class="hidden md:block lg:hidden text-[11px] text-indigo-600 font-bold">5 組 × 200 下，可以分次跳</p>
                         </div>
                     </div>
                     <div class="bg-white/80 px-2.5 md:px-3.5 py-1 md:py-2 rounded-xl md:rounded-2xl border border-indigo-100 text-right shrink-0">
-                        <div class="text-[10px] md:text-[11px] text-indigo-500 font-bold">今日累積</div>
+                        <div class="hidden md:block text-[10px] md:text-[11px] text-indigo-500 font-bold">今日累積</div>
                         <div class="text-base md:text-xl font-black text-indigo-700 whitespace-nowrap"><span id="rope-count">0</span><span class="text-xs font-bold text-indigo-400">/1000</span></div>
                     </div>
                 </div>
@@ -2028,12 +2032,12 @@
                     baseStyle = 'bg-amber-50/70 border-amber-200 text-gray-800';
                 }
 
-                btn.className = `relative py-1.5 px-0.5 sm:px-1 rounded-xl sm:rounded-2xl border-2 transition-all flex flex-col items-center justify-center min-h-[54px] sm:min-h-[64px] ${baseStyle}${(compact && row !== selectedRow) ? ' cal-off' : ''}`;
+                btn.className = `relative py-1.5 px-0.5 sm:px-1 rounded-xl sm:rounded-2xl border-2 transition-all flex flex-col items-center justify-center min-h-[48px] sm:min-h-[64px] ${baseStyle}${(compact && row !== selectedRow) ? ' cal-off' : ''}`;
                 btn.innerHTML = `
                     ${isToday ? `<span class="absolute -top-1.5 -right-1 cal-mini font-black px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-yellow-300 text-pink-900' : 'bg-pink-500 text-white'} shadow-sm">今天</span>` : ''}
                     <div class="text-sm sm:text-base font-black leading-tight">${d}</div>
                     ${firstPlan ? `<div class="cal-mini font-bold px-0.5 rounded mt-0.5 leading-tight max-w-full overflow-hidden whitespace-nowrap text-ellipsis ${isSelected ? 'bg-white/25 text-white' : (isExamDay ? 'bg-rose-500 text-white' : 'bg-rose-100 text-rose-700')}">${firstPlan.calendarTag || '🎯專案'}</div>` : ''}
-                    <div class="mt-0.5 cal-mini font-bold flex items-center gap-0.5 ${isSelected ? 'text-yellow-200' : (earnedStars > 0 ? 'text-amber-600' : 'text-gray-300')}">
+                    <div class="mt-0.5 cal-mini font-bold flex items-center gap-0.5 ${isSelected ? 'text-yellow-200' : (earnedStars > 0 ? 'text-amber-600' : 'text-gray-300')} ${(firstPlan && !isAllDone && earnedStars === 0) ? 'hidden md:flex' : ''}">
                         ${isAllDone ? '👑 滿貫' : (earnedStars > 0 ? `⭐+${earnedStars}` : '—')}
                     </div>
                 `;
@@ -2229,11 +2233,11 @@
                 btn.onclick = () => tapRopeStage(monthNum, dateNum, idx);
                 btn.innerHTML = `
                     <span class="text-[10px] md:text-[11px] font-bold leading-tight ${done ? 'text-indigo-200' : 'text-indigo-400'}">第${idx + 1}組<span class="hidden lg:inline"> (${stageTags[idx]})</span></span>
-                    <span class="text-lg md:text-base leading-none">${done ? '✅' : '🪢'}</span>
+                    <span class="text-lg md:text-base leading-none ${done ? '' : 'hidden md:inline'}">${done ? '✅' : '🪢'}</span>
                     <span class="hidden md:inline text-xs md:text-sm font-black leading-tight">200<span class="hidden lg:inline"> 下</span></span>
                     ${(done && record.ropeTimes && record.ropeTimes[idx])
                         ? `<span class="text-[10px] md:text-[11px] font-bold text-indigo-100 leading-tight">⏱️${formatRopeTime(record.ropeTimes[idx])}</span>`
-                        : `<span class="hidden md:inline text-[10px] md:text-xs font-bold px-1.5 md:px-2 py-0.5 rounded-full ${done ? 'bg-indigo-500 text-yellow-300' : 'bg-yellow-100 text-yellow-700'}">+1⭐</span>`}
+                        : `<span class="${done ? 'hidden md:inline' : ''} text-[10px] md:text-xs font-bold px-1.5 md:px-2 py-0.5 rounded-full ${done ? 'bg-indigo-500 text-yellow-300' : 'bg-yellow-100 text-yellow-700'}">+1⭐</span>`}
                 `;
                 container.appendChild(btn);
             });
