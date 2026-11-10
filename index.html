@@ -57,6 +57,21 @@
         @media (min-width: 768px) {
             #cal-week-nav { display: none !important; }
         }
+        /* ===== 字體下限：全站最小 12px（日曆格內的小標籤 11px）===== */
+        .text-\[9px\], .text-\[10px\], .text-\[11px\], .md\:text-\[10px\], .md\:text-\[11px\] { font-size: 12px !important; }
+        .cal-mini { font-size: 11px !important; }
+        /* ===== 按鈕最小點擊範圍 44px ===== */
+        .tap44 { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; }
+        @media (max-width: 767px) {
+            .bnav-btn { font-size: 12px; }
+            /* 手機：給爸媽的指南移到頁面最下方，讓今日任務往上靠 */
+            main { display: flex; flex-direction: column; }
+            main > #coach-card { order: 99; margin-top: 12px; }
+            /* 手機：只看本週時，累積星星改成一行小字 */
+            #calendar-card.cal-compact-mode #cal-stats-bar { background: none; border: 0; padding: 0 2px; margin: 6px 0 0; justify-content: center; }
+            #calendar-card.cal-compact-mode #cal-stats-bar { order: 5; }
+            #calendar-card.cal-compact-mode { display: flex; flex-direction: column; }
+        }
         .task-done {
             background-color: #F3F4F6 !important;
             border-color: #E5E7EB !important;
@@ -197,7 +212,7 @@
                         </p>
                     </div>
                 </div>
-                <button onclick="event.stopPropagation(); toggleCoachTip()" class="text-xs text-purple-500 hover:text-purple-700 font-bold shrink-0 underline mt-0.5 md:mt-0">
+                <button onclick="event.stopPropagation(); toggleCoachTip()" class="text-xs text-purple-500 hover:text-purple-700 font-bold shrink-0 underline -my-2 md:my-0 tap44">
                     <span id="coach-toggle-label">展開</span>
                 </button>
             </div>
@@ -221,6 +236,20 @@
 
         <!-- ==================== 視圖 1：每日任務挑戰 ==================== -->
         <div id="view-schedule">
+        <!-- 備份提醒：超過 7 天沒備份（或從未備份）時顯示 -->
+        <div id="backup-reminder" class="hidden bg-sky-50 border-2 border-sky-200 rounded-2xl p-3 mb-3 md:mb-5">
+            <div class="flex items-start gap-2.5">
+                <div class="text-xl shrink-0">💾</div>
+                <div class="min-w-0 flex-1">
+                    <div id="backup-reminder-title" class="text-sm font-black text-sky-900">該備份星星紀錄囉</div>
+                    <p class="text-xs text-sky-800 mt-0.5 leading-relaxed">紀錄只存在這台裝置裡，請爸媽幫忙下載備份檔，星星才不會不見。</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mt-2.5">
+                <button onclick="exportBackup()" class="tap44 text-sm bg-sky-500 text-white rounded-xl font-black shadow-sm">立即備份</button>
+                <button onclick="snoozeBackupReminder()" class="tap44 text-sm bg-white text-sky-700 border border-sky-200 rounded-xl font-bold">明天再提醒</button>
+            </div>
+        </div>
         <div class="md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] md:gap-5 md:items-start">
           <!-- 左欄 (平板固定)：日曆 + 星期預覽 -->
           <div class="md:sticky md:top-24 md:self-start">
@@ -237,16 +266,18 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-1.5 md:gap-2">
-                        <button id="cal-expand-btn" onclick="toggleCalendarExpand()" class="md:hidden text-xs bg-pink-50 text-pink-700 border border-pink-200 px-2.5 py-1.5 rounded-xl font-bold">
-                            📅 整月
+                        <button id="cal-prev-week" onclick="shiftWeek(-1)" aria-label="上一週" class="tap44 md:hidden text-sm bg-gray-50 text-gray-600 border border-gray-200 rounded-xl font-black active:bg-pink-50">◀</button>
+                        <button id="cal-next-week" onclick="shiftWeek(1)" aria-label="下一週" class="tap44 md:hidden text-sm bg-gray-50 text-gray-600 border border-gray-200 rounded-xl font-black active:bg-pink-50">▶</button>
+                        <button id="cal-expand-btn" onclick="toggleCalendarExpand()" class="tap44 md:hidden text-xs bg-pink-50 text-pink-700 border border-pink-200 px-2.5 rounded-xl font-bold whitespace-nowrap">
+                            整月
                         </button>
-                        <button onclick="jumpToToday()" class="text-xs bg-pink-500 hover:bg-pink-600 text-white px-2.5 md:px-3 py-1.5 rounded-xl font-bold transition shadow-sm whitespace-nowrap">
-                            📍 今天
+                        <button onclick="jumpToToday()" class="tap44 text-xs bg-pink-500 hover:bg-pink-600 text-white px-2.5 md:px-3 rounded-xl font-bold transition shadow-sm whitespace-nowrap">
+                            今天
                         </button>
                     </div>
                 </div>
 
-                <div class="bg-amber-50 border border-amber-200 px-2.5 py-1.5 rounded-xl text-[11px] md:text-xs font-bold text-amber-800 mb-2.5 md:mb-4 flex flex-wrap items-center gap-x-1">
+                <div id="cal-stats-bar" class="bg-amber-50 border border-amber-200 px-2.5 py-1.5 rounded-xl text-[11px] md:text-xs font-bold text-amber-800 mb-2.5 md:mb-4 flex flex-wrap items-center gap-x-1">
                     <span><span id="month-stat-label">10月</span>累積：<span id="month-earned-stars" class="text-sm font-black text-amber-600">0</span> ⭐</span>
                     <span class="mx-1 text-amber-300">|</span>
                     <span>本學年總計：<span id="quarter-earned-stars" class="text-sm font-black text-orange-600">0</span> ⭐</span>
@@ -273,12 +304,6 @@
                     <!-- 由 JS 動態生成 -->
                 </div>
 
-                <!-- 手機：上一週 / 下一週 -->
-                <div id="cal-week-nav" class="flex md:hidden justify-between items-center mt-2 text-xs font-bold">
-                    <button onclick="shiftWeek(-1)" class="px-3 py-1.5 rounded-xl bg-gray-50 text-gray-600 border border-gray-200 active:bg-pink-50">◀ 上一週</button>
-                    <span id="cal-week-label" class="text-gray-400"></span>
-                    <button onclick="shiftWeek(1)" class="px-3 py-1.5 rounded-xl bg-gray-50 text-gray-600 border border-gray-200 active:bg-pink-50">下一週 ▶</button>
-                </div>
             </div>
 
             <!-- 星期快速預覽標籤 (大螢幕才顯示) -->
@@ -337,7 +362,7 @@
                         </div>
                         <h3 id="current-day-title" class="hidden md:block text-lg font-black text-gray-800 mt-1.5">今日魔法任務清單</h3>
                     </div>
-                    <div class="flex items-center gap-1.5 shrink-0">
+                    <div class="hidden md:flex items-center gap-1.5 shrink-0">
                         <button onclick="openEditCurrentDaySchedule()" title="自訂此日任務" class="text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-2 md:px-3 py-1.5 rounded-xl font-bold transition">
                             ✏️<span class="hidden lg:inline"> 自訂此日任務</span>
                         </button>
@@ -367,7 +392,7 @@
                             <p class="hidden lg:block text-sm text-indigo-700 mt-0.5">
                                 不用一次跳完！拆成 <strong>5 小組（每組 200 下，約 2~3 分鐘）</strong>，可以分次完成喔！
                             </p>
-                            <p class="lg:hidden text-[11px] text-indigo-600 font-bold">5 組 × 200 下，可以分次跳</p>
+                            <p class="lg:hidden text-[11px] text-indigo-600 font-bold">5 組 × 200 下，每組 +1⭐</p>
                         </div>
                     </div>
                     <div class="bg-white/80 px-2.5 md:px-3.5 py-1 md:py-2 rounded-xl md:rounded-2xl border border-indigo-100 text-right shrink-0">
@@ -389,6 +414,12 @@
             <!-- 時間軸任務列表 -->
             <div class="space-y-2.5 md:space-y-3" id="timeline-container">
                 <!-- 由 JS 動態生成每日時間軸 -->
+            </div>
+
+            <!-- 手機：自訂 / 重置 放在任務清單最下方，避免誤按 -->
+            <div class="md:hidden grid grid-cols-2 gap-2 mt-4">
+                <button onclick="openEditCurrentDaySchedule()" class="tap44 text-xs bg-purple-50 text-purple-700 border border-purple-200 px-3 rounded-xl font-bold">✏️ 自訂此日任務</button>
+                <button onclick="resetCurrentDay()" class="tap44 text-xs bg-red-50 text-red-600 border border-red-200 px-3 rounded-xl font-bold">🔄 重置當日</button>
             </div>
           </div>
         </div>
@@ -1920,7 +1951,7 @@
             // 更新月份標題與切換按鈕高亮
             const headerTitle = document.getElementById('calendar-header-title');
             if (headerTitle) {
-                headerTitle.innerHTML = `${monthInfo.icon} ${monthInfo.year}年${monthInfo.name}<span class="hidden lg:inline"> 魔法集點日曆</span>`;
+                headerTitle.innerHTML = `${monthInfo.icon} <span class="hidden md:inline">${monthInfo.year}年</span>${monthInfo.name}<span class="hidden lg:inline"> 魔法集點日曆</span>`;
             }
             const monthLabel = document.getElementById('month-stat-label');
             if (monthLabel) {
@@ -1945,16 +1976,16 @@
             const calCard = document.getElementById('calendar-card');
             if (calCard) calCard.classList.toggle('cal-compact-mode', compact);
             const expandBtn = document.getElementById('cal-expand-btn');
-            if (expandBtn) expandBtn.textContent = compact ? '📅 整月' : '🔼 收起';
+            if (expandBtn) expandBtn.textContent = compact ? '整月' : '收起';
+            ['cal-prev-week', 'cal-next-week'].forEach(id => {
+                const b = document.getElementById(id);
+                if (b) b.style.display = compact ? '' : 'none';
+            });
             if (compact) {
                 grid.querySelectorAll('[data-row]').forEach(c => {
                     if (Number(c.dataset.row) !== selectedRow) c.classList.add('cal-off');
                 });
             }
-            const weekLabel = document.getElementById('cal-week-label');
-            if (weekLabel) weekLabel.textContent = compact ? `${monthNum}月 第 ${selectedRow + 1} 週` : '';
-            const weekNav = document.getElementById('cal-week-nav');
-            if (weekNav) weekNav.style.display = compact ? '' : 'none';
 
             const now = new Date();
             const isCurrentRealMonth = (now.getMonth() + 1 === monthNum && now.getFullYear() === monthInfo.year);
@@ -1999,10 +2030,10 @@
 
                 btn.className = `relative py-1.5 px-0.5 sm:px-1 rounded-xl sm:rounded-2xl border-2 transition-all flex flex-col items-center justify-center min-h-[54px] sm:min-h-[64px] ${baseStyle}${(compact && row !== selectedRow) ? ' cal-off' : ''}`;
                 btn.innerHTML = `
-                    ${isToday ? `<span class="absolute -top-1.5 -right-1 text-[9px] font-black px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-yellow-300 text-pink-900' : 'bg-pink-500 text-white'} shadow-sm">今天</span>` : ''}
+                    ${isToday ? `<span class="absolute -top-1.5 -right-1 cal-mini font-black px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-yellow-300 text-pink-900' : 'bg-pink-500 text-white'} shadow-sm">今天</span>` : ''}
                     <div class="text-sm sm:text-base font-black leading-tight">${d}</div>
-                    ${firstPlan ? `<div class="text-[9px] font-bold px-0.5 rounded mt-0.5 leading-tight max-w-full overflow-hidden whitespace-nowrap text-ellipsis ${isSelected ? 'bg-white/25 text-white' : (isExamDay ? 'bg-rose-500 text-white' : 'bg-rose-100 text-rose-700')}">${firstPlan.calendarTag || '🎯專案'}</div>` : ''}
-                    <div class="mt-0.5 text-[10px] font-bold flex items-center gap-0.5 ${isSelected ? 'text-yellow-200' : (earnedStars > 0 ? 'text-amber-600' : 'text-gray-300')}">
+                    ${firstPlan ? `<div class="cal-mini font-bold px-0.5 rounded mt-0.5 leading-tight max-w-full overflow-hidden whitespace-nowrap text-ellipsis ${isSelected ? 'bg-white/25 text-white' : (isExamDay ? 'bg-rose-500 text-white' : 'bg-rose-100 text-rose-700')}">${firstPlan.calendarTag || '🎯專案'}</div>` : ''}
+                    <div class="mt-0.5 cal-mini font-bold flex items-center gap-0.5 ${isSelected ? 'text-yellow-200' : (earnedStars > 0 ? 'text-amber-600' : 'text-gray-300')}">
                         ${isAllDone ? '👑 滿貫' : (earnedStars > 0 ? `⭐+${earnedStars}` : '—')}
                     </div>
                 `;
@@ -2051,6 +2082,7 @@
 
             // 渲染 10~12 月日曆
             renderOctoberCalendar();
+            renderBackupReminder();
 
             // 渲染「考前 14 天衝刺 / 特定期間」橫幅
             const specialBanner = document.getElementById('special-period-banner');
@@ -2189,19 +2221,19 @@
             stages.forEach((done, idx) => {
                 if (done) totalJumps += 200;
                 const btn = document.createElement('button');
-                btn.className = `py-2 px-0.5 md:p-3 rounded-xl md:rounded-2xl border-2 text-center transition-all flex flex-col items-center justify-center gap-0.5 md:gap-1 min-h-[76px] ${
+                btn.className = `py-2 px-0.5 md:p-3 rounded-xl md:rounded-2xl border-2 text-center transition-all flex flex-col items-center justify-center gap-0.5 md:gap-1 min-h-[56px] md:min-h-[76px] ${
                     done 
                     ? 'bg-indigo-600 border-indigo-600 text-white shadow-md scale-[0.98]' 
                     : 'bg-white border-indigo-200 hover:border-indigo-400 text-indigo-900'
                 }`;
-                btn.onclick = () => toggleRopeStage(monthNum, dateNum, idx);
+                btn.onclick = () => tapRopeStage(monthNum, dateNum, idx);
                 btn.innerHTML = `
                     <span class="text-[10px] md:text-[11px] font-bold leading-tight ${done ? 'text-indigo-200' : 'text-indigo-400'}">第${idx + 1}組<span class="hidden lg:inline"> (${stageTags[idx]})</span></span>
                     <span class="text-lg md:text-base leading-none">${done ? '✅' : '🪢'}</span>
-                    <span class="text-xs md:text-sm font-black leading-tight">200<span class="hidden lg:inline"> 下</span></span>
+                    <span class="hidden md:inline text-xs md:text-sm font-black leading-tight">200<span class="hidden lg:inline"> 下</span></span>
                     ${(done && record.ropeTimes && record.ropeTimes[idx])
                         ? `<span class="text-[10px] md:text-[11px] font-bold text-indigo-100 leading-tight">⏱️${formatRopeTime(record.ropeTimes[idx])}</span>`
-                        : `<span class="text-[10px] md:text-xs font-bold px-1.5 md:px-2 py-0.5 rounded-full ${done ? 'bg-indigo-500 text-yellow-300' : 'bg-yellow-100 text-yellow-700'}">+1⭐</span>`}
+                        : `<span class="hidden md:inline text-[10px] md:text-xs font-bold px-1.5 md:px-2 py-0.5 rounded-full ${done ? 'bg-indigo-500 text-yellow-300' : 'bg-yellow-100 text-yellow-700'}">+1⭐</span>`}
                 `;
                 container.appendChild(btn);
             });
@@ -2218,7 +2250,7 @@
                     launch.innerHTML = `<div class="w-full text-center py-2.5 rounded-2xl bg-indigo-50 text-indigo-700 font-bold text-sm border border-indigo-100">今天 5 組都跳完了，好厲害！${best ? `（🏆 最快紀錄 ${formatRopeTime(best)}）` : ''}</div>`;
                 } else {
                     const halfText = (typeof record.ropeHalfSec === 'number') ? '（已跳 100 下，再 100 下就完成）' : ' 200 下';
-                    launch.innerHTML = `<button onclick="openRopeTimer()" class="w-full py-2.5 md:py-3 rounded-2xl font-black text-white text-[15px] md:text-base shadow-md bg-gradient-to-r from-pink-500 to-rose-400 hover:opacity-95 transition">
+                    launch.innerHTML = `<button onclick="openRopeTimer()" class="w-full min-h-[44px] py-2.5 md:py-3 rounded-2xl font-black text-white text-[15px] md:text-base shadow-md bg-gradient-to-r from-pink-500 to-rose-400 hover:opacity-95 transition">
                         ⏱️ 開始計時：跳第 ${nextIdx + 1} 組${halfText}${bestText}
                     </button>`;
                 }
@@ -2229,6 +2261,34 @@
             } else {
                 banner.classList.add('hidden');
             }
+        }
+
+        // ===== 打卡日期限制 =====
+        // 未來的日期不能打卡；今天與昨天可以直接打卡；更早的日期要補登時，若有設家長密碼需先輸入。
+        // 取消打勾（扣回星星）不受限制。
+        function dayOffsetFromToday(monthNum, dateNum) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const target = new Date(yearOf(monthNum), monthNum - 1, dateNum);
+            return Math.round((target - today) / 86400000);
+        }
+        function guardCheckIn(monthNum, dateNum, isUndo, proceed) {
+            if (isUndo) { proceed(); return; }
+            const offset = dayOffsetFromToday(monthNum, dateNum);
+            if (offset > 0) {
+                showToast(`${monthNum}/${dateNum} 還沒到喔！等那一天再來打卡吧～`, '⏳');
+                return;
+            }
+            if (offset < -1 && appState.parentPin && !parentUnlocked) {
+                showToast('補登前天以前的紀錄，要請爸媽輸入密碼喔', '🔒');
+                requireParent(proceed);
+                return;
+            }
+            proceed();
+        }
+        function tapRopeStage(monthNum, dateNum, idx) {
+            const record = ensureDateRecord(monthNum, dateNum);
+            guardCheckIn(monthNum, dateNum, !!record.ropeProgress[idx], () => toggleRopeStage(monthNum, dateNum, idx));
         }
 
         function toggleRopeStage(monthNum, dateNum, idx) {
@@ -2267,11 +2327,15 @@
         }
 
         // 點擊任務卡片：打勾 / 取消打勾，並加減星星
-        function toggleTask(task) {
+        function toggleTask(task, guardPassed) {
             const monthNum = appState.currentMonth;
             const dateNum = appState.currentDate;
             const record = ensureDateRecord(monthNum, dateNum);
             const isDone = !!record.completedTasks[task.id];
+            if (!guardPassed) {
+                guardCheckIn(monthNum, dateNum, isDone, () => toggleTask(task, true));
+                return;
+            }
 
             if (isDone) {
                 delete record.completedTasks[task.id];
@@ -3067,9 +3131,13 @@
             return c ? -rt.carrySec : 0;
         }
 
-        function openRopeTimer() {
+        function openRopeTimer(guardPassed) {
             const monthNum = appState.currentMonth;
             const dateNum = appState.currentDate;
+            if (guardPassed !== true) {
+                guardCheckIn(monthNum, dateNum, false, () => openRopeTimer(true));
+                return;
+            }
             const record = ensureDateRecord(monthNum, dateNum);
             const targets = record.ropeProgress.map((d, i) => d ? -1 : i).filter(i => i >= 0);
             if (!targets.length) {
@@ -3475,6 +3543,36 @@
             }
         }
 
+        // ==================== 備份提醒 ====================
+        const BACKUP_REMIND_DAYS = 7;
+        function daysSinceLastBackup() {
+            const m = /^(\d{4})\/(\d{2})\/(\d{2})/.exec(appState.lastBackupAt || '');
+            if (!m) return null;
+            const last = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return Math.round((today - last) / 86400000);
+        }
+        function renderBackupReminder() {
+            const el = document.getElementById('backup-reminder');
+            if (!el) return;
+            let show = false;
+            try {
+                const days = daysSinceLastBackup();
+                const hasData = (appState.stars > 0) || (appState.history && appState.history.length > 0) || calculateQuarterTotalEarnedStars() > 0;
+                const snoozed = appState.backupSnoozeUntil && Date.now() < appState.backupSnoozeUntil;
+                show = hasData && !snoozed && (days === null || days >= BACKUP_REMIND_DAYS);
+                const title = document.getElementById('backup-reminder-title');
+                if (title) title.textContent = (days === null) ? '還沒有備份過星星紀錄喔' : `已經 ${days} 天沒有備份星星紀錄了`;
+            } catch (e) { console.error(e); }
+            el.classList.toggle('hidden', !show);
+        }
+        function snoozeBackupReminder() {
+            appState.backupSnoozeUntil = Date.now() + 24 * 60 * 60 * 1000;
+            saveState();
+            renderBackupReminder();
+        }
+
         // ==================== 資料備份：匯出 / 匯入 ====================
         function exportBackup() {
             const now = new Date();
@@ -3496,6 +3594,7 @@
             a.remove();
             setTimeout(() => URL.revokeObjectURL(url), 1000);
             renderPinStatus();
+            renderBackupReminder();
             showToast('備份檔已下載！建議存到雲端硬碟或傳到 LINE 自己的聊天室', '💾');
         }
 
@@ -3582,6 +3681,10 @@
             loadState();
             updateHeaderStats();
             renderScheduleView();
+            // 請瀏覽器盡量保留這個網站的資料，降低紀錄被系統自動清掉的機會
+            try {
+                if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+            } catch (e) {}
         });
     </script>
 </body>
