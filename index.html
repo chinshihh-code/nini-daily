@@ -225,16 +225,16 @@
 
         <!-- 主選單切換 (平板/電腦顯示；手機改用底部導覽列) -->
         <div class="hidden md:flex flex-wrap gap-2 mb-6 bg-white p-1.5 rounded-2xl shadow-sm border border-pink-100 w-fit">
-            <button onclick="switchMainView('schedule')" id="view-btn-schedule" class="px-4 py-2 rounded-xl font-bold text-xs md:text-sm transition-all tab-active">
+            <button onclick="switchMainView('schedule')" id="view-btn-schedule" class="px-4 py-2 min-h-[44px] rounded-xl font-bold text-xs md:text-sm transition-all tab-active">
                 📅 每日任務挑戰
             </button>
-            <button onclick="switchMainView('shop')" id="view-btn-shop" class="px-4 py-2 rounded-xl font-bold text-xs md:text-sm text-gray-600 hover:bg-pink-50 transition-all">
+            <button onclick="switchMainView('shop')" id="view-btn-shop" class="px-4 py-2 min-h-[44px] rounded-xl font-bold text-xs md:text-sm text-gray-600 hover:bg-pink-50 transition-all">
                 🎁 星星許願池 (換獎品)
             </button>
-            <button onclick="switchMainView('settings')" id="view-btn-settings" class="px-4 py-2 rounded-xl font-bold text-xs md:text-sm text-gray-600 hover:bg-pink-50 transition-all">
+            <button onclick="switchMainView('settings')" id="view-btn-settings" class="px-4 py-2 min-h-[44px] rounded-xl font-bold text-xs md:text-sm text-gray-600 hover:bg-pink-50 transition-all">
                 ⚙️ 家長設定 (改名/自訂任務)
             </button>
-            <button onclick="switchMainView('rules')" id="view-btn-rules" class="px-4 py-2 rounded-xl font-bold text-xs md:text-sm text-gray-600 hover:bg-pink-50 transition-all">
+            <button onclick="switchMainView('rules')" id="view-btn-rules" class="px-4 py-2 min-h-[44px] rounded-xl font-bold text-xs md:text-sm text-gray-600 hover:bg-pink-50 transition-all">
                 💡 排課與激勵秘訣
             </button>
         </div>
@@ -368,10 +368,10 @@
                         <h3 id="current-day-title" class="hidden md:block text-lg font-black text-gray-800 mt-1.5">今日魔法任務清單</h3>
                     </div>
                     <div class="hidden md:flex items-center gap-1.5 shrink-0">
-                        <button onclick="openEditCurrentDaySchedule()" title="自訂此日任務" class="text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-2 md:px-3 py-1.5 rounded-xl font-bold transition">
+                        <button onclick="openEditCurrentDaySchedule()" title="自訂此日任務" class="tap44 text-xs bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-2 md:px-3 py-1.5 rounded-xl font-bold transition">
                             ✏️<span class="hidden lg:inline"> 自訂此日任務</span>
                         </button>
-                        <button onclick="resetCurrentDay()" title="重置當日 (扣回星星)" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2 md:px-3 py-1.5 rounded-xl font-bold transition">
+                        <button onclick="resetCurrentDay()" title="重置當日 (扣回星星)" class="tap44 text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-2 md:px-3 py-1.5 rounded-xl font-bold transition">
                             🔄<span class="hidden lg:inline"> 重置當日</span>
                         </button>
                     </div>
@@ -2035,7 +2035,7 @@
 
                 btn.className = `relative py-1.5 px-0.5 sm:px-1 rounded-xl sm:rounded-2xl border-2 transition-all flex flex-col items-center justify-center min-h-[48px] sm:min-h-[64px] ${baseStyle}${(compact && row !== selectedRow) ? ' cal-off' : ''}`;
                 btn.innerHTML = `
-                    ${isToday ? `<span class="absolute -top-3 -right-1 cal-mini font-black px-1.5 py-0.2 rounded-full leading-tight ${isSelected ? 'bg-yellow-300 text-pink-900' : 'bg-pink-500 text-white'} shadow-sm">今天</span>` : ''}
+                    ${isToday ? `<span class="absolute -top-3 -right-1 cal-mini font-black px-1.5 py-0.2 rounded-full leading-tight whitespace-nowrap ${isSelected ? 'bg-yellow-300 text-pink-900' : 'bg-pink-500 text-white'} shadow-sm">今天</span>` : ''}
                     <div class="text-sm sm:text-base font-black leading-tight">${d}</div>
                     ${firstPlan ? `<div class="cal-mini font-bold px-0.5 rounded mt-0.5 leading-tight max-w-full overflow-hidden whitespace-nowrap ${isSelected ? 'bg-white/25 text-white' : (isExamDay ? 'bg-rose-500 text-white' : 'bg-rose-100 text-rose-700')}">${firstPlan.calendarTag || '🎯專案'}</div>` : ''}
                     <div class="mt-0.5 cal-mini font-bold flex items-center gap-0.5 ${isSelected ? 'text-yellow-200' : (earnedStars > 0 ? 'text-amber-600' : 'text-gray-300')} ${(firstPlan && !isAllDone && earnedStars === 0) ? 'hidden md:flex' : ''}">
@@ -2628,7 +2628,7 @@
                     resetTaskForm();
                     renderSettingsView();
                 };
-                btn.className = `px-4 py-2 rounded-xl font-bold text-xs md:text-sm transition-all ${
+                btn.className = `px-4 py-2 min-h-[44px] rounded-xl font-bold text-xs md:text-sm transition-all ${
                     isActive ? 'tab-active' : 'bg-gray-100 text-gray-600 hover:bg-pink-50'
                 }`;
                 btn.textContent = `${d.name} (${d.tasks.length}項)`;
@@ -3649,11 +3649,11 @@
                 const el = document.getElementById(`view-${v}`);
                 const btn = document.getElementById(`view-btn-${v}`);
                 if (el) el.classList.add('hidden');
-                if (btn) btn.className = 'px-4 py-2 rounded-xl font-bold text-xs md:text-sm text-gray-600 hover:bg-pink-50 transition-all';
+                if (btn) btn.className = 'px-4 py-2 min-h-[44px] rounded-xl font-bold text-xs md:text-sm text-gray-600 hover:bg-pink-50 transition-all';
             });
 
             document.getElementById(`view-${viewName}`).classList.remove('hidden');
-            document.getElementById(`view-btn-${viewName}`).className = 'px-4 py-2 rounded-xl font-bold text-xs md:text-sm transition-all tab-active';
+            document.getElementById(`view-btn-${viewName}`).className = 'px-4 py-2 min-h-[44px] rounded-xl font-bold text-xs md:text-sm transition-all tab-active';
 
             document.querySelectorAll('#bottom-nav [data-view]').forEach(b => {
                 b.classList.toggle('active', b.dataset.view === viewName);
