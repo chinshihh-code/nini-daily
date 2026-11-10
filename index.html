@@ -1934,8 +1934,8 @@
             bar.innerHTML = MONTH_ORDER.map(m => {
                 const info = SUPPORTED_MONTHS[m];
                 const cls = m === activeMonth
-                    ? 'shrink-0 px-3.5 py-1.5 rounded-xl font-black text-xs md:text-sm transition-all tab-active'
-                    : 'shrink-0 px-3.5 py-1.5 rounded-xl font-black text-xs md:text-sm transition-all text-gray-600 hover:bg-white';
+                    ? 'shrink-0 px-3.5 py-1.5 min-h-[44px] rounded-xl font-black text-xs md:text-sm transition-all tab-active'
+                    : 'shrink-0 px-3.5 py-1.5 min-h-[44px] rounded-xl font-black text-xs md:text-sm transition-all text-gray-600 hover:bg-white';
                 const yearHint = (m === 1) ? `<span class="text-[10px] opacity-70">${info.year}</span> ` : '';
                 return `<button onclick="selectMonth(${m})" id="month-btn-${m}" class="${cls}">${yearHint}${info.icon} ${m}月</button>`;
             }).join('');
