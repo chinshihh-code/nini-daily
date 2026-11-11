@@ -221,6 +221,14 @@ nav.tabs button.on i{background:var(--sun);border-color:transparent;box-shadow:v
 .quick{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--sun-soft);border-radius:18px;padding:10px 14px;margin-bottom:14px}
 .quick>span{font-size:14px;font-weight:700;color:var(--ink2);margin-right:4px}
 
+/* 字卡手寫 */
+.cardrow{display:grid;grid-template-columns:1fr auto;gap:16px;margin-top:14px;align-items:stretch}
+.cardrow .flash{min-height:0}
+.practice{display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center}
+.practice .pad{width:min(300px,70vw)}
+.ghost{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--kai);font-size:min(230px,54vw);line-height:1;color:rgba(111,130,238,.18);pointer-events:none}
+@media (max-width:760px){.cardrow{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -441,6 +449,7 @@ function render(){
   else if(r==='mistakes')app.innerHTML=vMist();
   else if(r==='print')app.innerHTML=vPrint();
   else app.innerHTML=vParent();
+  if(r==='cards')initCardPad();
   if(inQuiz&&sess.stage==='quiz')afterQuiz();}
 function meterCls(p){return p>=70?'':p>=35?' warn':' low';}
 function vHome(){
@@ -498,6 +507,16 @@ function vQuiz(){
   '<div class="qnav"><button class="btn" data-act="prev"'+(sess.i?'':' disabled')+'>上一題</button><button class="btn '+(last?'hot':'pri')+'" data-act="next">'+(last?'交卷看答案':'下一題')+'</button></div>';}
 /* 手寫板 */
 let pad=null;
+function initCardPad(){
+  const cv=$('#cpad');if(!cv)return;const rect=cv.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.width=Math.round(rect.width*dpr);cv.height=Math.round(rect.height*dpr);
+  const x=cv.getContext('2d');x.lineCap='round';x.lineJoin='round';x.strokeStyle='#4b4a6b';x.lineWidth=cv.width/34;let down=false;
+  if(ui.cardInk){const im=new Image();im.onload=()=>x.drawImage(im,0,0,cv.width,cv.height);im.src=ui.cardInk;}
+  const pos=e=>{const r=cv.getBoundingClientRect();return [(e.clientX-r.left)/r.width*cv.width,(e.clientY-r.top)/r.height*cv.height];};
+  cv.addEventListener('pointerdown',e=>{e.preventDefault();down=true;try{cv.setPointerCapture(e.pointerId);}catch(_){ }const p=pos(e);x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(p[0]+0.1,p[1]+0.1);x.stroke();});
+  cv.addEventListener('pointermove',e=>{if(!down)return;e.preventDefault();const p=pos(e);x.lineTo(p[0],p[1]);x.stroke();x.beginPath();x.moveTo(p[0],p[1]);});
+  const up=()=>{if(!down)return;down=false;ui.cardInk=cv.toDataURL('image/png');};
+  cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);cv.addEventListener('pointerleave',up);}
 function afterQuiz(){
   if(sess.mode==='mock'&&!timer)timer=setInterval(()=>{const c=$('#clock');if(c&&sess)c.textContent=fmtTime(Math.round((Date.now()-sess.start)/1000));},1000);
   const cv=$('#pad');pad=null;if(!cv)return;
@@ -559,7 +578,10 @@ function vCards(){
     else face='<div class="bigw" style="font-size:44px">'+esc(it.w)+'</div><div class="zyb">'+it.z+'</div><dl><dt>解釋</dt><dd>'+esc(it.d)+'</dd><dt>例句</dt><dd class="kai">'+esc(it.s)+'</dd><dt>類別</dt><dd>'+['課文重點詞語','語句學習詞語','延伸成語'][it.k]+'</dd></dl>';}
   return '<h1>字卡複習</h1><div class="scroll" style="margin-top:12px">'+D.L.map(l=>'<button class="chip'+(ui.cardL===l.n?' on':'')+'" data-act="card-l" data-n="'+l.n+'">'+l.n+'<small>'+esc(l.name)+'</small></button>').join('')+'</div>'+
   '<div class="row" style="justify-content:space-between"><div class="seg"><button data-act="card-m" data-m="c" class="'+(ui.cardMode==='c'?'on':'')+'">生字</button><button data-act="card-m" data-m="w" class="'+(ui.cardMode==='w'?'on':'')+'">語詞</button></div><span class="qcount">'+(ui.cardI+1)+' / '+list.length+'</span></div>'+
-  '<button class="card flash" style="margin-top:14px" data-act="card-flip" aria-label="翻面">'+face+'</button>'+
+  (ui.cardMode==='c'?'<div class="cardrow"><button class="card flash" data-act="card-flip" aria-label="翻面">'+face+'</button>'+
+    '<div class="card practice"><h3>寫寫看</h3><div class="pad">'+(ui.ghost?'<span class="ghost" aria-hidden="true">'+it.c+'</span>':'')+'<canvas id="cpad" aria-label="手寫練習區"></canvas></div>'+
+    '<div class="row" style="justify-content:center"><button class="btn sm" data-act="cpad-clear">清除重寫</button><button class="chip'+(ui.ghost?' on':'')+'" data-act="ghost" aria-pressed="'+!!ui.ghost+'">淡字描寫</button></div></div></div>'
+  :'<button class="card flash" style="margin-top:14px" data-act="card-flip" aria-label="翻面">'+face+'</button>')+
   '<div class="qnav"><button class="btn" data-act="card-prev">上一張</button><button class="btn pri" data-act="card-next">下一張</button></div>';}
 function keyLabel(key){const q=makeQ(key);if(!q)return null;return {q,html:reviewPrompt(q)};}
 function vMist(){
@@ -776,11 +798,13 @@ const A={
   mark(el){sess.ans[+el.dataset.i].ok=el.dataset.v==='1';render();},
   finish(){finish();},
   rv(el){sess.filter=el.dataset.f;render();},
-  'card-l'(el){ui.cardL=+el.dataset.n;ui.cardI=0;ui.cardFlip=false;render();},
-  'card-m'(el){ui.cardMode=el.dataset.m;ui.cardI=0;ui.cardFlip=false;render();},
+  'cpad-clear'(){ui.cardInk=null;const cv=$('#cpad');if(cv)cv.getContext('2d').clearRect(0,0,cv.width,cv.height);},
+  ghost(){ui.ghost=!ui.ghost;render();},
+  'card-l'(el){ui.cardInk=null;ui.cardL=+el.dataset.n;ui.cardI=0;ui.cardFlip=false;render();},
+  'card-m'(el){ui.cardInk=null;ui.cardMode=el.dataset.m;ui.cardI=0;ui.cardFlip=false;render();},
   'card-flip'(){ui.cardFlip=!ui.cardFlip;render();},
-  'card-next'(){const n=(ui.cardMode==='c'?CH:WD).filter(x=>x.l===ui.cardL).length;ui.cardI=(ui.cardI+1)%n;ui.cardFlip=false;render();},
-  'card-prev'(){const n=(ui.cardMode==='c'?CH:WD).filter(x=>x.l===ui.cardL).length;ui.cardI=(ui.cardI-1+n)%n;ui.cardFlip=false;render();},
+  'card-next'(){const n=(ui.cardMode==='c'?CH:WD).filter(x=>x.l===ui.cardL).length;ui.cardInk=null;ui.cardI=(ui.cardI+1)%n;ui.cardFlip=false;render();},
+  'card-prev'(){const n=(ui.cardMode==='c'?CH:WD).filter(x=>x.l===ui.cardL).length;ui.cardInk=null;ui.cardI=(ui.cardI-1+n)%n;ui.cardFlip=false;render();},
   'print-kind'(el){ui.printKind=el.dataset.k;ui.paper=null;render();},
   'print-src'(el){ui.printSrc=el.dataset.s;ui.paper=null;render();},
   paper(){genPaper();},pdf(){savePdf();},
