@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>六上國語字詞闖關</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* 版面想法：柔和的粉彩文具感——圓角白卡、淡淡陰影、粉圓字體 */
+  --ink:#4b4a6b; --ink2:#8583a3; --bg:#f8f4fc; --card:#ffffff; --line:#ebe5f5; --edge:#e7e0f4;
+  --blue:#6f82ee; --blue-soft:#e8ebff; --coral:#ffa6b6; --coral-soft:#ffecef;
+  --sun:#ffdc85; --sun-soft:#fff7e0; --mint:#56c8a7; --mint-soft:#e2f7ef; --bad:#f07a8a;
+  --mint-ink:#1c8f72; --bad-ink:#d04a60;
+  --soft:0 6px 18px rgba(123,110,170,.13); --press:0 3px 0 rgba(123,110,170,.16),0 6px 16px rgba(123,110,170,.12);
+  --display:"Huninn","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  --body:"PingFang TC","Noto Sans TC","Microsoft JhengHei","Heiti TC",sans-serif;
+  --kai:"BiauKaiTC","BiauKai","DFKai-SB","Kaiti TC","標楷體","PingFang TC","Noto Sans TC",serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-text-size-adjust:100%;
+  background-image:radial-gradient(circle at 8% 4%,#ffeef2 0,transparent 32%),radial-gradient(circle at 96% 12%,#e6f7f1 0,transparent 30%),radial-gradient(circle at 60% 100%,#fff5d9 0,transparent 36%);background-attachment:fixed}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+#shell{position:relative;z-index:1;min-height:100%;display:flex;flex-direction:column}
+header.top{display:flex;align-items:center;gap:12px;padding:12px 20px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.04em;display:flex;align-items:center;gap:10px}
+.brand i{font-style:normal;display:inline-grid;place-items:center;width:38px;height:38px;border-radius:10px;background:var(--coral);color:#fff;border:1.5px solid var(--edge);box-shadow:var(--soft);font-family:var(--kai);font-size:24px}
+.pills{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--edge);border-radius:999px;padding:3px 12px;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
+.pill b{color:var(--coral)} .pill.star b{color:#e0a100}
+main{flex:1;width:100%;max-width:980px;margin:0 auto;padding:8px 20px 120px}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;justify-content:center;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1.5px solid var(--edge)}
+nav.tabs button{flex:1;max-width:120px;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:13px;font-weight:700;color:var(--ink2);padding:2px}
+nav.tabs button i{font-style:normal;font-family:var(--kai);font-size:22px;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;border:2px solid transparent;color:var(--ink)}
+nav.tabs button.on{color:var(--ink)}
+nav.tabs button.on i{background:var(--sun);border-color:var(--ink);box-shadow:var(--soft)}
+h1,h2,h3{font-family:var(--display);line-height:1.3;margin:0;text-wrap:balance}
+h1{font-size:28px} h2{font-size:21px;margin:26px 0 12px} h3{font-size:17px}
+p{margin:0}
+.card{background:var(--card);border:1.5px solid var(--edge);border-radius:18px;box-shadow:var(--soft);padding:18px}
+.muted{color:var(--ink2);font-size:15px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.grid{display:grid;gap:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:10px 22px;border-radius:14px;border:1.5px solid var(--edge);background:var(--card);font-weight:700;font-size:18px;box-shadow:var(--soft);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(2px) scale(.98)}
+.btn.pri{background:var(--blue);color:#fff} .btn.hot{background:var(--coral);color:#fff} .btn.sun{background:var(--sun)}
+.btn.sm{min-height:42px;font-size:16px;padding:6px 14px;border-radius:12px}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.chip{min-height:44px;padding:6px 14px;border-radius:999px;border:1.5px solid var(--edge);background:var(--card);font-weight:700;font-size:16px}
+.chip.on{background:var(--blue);color:#fff;box-shadow:var(--soft)}
+.chip small{font-weight:400;opacity:.85;margin-left:4px}
+.seg{display:inline-flex;border:1.5px solid var(--edge);border-radius:14px;overflow:hidden;background:var(--card)}
+.seg button{border:0;background:none;padding:9px 20px;font-weight:700;min-height:46px}
+.seg button+button{border-left:1.5px solid var(--edge)}
+.seg button.on{background:var(--sun)}
+/* 首頁 */
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:stretch}
+.hero .rank{background:var(--blue);color:#fff}
+.rank .title{font-family:var(--kai);font-size:44px;line-height:1.1;margin:6px 0 10px}
+.lvbar{height:14px;border-radius:999px;background:rgba(255,255,255,.3);overflow:hidden;border:2px solid #fff}
+.lvbar i{display:block;height:100%;background:var(--sun)}
+.today b{font-size:38px;font-family:var(--display);font-variant-numeric:tabular-nums}
+.tiles{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.tile{text-align:left;display:flex;flex-direction:column;gap:4px;min-height:120px;justify-content:flex-end}
+.tile i{font-style:normal;font-family:var(--kai);font-size:34px;line-height:1}
+.tile b{font-size:19px;font-family:var(--display)} .tile span{font-size:14px;opacity:.9}
+.t1{background:var(--coral);color:#fff}.t2{background:var(--sun)}.t3{background:var(--mint-soft)}.t4{background:var(--coral-soft)}
+.lessons{grid-template-columns:repeat(4,1fr)}
+.lesson{text-align:left;padding:12px 14px;border-radius:14px;border:1.5px solid var(--edge);background:var(--card);display:flex;flex-direction:column;gap:6px}
+.lesson small{color:var(--ink2);font-weight:700} .lesson b{font-size:16px;line-height:1.3;min-height:2.6em}
+.meter{height:10px;border-radius:999px;background:var(--blue-soft);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--mint);border-radius:999px}
+.meter.warn i{background:var(--sun)} .meter.low i{background:var(--coral)}
+.badges{display:flex;gap:14px;flex-wrap:wrap}
+.badge{width:92px;text-align:center;font-size:13px;color:var(--ink2);font-weight:700}
+.badge i{font-style:normal;display:grid;place-items:center;width:72px;height:72px;margin:0 auto 6px;border-radius:50%;border:3px double var(--line);color:var(--line);font-family:var(--kai);font-size:24px;line-height:1.05;background:var(--card);transform:rotate(-8deg)}
+.badge.got{color:var(--ink)} .badge.got i{border-color:var(--bad);color:var(--bad);background:#fff5f4}
+/* 練習設定 */
+.unit{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.unit>span{flex:0 0 100%;font-size:14px;font-weight:700;color:var(--ink2)}
+/* 作答 */
+.qtop{display:flex;align-items:center;gap:12px;margin:6px 0 16px}
+.qbar{flex:1;height:14px;border:1.5px solid var(--edge);border-radius:999px;background:var(--card);overflow:hidden}
+.qbar i{display:block;height:100%;background:var(--sun)}
+.qcount{font-weight:700;font-variant-numeric:tabular-nums}
+.qcard{padding:22px;min-height:440px;display:flex;flex-direction:column;gap:16px}
+.qtype{align-self:flex-start;background:var(--ink);color:#fff;border-radius:8px;padding:2px 12px;font-size:14px;font-weight:700}
+.qword{font-family:var(--kai);font-size:64px;line-height:1.25;text-align:center;word-break:keep-all;overflow-wrap:anywhere}
+.qword.long{font-size:46px}
+.qword em{font-style:normal;color:var(--coral);border-bottom:5px solid var(--coral)}
+.qword .zy{font-family:var(--body);font-size:.5em;color:var(--blue);border:2px dashed var(--blue);border-radius:10px;padding:2px 8px;margin:0 4px;vertical-align:middle;white-space:nowrap}
+.qword .bk{display:inline-block;width:1em;height:1em;border:3px dashed var(--coral);border-radius:10px;vertical-align:-.12em;margin:0 3px}
+.qask{text-align:center;font-weight:700;font-size:19px}
+.qsent{font-size:24px;line-height:1.8;font-family:var(--kai)}
+.qsent u{text-decoration:none;display:inline-block;min-width:4.5em;border-bottom:3px solid var(--coral);margin:0 4px}
+.qhint{background:var(--sun-soft);border-radius:12px;padding:8px 14px;font-size:16px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:auto}
+.opts.one{grid-template-columns:1fr}
+.opt{min-height:64px;border:1.5px solid var(--edge);border-radius:14px;background:var(--card);font-size:26px;font-weight:700;padding:10px 14px;box-shadow:var(--soft)}
+.opt.txt{font-size:17px;font-weight:400;text-align:left;line-height:1.5}
+.opt.han{font-family:var(--kai);font-size:38px} .opt.wd{font-family:var(--kai);font-size:26px}
+.opt.on{background:var(--blue);color:#fff;border-color:var(--blue);transform:scale(.98)}
+.qnav{display:flex;justify-content:space-between;gap:12px;margin-top:16px;flex-wrap:wrap}
+.pad{align-self:center;position:relative;width:min(300px,70vw);aspect-ratio:1;border:2px solid #d9cfee;border-radius:18px;background:#fff;
+  background-image:linear-gradient(90deg,transparent calc(50% - 1px),#f1b8b3 calc(50% - 1px),#f1b8b3 calc(50% + 1px),transparent calc(50% + 1px)),linear-gradient(transparent calc(50% - 1px),#f1b8b3 calc(50% - 1px),#f1b8b3 calc(50% + 1px),transparent calc(50% + 1px))}
+.pad canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;border-radius:9px}
+.confirm{background:var(--sun-soft);border:1.5px solid var(--edge);border-radius:14px;padding:12px 16px;margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-weight:700}
+/* 對照、成績 */
+.checks{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.chk{display:flex;flex-direction:column;gap:10px;padding:14px}
+.chk .pair{display:flex;gap:10px;align-items:center;justify-content:center}
+.chk .mine,.chk .right{width:104px;height:104px;border:1.5px solid var(--edge);border-radius:10px;background:#fff;display:grid;place-items:center}
+.chk .mine img{width:100%;height:100%}
+.chk .right{font-family:var(--kai);font-size:76px;line-height:1;background:var(--mint-soft)}
+.chk .mk{display:flex;gap:8px}
+.chk .mk button{flex:1}
+.btn.ok.on{background:var(--mint);color:#fff}.btn.no.on{background:var(--bad);color:#fff}
+.score{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+.ring{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--edge);box-shadow:var(--soft)}
+.ring div{width:112px;height:112px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-family:var(--display);font-size:38px;font-weight:700;border:1.5px solid var(--edge);font-variant-numeric:tabular-nums}
+.gain{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.rv{border-top:2px dashed var(--line);padding:14px 0;display:grid;grid-template-columns:36px 1fr;gap:10px}
+.rv:first-child{border-top:0}
+.rv .mark{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;background:var(--mint)}
+.rv.x .mark{background:var(--bad)}
+.rv .q{font-family:var(--kai);font-size:21px;line-height:1.5}
+.rv .a{font-size:16px} .rv .a s{color:var(--bad)} .rv .a b{color:var(--mint)}
+.rv .e{font-size:15px;color:var(--ink2);background:var(--bg);border-radius:10px;padding:8px 12px;margin-top:6px}
+.rv .e b{color:var(--ink)}
+.rv img{width:64px;height:64px;border:1.5px solid var(--edge);border-radius:8px;background:#fff;vertical-align:middle}
+/* 字卡 */
+.scroll{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px}
+.scroll .chip{flex:0 0 auto}
+.flash{min-height:380px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:24px;width:100%}
+.flash .big{font-family:var(--kai);font-size:150px;line-height:1.05}
+.flash .bigw{font-family:var(--kai);font-size:64px;line-height:1.2}
+.flash .zyb{font-size:28px;color:var(--blue);font-weight:700}
+.flash dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;text-align:left;font-size:18px;max-width:640px}
+.flash dt{font-weight:700;color:var(--ink2);white-space:nowrap} .flash dd{margin:0}
+.flash .tap{font-size:14px;color:var(--ink2)}
+.kai{font-family:var(--kai);font-size:1.15em}
+/* 錯題本、家長 */
+.mrow{display:grid;grid-template-columns:1fr auto;gap:10px;padding:12px 0;border-top:2px dashed var(--line);align-items:center}
+.mrow:first-child{border-top:0}
+.tag{display:inline-block;font-size:13px;font-weight:700;border-radius:8px;padding:1px 9px;background:var(--blue-soft);margin-right:6px}
+.tag.red{background:var(--coral-soft);color:#b3261e}
+.stats{grid-template-columns:repeat(4,1fr)}
+.stat b{display:block;font-family:var(--display);font-size:34px;line-height:1.2;font-variant-numeric:tabular-nums}
+.tbl{width:100%;border-collapse:collapse;font-size:16px}
+.tbl th,.tbl td{padding:9px 8px;border-bottom:2px dashed var(--line);text-align:left;vertical-align:middle}
+.tbl th{font-size:14px;color:var(--ink2)} .tbl td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tblwrap{overflow-x:auto}
+/* 列印 */
+.pages{display:grid;gap:18px;justify-items:center;margin-top:18px}
+.pages img{width:100%;max-width:794px;border:1.5px solid var(--edge);box-shadow:var(--soft);background:#fff}
+.note{background:var(--sun-soft);border:1.5px solid var(--edge);border-radius:14px;padding:10px 16px;font-size:15px}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:9}
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr}.tiles,.lessons,.stats{grid-template-columns:repeat(2,1fr)}
+  .opts{grid-template-columns:1fr}.qword{font-size:48px}.qword.long{font-size:34px}.score{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .flash .big{font-size:110px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* 柔和版調整 */
+.card{border-radius:26px}
+.btn,.opt{box-shadow:var(--press);border-radius:18px}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.hot{background:var(--coral);border-color:var(--coral);color:var(--ink)}
+.btn.sun{background:var(--sun);border-color:var(--sun)}
+.chip{box-shadow:0 2px 0 rgba(123,110,170,.1)}
+.chip.on{background:var(--blue);border-color:var(--blue);box-shadow:var(--soft)}
+.seg{border-radius:18px}.seg button.on{background:var(--sun)}
+.brand i{border:0;border-radius:14px;background:var(--coral);color:#fff;box-shadow:var(--soft)}
+.pill{border-color:var(--edge);box-shadow:0 2px 0 rgba(123,110,170,.08)}
+.pill b{color:var(--bad-ink)}.pill.star b{color:#e2a400}
+nav.tabs{border-top:0;box-shadow:0 -6px 20px rgba(123,110,170,.12);border-radius:26px 26px 0 0}
+nav.tabs button i{border-radius:50%}
+nav.tabs button.on i{background:var(--sun);border-color:transparent;box-shadow:var(--soft)}
+.hero .rank{background:linear-gradient(135deg,#8a9af5,#a99bf0);border:0}
+.lvbar{border:0;background:rgba(255,255,255,.35)}
+.t1{background:var(--coral-soft);color:var(--ink)}.t2{background:var(--sun-soft)}.t3{background:var(--mint-soft)}.t4{background:var(--blue-soft)}
+.tile{border:0}.tile i{width:58px;height:58px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:30px;margin-bottom:6px;box-shadow:0 2px 0 rgba(123,110,170,.1)}
+.lesson{border-radius:20px;box-shadow:0 2px 0 rgba(123,110,170,.1)}
+.meter{height:12px}
+.badge i{border-color:#ddd5ee;color:#cfc6e4}
+.badge.got i{border-color:var(--bad);color:var(--bad-ink);background:var(--coral-soft)}
+.qtype{background:var(--blue-soft);color:var(--blue);border-radius:999px}
+.qbar{border:0;background:#fff;box-shadow:inset 0 0 0 1.5px var(--edge)}.qbar i{border-radius:999px}
+.qword em{color:var(--bad-ink);border-bottom-color:var(--coral)}
+.qword .bk{border-color:var(--coral)}
+.qhint{border-radius:16px}
+.confirm,.note{border-color:#f3e3ad;border-radius:18px}
+.chk .mine,.chk .right{border-color:var(--edge);border-radius:16px}
+.btn.ok.on{background:var(--mint);border-color:var(--mint);color:#fff}.btn.no.on{background:var(--bad);border-color:var(--bad);color:#fff}
+.ring,.ring div{border:0}.ring{box-shadow:var(--soft)}
+.rv .a s{color:var(--bad-ink)}.rv .a b{color:var(--mint-ink)}
+.rv img{border-color:var(--edge);border-radius:12px}
+.tag.red{color:var(--bad-ink)}
+.pages img{border:1.5px solid var(--edge);border-radius:8px;max-width:100%}
+
+.chip.on::before{content:"✓";margin-right:6px;font-weight:700}
+.chip:not(.on){color:var(--ink2)}
+
+/* 生字關卡 */
+.t5{background:#efe9ff}
+.radq{border-top:1.5px dashed var(--edge);padding-top:14px}
+.radopts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.opt.rad{font-family:var(--kai);font-size:32px;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;gap:2px}
+.opt.rad small{font-family:var(--body);font-size:13px;opacity:.75}
+.lesson .pass,.pass{color:var(--mint-ink);font-weight:700}
+.radres{font-weight:700;font-size:15px;text-align:center;border-radius:12px;padding:4px 8px}
+.radres.ok{background:var(--mint-soft);color:var(--mint-ink)}.radres.no{background:var(--coral-soft);color:var(--bad-ink)}
+.trialcard p{max-width:62ch}
+@media (max-width:760px){.radopts{grid-template-columns:repeat(2,1fr)}}
+
+</style>
+</head>
+<body>
+<div id="shell">
+  <header class="top" id="top"></header>
+  <main id="app"></main>
+  <nav class="tabs" id="tabs" aria-label="主選單"></nav>
+</div>
+<canvas id="fx" aria-hidden="true"></canvas>
+<script>
+'use strict';
+const D={"L":[{"n":1,"name":"跑道","unit":"第一單元 擷取品格的珍寶","genre":"記敘文（故事）"},{"n":2,"name":"朱子治家格言選","unit":"第一單元 擷取品格的珍寶","genre":"文言文"},{"n":3,"name":"談遇見更好的自己","unit":"第一單元 擷取品格的珍寶","genre":"議論文"},{"n":4,"name":"臺灣美食詩選","unit":"第二單元 探索美食的滋味","genre":"詩歌"},{"n":5,"name":"最好的味覺禮物","unit":"第二單元 探索美食的滋味","genre":"記敘文"},{"n":6,"name":"珍珠奶茶","unit":"第二單元 探索美食的滋味","genre":"說明文／記敘文"},{"n":7,"name":"大小剛好的鞋子","unit":"第三單元 展現思辨的智慧","genre":"記敘文"},{"n":8,"name":"狐假虎威","unit":"第三單元 展現思辨的智慧","genre":"文言文"},{"n":9,"name":"空城計","unit":"第三單元 展現思辨的智慧","genre":"記敘文（小說）"},{"n":10,"name":"耶誕節","unit":"第四單元 擁抱經典的真情","genre":"記敘文（小說）"},{"n":11,"name":"下午茶風波","unit":"第四單元 擁抱經典的真情","genre":"記敘文（小說）"},{"n":12,"name":"橘子","unit":"第四單元 擁抱經典的真情","genre":"記敘文（小說）"}],"C":[{"l":1,"c":"軸","r":"車","z":"ㄓㄡˊ","w":["壓軸","輪軸","車軸"]},{"l":1,"c":"奪","r":"大","z":"ㄉㄨㄛˊ","w":["爭奪","奪冠","奪眶而出"]},{"l":1,"c":"屈","r":"尸","z":"ㄑㄩ","w":["委屈","屈服","屈指可數"]},{"l":1,"c":"偏","r":"人","z":"ㄆㄧㄢ","w":["偏心","偏遠","偏袒"]},{"l":1,"c":"搬","r":"手","z":"ㄅㄢ","w":["搬運","搬家","搬弄是非"]},{"l":1,"c":"芥","r":"艸","z":"ㄐㄧㄝˋ","w":["芥蒂","芥末"]},{"l":1,"c":"蒂","r":"艸","z":"ㄉㄧˋ","w":["芥蒂","菸蒂","根深蒂固"]},{"l":1,"c":"抑","r":"手","z":"ㄧˋ","w":["壓抑","抑或","抑制"]},{"l":1,"c":"拒","r":"手","z":"ㄐㄩˋ","w":["拒絕","抗拒","婉拒"]},{"l":1,"c":"尷","r":"尢","z":"ㄍㄢ","w":["尷尬"]},{"l":1,"c":"尬","r":"尢","z":"ㄍㄚˋ","w":["尷尬"]},{"l":1,"c":"悔","r":"心","z":"ㄏㄨㄟˇ","w":["後悔","悔不當初","懊悔"]},{"l":1,"c":"拱","r":"手","z":"ㄍㄨㄥˇ","w":["拱手讓人","拱橋","群山環拱"]},{"l":1,"c":"距","r":"足","z":"ㄐㄩˋ","w":["距離","差距","行距"]},{"l":1,"c":"默","r":"黑","z":"ㄇㄛˋ","w":["默默","沉默","潛移默化"]},{"l":1,"c":"鬥","r":"鬥","z":"ㄉㄡˋ","w":["格鬥","鬥智","勾心鬥角"]},{"l":1,"c":"扭","r":"手","z":"ㄋㄧㄡˇ","w":["扭曲","扭動","扭傷"]},{"l":1,"c":"猛","r":"犬","z":"ㄇㄥˇ","w":["猛烈","勇猛","突飛猛進"]},{"l":1,"c":"愣","r":"心","z":"ㄌㄥˋ","w":["發愣","愣住","愣頭愣腦"]},{"l":2,"c":"粥","r":"米","z":"ㄓㄡ","w":["稀粥","一粥一飯"]},{"l":2,"c":"縷","r":"糸","z":"ㄌㄩˇ","w":["半絲半縷","一縷青煙","縷析"]},{"l":2,"c":"碗","r":"石","z":"ㄨㄢˇ","w":["飯碗","瓷碗","碗盤"]},{"l":2,"c":"綢","r":"糸","z":"ㄔㄡˊ","w":["綢緞","絲綢","未雨綢繆"]},{"l":2,"c":"繆","r":"糸","z":"ㄇㄡˊ","w":["未雨綢繆","綢繆"]},{"l":2,"c":"毋","r":"毋","z":"ㄨˊ","w":["毋須","毋枉毋縱","毋庸置疑"]},{"l":2,"c":"掘","r":"手","z":"ㄐㄩㄝˊ","w":["掘取","挖掘","臨渴掘井"]},{"l":2,"c":"纏","r":"糸","z":"ㄔㄢˊ","w":["纏繞","糾纏","腰纏萬貫"]},{"l":2,"c":"縛","r":"糸","z":"ㄈㄨˊ","w":["束縛","縛雞之力","作繭自縛"]},{"l":2,"c":"瓦","r":"瓦","z":"ㄨㄚˇ","w":["瓦罐","磚瓦","冰消瓦解"]},{"l":2,"c":"缶","r":"缶","z":"ㄈㄡˇ","w":["瓦缶","擊缶"]},{"l":2,"c":"蔬","r":"艸","z":"ㄕㄨ","w":["蔬菜","蔬果","園蔬勝珍饈"]},{"l":2,"c":"饈","r":"食","z":"ㄒㄧㄡ","w":["珍饈","珍饈佳餚"]},{"l":2,"c":"腹","r":"肉","z":"ㄈㄨˋ","w":["腹部","捧腹大笑","口蜜腹劍"]},{"l":2,"c":"陶","r":"阜","z":"ㄊㄠˊ","w":["陶瓷","陶器","陶冶","陶醉"]},{"l":2,"c":"施","r":"方","z":"ㄕ","w":["施惠","施壓","因材施教"]},{"l":2,"c":"惠","r":"心","z":"ㄏㄨㄟˋ","w":["恩惠","施惠","惠存"]},{"l":2,"c":"勿","r":"勹","z":"ㄨˋ","w":["切勿","勿念","勿失良機"]},{"l":2,"c":"預","r":"頁","z":"ㄩˋ","w":["預備","預留","預計"]},{"l":2,"c":"悲","r":"心","z":"ㄅㄟ","w":["悲傷","樂極生悲","慈悲"]},{"l":3,"c":"卓","r":"十","z":"ㄓㄨㄛˊ","w":["卓越","卓見","卓然而立"]},{"l":3,"c":"培","r":"土","z":"ㄆㄟˊ","w":["栽培","培育"]},{"l":3,"c":"裁","r":"衣","z":"ㄘㄞˊ","w":["總裁","裁員","別出心裁"]},{"l":3,"c":"瑣","r":"玉","z":"ㄙㄨㄛˇ","w":["瑣事","瑣碎","瑣屑"]},{"l":3,"c":"仲","r":"人","z":"ㄓㄨㄥˋ","w":["仲夏","仲裁","伯仲之間"]},{"l":3,"c":"耕","r":"耒","z":"ㄍㄥ","w":["耕田","耕耘","舌耕"]},{"l":3,"c":"賺","r":"貝","z":"ㄓㄨㄢˋ","w":["賺錢","賺取","賺人熱淚"]},{"l":3,"c":"異","r":"田","z":"ㄧˋ","w":["異能","異常","標新立異","異口同聲"]},{"l":3,"c":"惋","r":"心","z":"ㄨㄢˋ","w":["惋惜","惋嘆"]},{"l":3,"c":"欠","r":"欠","z":"ㄑㄧㄢˋ","w":["欠缺","欠安","欠債"]},{"l":3,"c":"砥","r":"石","z":"ㄉㄧˇ","w":["砥礪","砥柱中流"]},{"l":3,"c":"礪","r":"石","z":"ㄌㄧˋ","w":["砥礪","礪石"]},{"l":3,"c":"驕","r":"馬","z":"ㄐㄧㄠ","w":["驕傲","驕陽","驕兵必敗"]},{"l":3,"c":"傲","r":"人","z":"ㄠˋ","w":["傲慢","驕傲","傲骨","恃才傲物"]},{"l":3,"c":"耘","r":"耒","z":"ㄩㄣˊ","w":["耕耘","春耕夏耘"]},{"l":3,"c":"隔","r":"阜","z":"ㄍㄜˊ","w":["阻隔","隔離","隔絕","隔靴搔癢"]},{"l":3,"c":"茁","r":"艸","z":"ㄓㄨㄛˊ","w":["茁壯"]},{"l":4,"c":"鼎","r":"鼎","z":"ㄉㄧㄥˇ","w":["鼎言","鼎立","一言九鼎"]},{"l":4,"c":"颳","r":"風","z":"ㄍㄨㄚ","w":["颳風"]},{"l":4,"c":"廚","r":"广","z":"ㄔㄨˊ","w":["廚房","廚藝","廚具"]},{"l":4,"c":"淋","r":"水","z":"ㄌㄧㄣˊ","w":["淋漓","淋雨","淋漓盡致"]},{"l":4,"c":"晒","r":"日","z":"ㄕㄞˋ","w":["晒乾","晒黑","日晒雨淋"]},{"l":4,"c":"筍","r":"竹","z":"ㄙㄨㄣˇ","w":["竹筍","筍乾","雨後春筍"]},{"l":4,"c":"丁","r":"一","z":"ㄉㄧㄥ","w":["肉丁","布丁","目不識丁"]},{"l":4,"c":"醃","r":"酉","z":"ㄧㄢ","w":["醃製","醃肉","醃漬"]},{"l":4,"c":"攪","r":"手","z":"ㄐㄧㄠˇ","w":["攪拌","攪和","胡攪蠻纏"]},{"l":4,"c":"炸","r":"火","z":"ㄓㄚˊ","w":["油炸","炸雞"],"alt":[{"z":"ㄓㄚˋ","w":["炸彈","轟炸"]}]},{"l":4,"c":"瑩","r":"玉","z":"ㄧㄥˊ","w":["晶瑩","瑩潤","晶瑩剔透"]},{"l":4,"c":"饗","r":"食","z":"ㄒㄧㄤˇ","w":["饗宴","饗客","以饗讀者"]},{"l":4,"c":"宴","r":"宀","z":"ㄧㄢˋ","w":["宴會","晚宴","宴客","宴居"]},{"l":4,"c":"彰","r":"彡","z":"ㄓㄤ","w":["表彰","彰顯","欲蓋彌彰"]},{"l":4,"c":"煮","r":"火","z":"ㄓㄨˇ","w":["烹煮","煮熟","煮沸"]},{"l":4,"c":"豬","r":"豕","z":"ㄓㄨ","w":["毛豬","豬舍"]},{"l":5,"c":"削","r":"刀","z":"ㄒㄧㄠ","w":["削皮","刀削麵","削鉛筆"],"alt":[{"z":"ㄒㄩㄝˋ","w":["瘦削","剝削","削足適履"]}]},{"l":5,"c":"沫","r":"水","z":"ㄇㄛˋ","w":["泡沫","飛沫","相濡以沫"]},{"l":5,"c":"茶","r":"艸","z":"ㄔㄚˊ","w":["品茶","苦茶","粗茶淡飯"]},{"l":5,"c":"嗅","r":"口","z":"ㄒㄧㄡˋ","w":["嗅覺","嗅聞"]},{"l":5,"c":"按","r":"手","z":"ㄢˋ","w":["按鈴","按部就班"]},{"l":5,"c":"碎","r":"石","z":"ㄙㄨㄟˋ","w":["破碎","粉碎","粉身碎骨"]},{"l":5,"c":"舍","r":"舌","z":"ㄕㄜˋ","w":["宿舍","退避三舍"],"alt":[{"z":"ㄕㄜˇ","w":["舍我其誰","舍本逐末"]}]},{"l":5,"c":"熬","r":"火","z":"ㄠˊ","w":["熬煮","熬夜","煎熬"]},{"l":5,"c":"砂","r":"石","z":"ㄕㄚ","w":["金砂","鐵砂","砂石"]},{"l":5,"c":"混","r":"水","z":"ㄏㄨㄣˋ","w":["混合","混濁","魚目混珠"]},{"l":5,"c":"焦","r":"火","z":"ㄐㄧㄠ","w":["焦糖","焦急","焦慮"]},{"l":5,"c":"舀","r":"臼","z":"ㄧㄠˇ","w":["舀水","舀湯"]},{"l":5,"c":"勺","r":"勹","z":"ㄕㄠˊ","w":["鐵勺","湯勺","勺子"]},{"l":5,"c":"熄","r":"火","z":"ㄒㄧˊ","w":["熄火","熄滅","熄燈"]},{"l":5,"c":"騰","r":"馬","z":"ㄊㄥˊ","w":["熱騰騰","騰出","飛黃騰達"]},{"l":5,"c":"啜","r":"口","z":"ㄔㄨㄛˋ","w":["啜飲","啜泣"]},{"l":5,"c":"淌","r":"水","z":"ㄊㄤˇ","w":["流淌","淌淚","淌下"]},{"l":5,"c":"沛","r":"水","z":"ㄆㄟˋ","w":["充沛","豐沛","顛沛流離"]},{"l":5,"c":"舔","r":"舌","z":"ㄊㄧㄢˇ","w":["舔拭","舔吮","舔冰棒"]},{"l":6,"c":"靡","r":"非","z":"ㄇㄧˇ","w":["風靡","所向披靡"],"alt":[{"z":"ㄇㄧˊ","w":["靡爛","靡費"]}]},{"l":6,"c":"嫁","r":"女","z":"ㄐㄧㄚˋ","w":["出嫁","轉嫁","為人作嫁"]},{"l":6,"c":"贊","r":"貝","z":"ㄗㄢˋ","w":["贊助","贊同","贊許"]},{"l":6,"c":"干","r":"干","z":"ㄍㄢ","w":["干涉","干預","相干"]},{"l":6,"c":"烹","r":"火","z":"ㄆㄥ","w":["烹調","烹飪","兔死狗烹"]},{"l":6,"c":"薯","r":"艸","z":"ㄕㄨˇ","w":["番薯","馬鈴薯"]},{"l":6,"c":"末","r":"木","z":"ㄇㄛˋ","w":["粉末","本末倒置","期末"]},{"l":6,"c":"添","r":"水","z":"ㄊㄧㄢ","w":["增添","添補","錦上添花"]},{"l":6,"c":"擴","r":"手","z":"ㄎㄨㄛˋ","w":["擴展","擴張","擴大"]},{"l":6,"c":"袂","r":"衣","z":"ㄇㄟˋ","w":["聯袂"]},{"l":6,"c":"稠","r":"禾","z":"ㄔㄡˊ","w":["黏稠","稠密","稠度"]},{"l":6,"c":"衡","r":"行","z":"ㄏㄥˊ","w":["平衡","衡量","度量衡"]},{"l":6,"c":"徜","r":"彳","z":"ㄔㄤˊ","w":["徜徉"]},{"l":6,"c":"徉","r":"彳","z":"ㄧㄤˊ","w":["徜徉"]},{"l":6,"c":"撫","r":"手","z":"ㄈㄨˇ","w":["撫摸","安撫","撫育"]},{"l":6,"c":"薩","r":"艸","z":"ㄙㄚˋ","w":["菩薩","披薩"]},{"l":6,"c":"乳","r":"乙","z":"ㄖㄨˇ","w":["乳汁","牛乳","水乳交融"]},{"l":7,"c":"仰","r":"人","z":"ㄧㄤˇ","w":["仰首","仰望","信仰","仰人鼻息"]},{"l":7,"c":"緬","r":"糸","z":"ㄇㄧㄢˇ","w":["緬甸","緬懷"]},{"l":7,"c":"甸","r":"田","z":"ㄉㄧㄢˋ","w":["緬甸","沉甸甸"]},{"l":7,"c":"踝","r":"足","z":"ㄏㄨㄞˊ","w":["腳踝","踝骨"]},{"l":7,"c":"絨","r":"糸","z":"ㄖㄨㄥˊ","w":["呢絨","絲絨","羽絨"]},{"l":7,"c":"濺","r":"水","z":"ㄐㄧㄢˋ","w":["濺溼","噴濺","飛濺"]},{"l":7,"c":"襬","r":"衣","z":"ㄅㄞˇ","w":["下襬","裙襬"]},{"l":7,"c":"弄","r":"廾","z":"ㄋㄨㄥˋ","w":["玩弄","弄巧成拙"],"alt":[{"z":"ㄌㄨㄥˋ","w":["巷弄","弄堂"]}]},{"l":7,"c":"恣","r":"心","z":"ㄗˋ","w":["恣意","驕恣","恣情"]},{"l":7,"c":"批","r":"手","z":"ㄆㄧ","w":["批評","批判","大批"]},{"l":7,"c":"徑","r":"彳","z":"ㄐㄧㄥˋ","w":["行徑","捷徑","路徑"]},{"l":7,"c":"謹","r":"言","z":"ㄐㄧㄣˇ","w":["謹慎","謹記","恭謹"]},{"l":7,"c":"恰","r":"心","z":"ㄑㄧㄚˋ","w":["恰好","恰巧","恰如其分"]},{"l":7,"c":"乏","r":"丿","z":"ㄈㄚˊ","w":["缺乏","乏味","疲乏"]},{"l":7,"c":"皆","r":"白","z":"ㄐㄧㄝ","w":["皆大歡喜","比比皆是"]},{"l":7,"c":"嗤","r":"口","z":"ㄔ","w":["嗤笑","嗤之以鼻"]},{"l":7,"c":"嗯","r":"口","z":"˙ㄣ","w":[],"note":"歎詞，表示答應或疑問"},{"l":8,"c":"策","r":"竹","z":"ㄘㄜˋ","w":["簡策","策略","束手無策"]},{"l":8,"c":"劉","r":"刀","z":"ㄌㄧㄡˊ","w":["劉向"]},{"l":8,"c":"纂","r":"糸","z":"ㄗㄨㄢˇ","w":["編纂","纂修"]},{"l":8,"c":"寓","r":"宀","z":"ㄩˋ","w":["寓言","寓所","寓意"]},{"l":8,"c":"鷸","r":"鳥","z":"ㄩˋ","w":["鷸蚌相爭"]},{"l":8,"c":"蚌","r":"虫","z":"ㄅㄤˋ","w":["鷸蚌相爭","蚌殼"]},{"l":8,"c":"述","r":"辵","z":"ㄕㄨˋ","w":["敘述","描述","論述"]},{"l":8,"c":"赫","r":"赤","z":"ㄏㄜˋ","w":["顯赫","赫赫有名"]},{"l":8,"c":"畏","r":"田","z":"ㄨㄟˋ","w":["畏怯","無畏","後生可畏"]},{"l":8,"c":"詢","r":"言","z":"ㄒㄩㄣˊ","w":["詢問","諮詢","質詢"]},{"l":8,"c":"曰","r":"曰","z":"ㄩㄝ","w":["子曰","美其名曰"]},{"l":8,"c":"吾","r":"口","z":"ㄨˊ","w":["吾人","吾輩","吾師"]},{"l":8,"c":"遂","r":"辵","z":"ㄙㄨㄟˋ","w":["順遂","遂願","未遂"]},{"l":8,"c":"諷","r":"言","z":"ㄈㄥˋ","w":["諷刺","嘲諷","諷諭"]},{"l":8,"c":"蔽","r":"艸","z":"ㄅㄧˋ","w":["蒙蔽","遮蔽","掩蔽"]},{"l":8,"c":"妨","r":"女","z":"ㄈㄤˊ","w":["不妨","妨害","妨礙"]},{"l":8,"c":"虛","r":"虍","z":"ㄒㄩ","w":["虛名","虛弱","虛懷若谷"]},{"l":8,"c":"誘","r":"言","z":"ㄧㄡˋ","w":["誘導","引誘","循循善誘"]},{"l":9,"c":"亭","r":"亠","z":"ㄊㄧㄥˊ","w":["涼亭","售票亭","亭亭玉立"]},{"l":9,"c":"支","r":"支","z":"ㄓ","w":["支援","支配","一支軍隊","樂不可支"]},{"l":9,"c":"縣","r":"糸","z":"ㄒㄧㄢˋ","w":["西城縣","縣府"]},{"l":9,"c":"懿","r":"心","z":"ㄧˋ","w":["司馬懿","懿德","懿行"]},{"l":9,"c":"剩","r":"刀","z":"ㄕㄥˋ","w":["剩餘","剩下","剩飯"]},{"l":9,"c":"魏","r":"鬼","z":"ㄨㄟˋ","w":["曹魏","北魏"]},{"l":9,"c":"旗","r":"方","z":"ㄑㄧˊ","w":["國旗","旗幟","旗開得勝"]},{"l":9,"c":"幟","r":"巾","z":"ㄓˋ","w":["旗幟","獨樹一幟"]},{"l":9,"c":"崗","r":"山","z":"ㄍㄤˇ","w":["崗位","站崗"]},{"l":9,"c":"姓","r":"女","z":"ㄒㄧㄥˋ","w":["百姓","隱姓埋名"]},{"l":9,"c":"倘","r":"人","z":"ㄊㄤˇ","w":["倘若","倘使"]},{"l":9,"c":"憧","r":"心","z":"ㄔㄨㄥ","w":["憧憬"]},{"l":9,"c":"薰","r":"艸","z":"ㄒㄩㄣ","w":["薰陶","薰染","薰風"]},{"l":9,"c":"撤","r":"手","z":"ㄔㄜˋ","w":["撤退","撤軍","撤銷"]},{"l":9,"c":"諸","r":"言","z":"ㄓㄨ","w":["諸葛亮","諸事","反求諸己"]},{"l":9,"c":"葛","r":"艸","z":"ㄍㄜˊ","w":["諸葛亮","葛藤","葛布"]},{"l":9,"c":"慎","r":"心","z":"ㄕㄣˋ","w":["謹慎","慎重","慎始敬終"]},{"l":9,"c":"丞","r":"一","z":"ㄔㄥˊ","w":["丞相","縣丞"]},{"l":10,"c":"耶","r":"耳","z":"ㄧㄝˊ","w":["耶誕節","耶穌"]},{"l":10,"c":"郊","r":"邑","z":"ㄐㄧㄠ","w":["郊外","郊區","荒郊"]},{"l":10,"c":"慈","r":"心","z":"ㄘˊ","w":["慈祥","仁慈","家慈"]},{"l":10,"c":"祥","r":"示","z":"ㄒㄧㄤˊ","w":["慈祥","祥和","吉祥"]},{"l":10,"c":"劈","r":"刀","z":"ㄆㄧ","w":["劈柴","劈頭","劈啪"]},{"l":10,"c":"啪","r":"口","z":"ㄆㄚ","w":["劈啪","噼哩啪啦"]},{"l":10,"c":"零","r":"雨","z":"ㄌㄧㄥˊ","w":["零用錢","零散","感激涕零"]},{"l":10,"c":"厭","r":"厂","z":"ㄧㄢˋ","w":["厭倦","討厭","兵不厭詐"]},{"l":10,"c":"倦","r":"人","z":"ㄐㄩㄢˋ","w":["疲倦","厭倦","孜孜不倦"]},{"l":10,"c":"辯","r":"辛","z":"ㄅㄧㄢˋ","w":["辯護","爭辯","辯才無礙"]},{"l":10,"c":"私","r":"禾","z":"ㄙ","w":["自私","大公無私","私生活"]},{"l":10,"c":"貧","r":"貝","z":"ㄆㄧㄣˊ","w":["貧窮","貧血","貧困"]},{"l":10,"c":"係","r":"人","z":"ㄒㄧˋ","w":["關係","干係"]},{"l":10,"c":"趁","r":"走","z":"ㄔㄣˋ","w":["趁機","趁虛而入","趁熱打鐵"]},{"l":10,"c":"稍","r":"禾","z":"ㄕㄠ","w":["稍微","稍候","稍縱即逝"]},{"l":10,"c":"罕","r":"网","z":"ㄏㄢˇ","w":["罕見","稀罕","人跡罕至"]},{"l":10,"c":"烘","r":"火","z":"ㄏㄨㄥ","w":["烘乾","烘托","暖烘烘"]},{"l":10,"c":"衷","r":"衣","z":"ㄓㄨㄥ","w":["衷心","苦衷","言不由衷"]},{"l":10,"c":"鋼","r":"金","z":"ㄍㄤ","w":["鋼琴","鋼筋","不鏽鋼"]},{"l":11,"c":"楓","r":"木","z":"ㄈㄥ","w":["楓林","楓葉","楓糖"]},{"l":11,"c":"恢","r":"心","z":"ㄏㄨㄟ","w":["恢復","天網恢恢"]},{"l":11,"c":"潑","r":"水","z":"ㄆㄛ","w":["活潑","潑水","潑辣"]},{"l":11,"c":"莓","r":"艸","z":"ㄇㄟˊ","w":["草莓","藍莓"]},{"l":11,"c":"廳","r":"广","z":"ㄊㄧㄥ","w":["客廳","大廳","音樂廳"]},{"l":11,"c":"額","r":"頁","z":"ㄜˊ","w":["前額","額頭","名額","焦頭爛額"]},{"l":11,"c":"灌","r":"水","z":"ㄍㄨㄢˋ","w":["灌醉","灌溉","澆灌"]},{"l":11,"c":"醉","r":"酉","z":"ㄗㄨㄟˋ","w":["陶醉","沉醉","酩酊大醉"]},{"l":11,"c":"釀","r":"酉","z":"ㄋㄧㄤˋ","w":["醞釀","釀造","佳釀"]},{"l":11,"c":"替","r":"曰","z":"ㄊㄧˋ","w":["代替","替換","興替"]},{"l":11,"c":"諒","r":"言","z":"ㄌㄧㄤˋ","w":["原諒","體諒","諒必"]},{"l":11,"c":"脣","r":"肉","z":"ㄔㄨㄣˊ","w":["嘴脣","雙脣","脣齒相依"]},{"l":11,"c":"奔","r":"大","z":"ㄅㄣ","w":["狂奔","奔馳","奔波","疲於奔命"]},{"l":11,"c":"乞","r":"乙","z":"ㄑㄧˇ","w":["乞求","乞討","搖尾乞憐"]},{"l":11,"c":"某","r":"木","z":"ㄇㄡˇ","w":["某人","某地"]},{"l":11,"c":"煥","r":"火","z":"ㄏㄨㄢˋ","w":["神采煥發","容光煥發","煥然一新"]},{"l":11,"c":"橇","r":"木","z":"ㄑㄧㄠ","w":["雪橇"]},{"l":11,"c":"鈴","r":"金","z":"ㄌㄧㄥˊ","w":["門鈴","鈴鐺","掩耳盜鈴"]},{"l":11,"c":"迴","r":"辵","z":"ㄏㄨㄟˊ","w":["巡迴","迴盪","迴避"]},{"l":12,"c":"廂","r":"广","z":"ㄒㄧㄤ","w":["車廂","包廂","一廂情願"]},{"l":12,"c":"頰","r":"頁","z":"ㄐㄧㄚˊ","w":["臉頰","雙頰","兩頰"]},{"l":12,"c":"袱","r":"衣","z":"ㄈㄨˊ","w":["包袱"],"note":"「包袱」的袱讀輕聲 ˙ㄈㄨ","noread":1},{"l":12,"c":"瘡","r":"疒","z":"ㄔㄨㄤ","w":["凍瘡","千瘡百孔"]},{"l":12,"c":"狽","r":"犬","z":"ㄅㄟˋ","w":["狼狽","狼狽為奸"]},{"l":12,"c":"憊","r":"心","z":"ㄅㄟˋ","w":["疲憊","憊倦"]},{"l":12,"c":"淒","r":"水","z":"ㄑㄧ","w":["淒涼","淒厲","淒風苦雨"]},{"l":12,"c":"隧","r":"阜","z":"ㄙㄨㄟˋ","w":["隧道"]},{"l":12,"c":"卯","r":"卩","z":"ㄇㄠˇ","w":["卯足全力","卯上","寅吃卯糧"]},{"l":12,"c":"貫","r":"貝","z":"ㄍㄨㄢˋ","w":["全神貫注","連貫","如雷貫耳"]},{"l":12,"c":"岔","r":"山","z":"ㄔㄚˋ","w":["岔路","出岔","打個岔"]},{"l":12,"c":"欄","r":"木","z":"ㄌㄢˊ","w":["欄杆","柵欄","專欄"]},{"l":12,"c":"柵","r":"木","z":"ㄓㄚˋ","w":["柵欄","柵門"]},{"l":12,"c":"矮","r":"矢","z":"ㄞˇ","w":["矮小","矮胖","矮牆"]},{"l":12,"c":"陰","r":"阜","z":"ㄧㄣ","w":["陰暗","陰雨","光陰","陽奉陰違"]},{"l":12,"c":"扔","r":"手","z":"ㄖㄥ","w":["扔掉","扔下"]},{"l":12,"c":"茫","r":"艸","z":"ㄇㄤˊ","w":["茫然","渺茫","人海茫茫"]},{"l":12,"c":"悶","r":"心","z":"ㄇㄣˋ","w":["苦悶","鬱悶","悶悶不樂"],"alt":[{"z":"ㄇㄣ","w":["悶熱","悶不吭聲"]}]}],"G":[{"l":1,"t":"near","items":[{"c":"軸","z":"ㄓㄡˊ","w":["壓軸","輪軸"]},{"c":"抽","z":"ㄔㄡ","w":["抽獎","抽象"]},{"c":"油","z":"ㄧㄡˊ","w":["石油","油漆"]},{"c":"柚","z":"ㄧㄡˋ","w":["柚子","柚木"]}]},{"l":1,"t":"near","items":[{"c":"偏","z":"ㄆㄧㄢ","w":["偏心","偏遠"]},{"c":"篇","z":"ㄆㄧㄢ","w":["詩篇","篇章"]},{"c":"遍","z":"ㄅㄧㄢˋ","w":["遍地","走遍天下"]},{"c":"扁","z":"ㄅㄧㄢˇ","w":["扁平","壓扁"]}]},{"l":1,"t":"near","items":[{"c":"搬","z":"ㄅㄢ","w":["搬運","搬家"]},{"c":"般","z":"ㄅㄢ","w":["一般","百般"]}]},{"l":1,"t":"near","items":[{"c":"芥","z":"ㄐㄧㄝˋ","w":["芥蒂","芥末"]},{"c":"介","z":"ㄐㄧㄝˋ","w":["介意","介紹"]}]},{"l":1,"t":"near","items":[{"c":"抑","z":"ㄧˋ","w":["壓抑","抑或"]},{"c":"仰","z":"ㄧㄤˇ","w":["久仰","俯仰無愧"]},{"c":"迎","z":"ㄧㄥˊ","w":["迎接","迎刃而解"]}]},{"l":1,"t":"near","items":[{"c":"蒂","z":"ㄉㄧˋ","w":["芥蒂","菸蒂"]},{"c":"締","z":"ㄉㄧˋ","w":["締結","取締"]}]},{"l":1,"t":"near","items":[{"c":"拒","z":"ㄐㄩˋ","w":["拒絕","抗拒"]},{"c":"距","z":"ㄐㄩˋ","w":["距離","差距"]}]},{"l":1,"t":"near","items":[{"c":"悔","z":"ㄏㄨㄟˇ","w":["後悔","悔不當初"]},{"c":"侮","z":"ㄨˇ","w":["欺侮","侮辱"]}]},{"l":1,"t":"near","items":[{"c":"拱","z":"ㄍㄨㄥˇ","w":["拱橋","拱手讓人"]},{"c":"供","z":"ㄍㄨㄥ","w":["提供","供應"]},{"c":"洪","z":"ㄏㄨㄥˊ","w":["洪水","洪荒"]}]},{"l":1,"t":"near","items":[{"c":"默","z":"ㄇㄛˋ","w":["默默","沉默"]},{"c":"點","z":"ㄉㄧㄢˇ","w":["指點","優點"]}]},{"l":1,"t":"near","items":[{"c":"扭","z":"ㄋㄧㄡˇ","w":["扭曲","扭動"]},{"c":"紐","z":"ㄋㄧㄡˇ","w":["樞紐","紐扣"]}]},{"l":2,"t":"near","items":[{"c":"縷","z":"ㄌㄩˇ","w":["縷縷","縷析","半絲半縷"]},{"c":"屢","z":"ㄌㄩˇ","w":["屢次","屢見不鮮"]},{"c":"樓","z":"ㄌㄡˊ","w":["樓房","人去樓空"]},{"c":"摟","z":"ㄌㄡˇ","w":["摟肩","摟抱"]},{"c":"鏤","z":"ㄌㄡˋ","w":["鏤刻","雕鏤"]}]},{"l":2,"t":"near","items":[{"c":"碗","z":"ㄨㄢˇ","w":["飯碗","碗盤"]},{"c":"婉","z":"ㄨㄢˇ","w":["婉轉","婉拒"]},{"c":"蜿","z":"ㄨㄢ","w":["蜿蜒"]}]},{"l":2,"t":"near","items":[{"c":"綢","z":"ㄔㄡˊ","w":["綢繆","綢緞"]},{"c":"稠","z":"ㄔㄡˊ","w":["濃稠","稠密"]},{"c":"啁","z":"ㄓㄡ","w":["啁啾"]},{"c":"凋","z":"ㄉㄧㄠ","w":["凋零","凋謝"]}]},{"l":2,"t":"near","items":[{"c":"毋","z":"ㄨˊ","w":["毋須","毋枉毋縱"]},{"c":"母","z":"ㄇㄨˇ","w":["母親","母語"]}]},{"l":2,"t":"near","items":[{"c":"掘","z":"ㄐㄩㄝˊ","w":["掘取","臨渴掘井"]},{"c":"倔","z":"ㄐㄩㄝˊ","w":["倔強"]},{"c":"崛","z":"ㄐㄩㄝˊ","w":["崛起"]}]},{"l":2,"t":"near","items":[{"c":"縛","z":"ㄈㄨˊ","w":["束縛","縛雞之力"]},{"c":"傅","z":"ㄈㄨˋ","w":["師傅"]},{"c":"搏","z":"ㄅㄛˊ","w":["搏鬥","脈搏"]},{"c":"博","z":"ㄅㄛˊ","w":["廣博","博愛"]}]},{"l":2,"t":"near","items":[{"c":"瓦","z":"ㄨㄚˇ","w":["瓦缶","磚瓦"]},{"c":"互","z":"ㄏㄨˋ","w":["互相","互助"]}]},{"l":2,"t":"near","items":[{"c":"蔬","z":"ㄕㄨ","w":["蔬菜","蔬果"]},{"c":"疏","z":"ㄕㄨ","w":["疏通","疏忽"]}]},{"l":2,"t":"near","items":[{"c":"腹","z":"ㄈㄨˋ","w":["腹部","捧腹大笑"]},{"c":"復","z":"ㄈㄨˋ","w":["康復","恢復"]},{"c":"複","z":"ㄈㄨˋ","w":["複製","複雜"]}]},{"l":2,"t":"near","items":[{"c":"陶","z":"ㄊㄠˊ","w":["陶器","陶冶"]},{"c":"淘","z":"ㄊㄠˊ","w":["淘氣","淘汰"]}]},{"l":2,"t":"near","items":[{"c":"施","z":"ㄕ","w":["施惠","施壓"]},{"c":"拖","z":"ㄊㄨㄛ","w":["拖地","拖延"]}]},{"l":2,"t":"near","items":[{"c":"惠","z":"ㄏㄨㄟˋ","w":["施惠","恩惠"]},{"c":"慧","z":"ㄏㄨㄟˋ","w":["智慧","聰慧"]}]},{"l":3,"t":"near","items":[{"c":"卓","z":"ㄓㄨㄛˊ","w":["卓越","卓見"]},{"c":"桌","z":"ㄓㄨㄛ","w":["桌椅","書桌"]}]},{"l":3,"t":"near","items":[{"c":"裁","z":"ㄘㄞˊ","w":["總裁","裁員","裁判"]},{"c":"栽","z":"ㄗㄞ","w":["盆栽","栽培"]},{"c":"哉","z":"ㄗㄞ","w":["嗚呼哀哉"]}]},{"l":3,"t":"near","items":[{"c":"瑣","z":"ㄙㄨㄛˇ","w":["瑣事","瑣碎"]},{"c":"鎖","z":"ㄙㄨㄛˇ","w":["封鎖","連鎖"]}]},{"l":3,"t":"near","items":[{"c":"仲","z":"ㄓㄨㄥˋ","w":["仲夏","仲裁","伯仲之間"]},{"c":"忡","z":"ㄔㄨㄥ","w":["憂心忡忡"]},{"c":"沖","z":"ㄔㄨㄥ","w":["沖泡","一飛沖天"]}]},{"l":3,"t":"near","items":[{"c":"賺","z":"ㄓㄨㄢˋ","w":["賺錢","賺取"]},{"c":"謙","z":"ㄑㄧㄢ","w":["謙虛","謙讓"]},{"c":"歉","z":"ㄑㄧㄢˋ","w":["道歉","歉疚"]},{"c":"兼","z":"ㄐㄧㄢ","w":["兼備","兼顧"]}]},{"l":3,"t":"near","items":[{"c":"惋","z":"ㄨㄢˋ","w":["惋惜","惋嘆"]},{"c":"腕","z":"ㄨㄢˋ","w":["手腕","扼腕"]}]},{"l":3,"t":"near","items":[{"c":"砥","z":"ㄉㄧˇ","w":["砥礪","中流砥柱"]},{"c":"詆","z":"ㄉㄧˇ","w":["詆毀"]}]},{"l":3,"t":"near","items":[{"c":"驕","z":"ㄐㄧㄠ","w":["驕陽","驕傲自滿"]},{"c":"嬌","z":"ㄐㄧㄠ","w":["嬌貴","嬌柔"]}]},{"l":3,"t":"near","items":[{"c":"傲","z":"ㄠˋ","w":["傲慢","驕傲自滿"]},{"c":"遨","z":"ㄠˊ","w":["遨遊"]},{"c":"熬","z":"ㄠˊ","w":["熬夜","熬湯"]}]},{"l":3,"t":"near","items":[{"c":"耘","z":"ㄩㄣˊ","w":["耕耘","春耕夏耘"]},{"c":"紜","z":"ㄩㄣˊ","w":["眾說紛紜"]}]},{"l":3,"t":"near","items":[{"c":"隔","z":"ㄍㄜˊ","w":["阻隔","隔絕"]},{"c":"嗝","z":"ㄍㄜˊ","w":["打嗝","飽嗝"]}]},{"l":3,"t":"near","items":[{"c":"茁","z":"ㄓㄨㄛˊ","w":["茁壯"]},{"c":"拙","z":"ㄓㄨㄛˊ","w":["拙見","笨拙"]},{"c":"絀","z":"ㄔㄨˋ","w":["短絀","相形見絀"]}]},{"l":4,"t":"near","items":[{"c":"颳","z":"ㄍㄨㄚ","w":["颳風"]},{"c":"颱","z":"ㄊㄞˊ","w":["颱風","防颱"]}]},{"l":4,"t":"near","items":[{"c":"筍","z":"ㄙㄨㄣˇ","w":["竹筍","筍乾"]},{"c":"荀","z":"ㄒㄩㄣˊ","w":["荀子"]}]},{"l":4,"t":"near","items":[{"c":"醃","z":"ㄧㄢ","w":["醃製","醃肉"]},{"c":"淹","z":"ㄧㄢ","w":["淹沒","淹水"]},{"c":"掩","z":"ㄧㄢˇ","w":["掩飾","掩蓋"]}]},{"l":4,"t":"poly","items":[{"c":"炸","z":"ㄓㄚˊ","w":["油炸","炸雞","炸肉"]},{"c":"炸","z":"ㄓㄚˋ","w":["炸彈","轟炸","爆炸"]}]},{"l":4,"t":"near","items":[{"c":"瑩","z":"ㄧㄥˊ","w":["晶瑩","晶瑩剔透"]},{"c":"營","z":"ㄧㄥˊ","w":["營業","露營"]},{"c":"螢","z":"ㄧㄥˊ","w":["螢幕","螢火蟲"]},{"c":"縈","z":"ㄧㄥˊ","w":["縈繞","魂牽夢縈"]}]},{"l":4,"t":"near","items":[{"c":"饗","z":"ㄒㄧㄤˇ","w":["饗宴"]},{"c":"響","z":"ㄒㄧㄤˇ","w":["影響","聲響"]},{"c":"嚮","z":"ㄒㄧㄤˋ","w":["嚮往","嚮導"]}]},{"l":5,"t":"near","items":[{"c":"削","z":"ㄒㄧㄠ","w":["削皮","刀削麵"]},{"c":"消","z":"ㄒㄧㄠ","w":["消滅","消失"]},{"c":"銷","z":"ㄒㄧㄠ","w":["銷售","推銷"]}]},{"l":5,"t":"near","items":[{"c":"沫","z":"ㄇㄛˋ","w":["泡沫","飛沫"]},{"c":"抹","z":"ㄇㄛˇ","w":["塗抹","抹滅"]}]},{"l":5,"t":"near","items":[{"c":"茶","z":"ㄔㄚˊ","w":["品茶","下午茶"]},{"c":"荼","z":"ㄊㄨˊ","w":["荼毒","如火如荼"]}]},{"l":5,"t":"near","items":[{"c":"碎","z":"ㄙㄨㄟˋ","w":["破碎","粉身碎骨"]},{"c":"淬","z":"ㄘㄨㄟˋ","w":["淬鍊","淬礪"]}]},{"l":5,"t":"near","items":[{"c":"焦","z":"ㄐㄧㄠ","w":["焦糖","焦慮"]},{"c":"蕉","z":"ㄐㄧㄠ","w":["香蕉","蕉農"]}]},{"l":5,"t":"near","items":[{"c":"騰","z":"ㄊㄥˊ","w":["騰出","熱騰騰"]},{"c":"謄","z":"ㄊㄥˊ","w":["謄本","謄寫"]}]},{"l":5,"t":"near","items":[{"c":"啜","z":"ㄔㄨㄛˋ","w":["啜飲","啜泣"]},{"c":"輟","z":"ㄔㄨㄛˋ","w":["輟學","中輟"]},{"c":"綴","z":"ㄓㄨㄟˋ","w":["點綴","綴飾"]}]},{"l":5,"t":"near","items":[{"c":"淌","z":"ㄊㄤˇ","w":["流淌","淌淚"]},{"c":"躺","z":"ㄊㄤˇ","w":["躺平","躺椅"]},{"c":"趟","z":"ㄊㄤˋ","w":["一趟","趕趟"]}]},{"l":5,"t":"near","items":[{"c":"沛","z":"ㄆㄟˋ","w":["豐沛","充沛"]},{"c":"柿","z":"ㄕˋ","w":["柿子"]}]},{"l":5,"t":"near","items":[{"c":"舔","z":"ㄊㄧㄢˇ","w":["舔拭","舔冰棒"]},{"c":"添","z":"ㄊㄧㄢ","w":["增添","添飯"]}]},{"l":5,"t":"poly","items":[{"c":"削","z":"ㄒㄧㄠ","w":["削皮","刀削麵","削鉛筆"]},{"c":"削","z":"ㄒㄩㄝˋ","w":["瘦削","剝削","削足適履"]}]},{"l":5,"t":"poly","items":[{"c":"舍","z":"ㄕㄜˋ","w":["宿舍","退避三舍"]},{"c":"舍","z":"ㄕㄜˇ","w":["舍我其誰"]}]},{"l":6,"t":"near","items":[{"c":"嫁","z":"ㄐㄧㄚˋ","w":["出嫁","轉嫁"]},{"c":"稼","z":"ㄐㄧㄚˋ","w":["莊稼"]}]},{"l":6,"t":"near","items":[{"c":"干","z":"ㄍㄢ","w":["干涉","相干"]},{"c":"千","z":"ㄑㄧㄢ","w":["千萬","千古"]}]},{"l":6,"t":"near","items":[{"c":"末","z":"ㄇㄛˋ","w":["粉末","歲末","本末倒置"]},{"c":"未","z":"ㄨㄟˋ","w":["未來","未必","未雨綢繆"]}]},{"l":6,"t":"near","items":[{"c":"擴","z":"ㄎㄨㄛˋ","w":["擴展","擴張"]},{"c":"礦","z":"ㄎㄨㄤˋ","w":["礦場","採礦"]},{"c":"曠","z":"ㄎㄨㄤˋ","w":["空曠","曠野"]}]},{"l":6,"t":"near","items":[{"c":"衡","z":"ㄏㄥˊ","w":["平衡","衡量"]},{"c":"衝","z":"ㄔㄨㄥ","w":["衝突","衝鋒"]}]},{"l":6,"t":"near","items":[{"c":"撫","z":"ㄈㄨˇ","w":["撫摸","安撫"]},{"c":"嫵","z":"ㄨˇ","w":["嫵媚"]}]},{"l":6,"t":"poly","items":[{"c":"靡","z":"ㄇㄧˇ","w":["風靡","所向披靡"]},{"c":"靡","z":"ㄇㄧˊ","w":["靡爛","靡費"]}]},{"l":7,"t":"near","items":[{"c":"緬","z":"ㄇㄧㄢˇ","w":["緬甸","緬懷"]},{"c":"靦","z":"ㄇㄧㄢˇ","w":["靦腆"]}]},{"l":7,"t":"near","items":[{"c":"踝","z":"ㄏㄨㄞˊ","w":["腳踝","踝骨"]},{"c":"課","z":"ㄎㄜˋ","w":["課程","課業"]},{"c":"棵","z":"ㄎㄜ","w":["一棵樹"]},{"c":"裸","z":"ㄌㄨㄛˇ","w":["赤裸","裸露"]},{"c":"粿","z":"ㄍㄨㄛˇ","w":["碗粿","草仔粿"]}]},{"l":7,"t":"near","items":[{"c":"濺","z":"ㄐㄧㄢˋ","w":["噴濺","濺溼"]},{"c":"賤","z":"ㄐㄧㄢˋ","w":["貧賤","賤價"]},{"c":"踐","z":"ㄐㄧㄢˋ","w":["實踐","踐踏"]}]},{"l":7,"t":"near","items":[{"c":"襬","z":"ㄅㄞˇ","w":["下襬","裙襬"]},{"c":"擺","z":"ㄅㄞˇ","w":["擺動","擺設"]}]},{"l":7,"t":"near","items":[{"c":"恣","z":"ㄗˋ","w":["恣意","驕恣"]},{"c":"姿","z":"ㄗ","w":["姿勢","姿態"]}]},{"l":7,"t":"near","items":[{"c":"徑","z":"ㄐㄧㄥˋ","w":["行徑","捷徑"]},{"c":"勁","z":"ㄐㄧㄣˋ","w":["使勁","幹勁"]},{"c":"經","z":"ㄐㄧㄥ","w":["行經","經過"]}]},{"l":7,"t":"near","items":[{"c":"謹","z":"ㄐㄧㄣˇ","w":["謹記","恭謹"]},{"c":"僅","z":"ㄐㄧㄣˇ","w":["僅有","僅僅"]},{"c":"勤","z":"ㄑㄧㄣˊ","w":["勤勞","辛勤"]}]},{"l":7,"t":"near","items":[{"c":"恰","z":"ㄑㄧㄚˋ","w":["恰恰","恰好"]},{"c":"洽","z":"ㄑㄧㄚˋ","w":["洽談","接洽"]}]},{"l":7,"t":"poly","items":[{"c":"弄","z":"ㄋㄨㄥˋ","w":["玩弄","逗弄","弄巧成拙"]},{"c":"弄","z":"ㄌㄨㄥˋ","w":["巷弄","弄堂"]}]},{"l":8,"t":"near","items":[{"c":"寓","z":"ㄩˋ","w":["寓言","寓意"]},{"c":"遇","z":"ㄩˋ","w":["禮遇","待遇"]}]},{"l":8,"t":"near","items":[{"c":"赫","z":"ㄏㄜˋ","w":["顯赫","赫赫"]},{"c":"嚇","z":"ㄒㄧㄚˋ","w":["驚嚇","嚇人"]}]},{"l":8,"t":"near","items":[{"c":"遂","z":"ㄙㄨㄟˋ","w":["順遂","未遂"]},{"c":"逐","z":"ㄓㄨˊ","w":["競逐","追逐"]}]},{"l":8,"t":"near","items":[{"c":"諷","z":"ㄈㄥˋ","w":["諷刺","嘲諷"]},{"c":"楓","z":"ㄈㄥ","w":["楓樹","楓葉"]}]},{"l":8,"t":"near","items":[{"c":"蔽","z":"ㄅㄧˋ","w":["蒙蔽","掩蔽"]},{"c":"弊","z":"ㄅㄧˋ","w":["弊案","利弊"]},{"c":"幣","z":"ㄅㄧˋ","w":["錢幣","硬幣"]}]},{"l":8,"t":"near","items":[{"c":"妨","z":"ㄈㄤˊ","w":["不妨","妨害"]},{"c":"仿","z":"ㄈㄤˇ","w":["模仿","仿造"]},{"c":"彿","z":"ㄈㄨˊ","w":["彷彿"]},{"c":"訪","z":"ㄈㄤˇ","w":["拜訪","訪問"]}]},{"l":8,"t":"near","items":[{"c":"誘","z":"ㄧㄡˋ","w":["誘導","引誘"]},{"c":"透","z":"ㄊㄡˋ","w":["透明","透氣"]}]},{"l":9,"t":"near","items":[{"c":"旗","z":"ㄑㄧˊ","w":["旗幟","錦旗"]},{"c":"期","z":"ㄑㄧˊ","w":["期待","日期"]},{"c":"欺","z":"ㄑㄧ","w":["欺負","欺騙"]},{"c":"棋","z":"ㄑㄧˊ","w":["棋盤","下棋"]}]},{"l":9,"t":"near","items":[{"c":"幟","z":"ㄓˋ","w":["旗幟","獨樹一幟"]},{"c":"識","z":"ㄕˋ","w":["知識","認識"]},{"c":"織","z":"ㄓ","w":["編織","紡織"]}]},{"l":9,"t":"near","items":[{"c":"崗","z":"ㄍㄤˇ","w":["崗位","站崗"]},{"c":"綱","z":"ㄍㄤ","w":["大綱","綱要"]},{"c":"剛","z":"ㄍㄤ","w":["剛才","剛好"]},{"c":"岡","z":"ㄍㄤ","w":["山岡","景陽岡"]}]},{"l":9,"t":"near","items":[{"c":"姓","z":"ㄒㄧㄥˋ","w":["百姓","貴姓"]},{"c":"娃","z":"ㄨㄚˊ","w":["娃娃"]},{"c":"性","z":"ㄒㄧㄥˋ","w":["個性","性情"]}]},{"l":9,"t":"near","items":[{"c":"撤","z":"ㄔㄜˋ","w":["撤退","撤換"]},{"c":"撒","z":"ㄙㄚ","w":["撒嬌","撒謊"]}]},{"l":9,"t":"near","items":[{"c":"憧","z":"ㄔㄨㄥ","w":["憧憬"]},{"c":"撞","z":"ㄓㄨㄤˋ","w":["碰撞","頂撞"]},{"c":"僮","z":"ㄊㄨㄥˊ","w":["書僮","僮僕"]}]},{"l":9,"t":"near","items":[{"c":"諸","z":"ㄓㄨ","w":["諸事","諸君"]},{"c":"緒","z":"ㄒㄩˋ","w":["情緒","頭緒"]}]},{"l":9,"t":"near","items":[{"c":"丞","z":"ㄔㄥˊ","w":["丞相"]},{"c":"承","z":"ㄔㄥˊ","w":["承認","承擔"]}]},{"l":10,"t":"near","items":[{"c":"耶","z":"ㄧㄝˊ","w":["耶穌","耶誕節"]},{"c":"邪","z":"ㄒㄧㄝˊ","w":["邪惡","天真無邪"]}]},{"l":10,"t":"near","items":[{"c":"郊","z":"ㄐㄧㄠ","w":["郊外","郊區"]},{"c":"效","z":"ㄒㄧㄠˋ","w":["效率","效果"]}]},{"l":10,"t":"near","items":[{"c":"祥","z":"ㄒㄧㄤˊ","w":["慈祥","祥和"]},{"c":"詳","z":"ㄒㄧㄤˊ","w":["詳細","詳情"]},{"c":"洋","z":"ㄧㄤˊ","w":["洋蔥","海洋"]},{"c":"烊","z":"ㄧㄤˋ","w":["打烊"]}]},{"l":10,"t":"near","items":[{"c":"劈","z":"ㄆㄧ","w":["劈啪","劈柴"]},{"c":"壁","z":"ㄅㄧˋ","w":["牆壁","隔壁"]},{"c":"臂","z":"ㄅㄧˋ","w":["手臂","臂膀"]},{"c":"璧","z":"ㄅㄧˋ","w":["完璧歸趙"]}]},{"l":10,"t":"near","items":[{"c":"辯","z":"ㄅㄧㄢˋ","w":["辯護","爭辯"]},{"c":"辮","z":"ㄅㄧㄢˋ","w":["髮辮","辮子"]},{"c":"辦","z":"ㄅㄢˋ","w":["辦法","辦公"]},{"c":"瓣","z":"ㄅㄢˋ","w":["花瓣"]}]},{"l":10,"t":"near","items":[{"c":"貧","z":"ㄆㄧㄣˊ","w":["貧窮","貧乏"]},{"c":"貪","z":"ㄊㄢ","w":["貪心","貪玩"]}]},{"l":10,"t":"near","items":[{"c":"稍","z":"ㄕㄠ","w":["稍微","稍候"]},{"c":"梢","z":"ㄕㄠ","w":["樹梢","末梢"]},{"c":"俏","z":"ㄑㄧㄠˋ","w":["俏麗","俏皮"]}]},{"l":10,"t":"near","items":[{"c":"衷","z":"ㄓㄨㄥ","w":["衷心","苦衷"]},{"c":"哀","z":"ㄞ","w":["哀傷","默哀"]},{"c":"衰","z":"ㄕㄨㄞ","w":["衰弱","衰老"]}]},{"l":10,"t":"near","items":[{"c":"鋼","z":"ㄍㄤ","w":["鋼琴","鋼筋"]},{"c":"綱","z":"ㄍㄤ","w":["大綱","綱要"]}]},{"l":11,"t":"near","items":[{"c":"潑","z":"ㄆㄛ","w":["活潑","潑水"]},{"c":"撥","z":"ㄅㄛ","w":["撥動","撥打"]}]},{"l":11,"t":"near","items":[{"c":"莓","z":"ㄇㄟˊ","w":["草莓","藍莓"]},{"c":"霉","z":"ㄇㄟˊ","w":["發霉","霉運"]},{"c":"梅","z":"ㄇㄟˊ","w":["梅花","酸梅"]}]},{"l":11,"t":"near","items":[{"c":"灌","z":"ㄍㄨㄢˋ","w":["灌醉","灌水"]},{"c":"罐","z":"ㄍㄨㄢˋ","w":["鐵罐","罐頭"]},{"c":"觀","z":"ㄍㄨㄢ","w":["觀賞","觀看"]}]},{"l":11,"t":"near","items":[{"c":"釀","z":"ㄋㄧㄤˋ","w":["釀造","醞釀"]},{"c":"壤","z":"ㄖㄤˇ","w":["土壤","天壤之別"]},{"c":"讓","z":"ㄖㄤˋ","w":["禮讓","讓位"]}]},{"l":11,"t":"near","items":[{"c":"乞","z":"ㄑㄧˇ","w":["乞求","乞討"]},{"c":"迄","z":"ㄑㄧˋ","w":["迄今","迄未成功"]},{"c":"屹","z":"ㄧˋ","w":["屹立不搖"]}]},{"l":11,"t":"near","items":[{"c":"煥","z":"ㄏㄨㄢˋ","w":["煥然一新","神采煥發"]},{"c":"換","z":"ㄏㄨㄢˋ","w":["變換","交換"]},{"c":"渙","z":"ㄏㄨㄢˋ","w":["渙散","渙然冰釋"]},{"c":"喚","z":"ㄏㄨㄢˋ","w":["呼喚","喚醒"]}]},{"l":11,"t":"near","items":[{"c":"橇","z":"ㄑㄧㄠ","w":["雪橇"]},{"c":"撬","z":"ㄑㄧㄠˋ","w":["撬開","撬門"]}]},{"l":11,"t":"near","items":[{"c":"鈴","z":"ㄌㄧㄥˊ","w":["鈴鐺","門鈴"]},{"c":"玲","z":"ㄌㄧㄥˊ","w":["玲瓏","小巧玲瓏"]},{"c":"伶","z":"ㄌㄧㄥˊ","w":["伶俐","伶牙俐齒"]},{"c":"聆","z":"ㄌㄧㄥˊ","w":["聆聽","聆賞"]}]},{"l":11,"t":"near","items":[{"c":"迴","z":"ㄏㄨㄟˊ","w":["迴盪","巡迴"]},{"c":"迥","z":"ㄐㄧㄨㄥˇ","w":["迥異","迥然不同"]}]},{"l":12,"t":"near","items":[{"c":"廂","z":"ㄒㄧㄤ","w":["車廂","一廂情願"]},{"c":"相","z":"ㄒㄧㄤ","w":["互相","相反","相距"]}]},{"l":12,"t":"near","items":[{"c":"淒","z":"ㄑㄧ","w":["淒厲","淒風苦雨"]},{"c":"棲","z":"ㄑㄧ","w":["棲息","棲身"]}]},{"l":12,"t":"near","items":[{"c":"隧","z":"ㄙㄨㄟˋ","w":["隧道"]},{"c":"燧","z":"ㄙㄨㄟˋ","w":["燧石","燧人氏"]}]},{"l":12,"t":"near","items":[{"c":"卯","z":"ㄇㄠˇ","w":["卯上","卯足全力"]},{"c":"卵","z":"ㄌㄨㄢˇ","w":["產卵","卵生"]}]},{"l":12,"t":"near","items":[{"c":"貫","z":"ㄍㄨㄢˋ","w":["連貫","全神貫注"]},{"c":"慣","z":"ㄍㄨㄢˋ","w":["習慣","舊慣"]}]},{"l":12,"t":"near","items":[{"c":"岔","z":"ㄔㄚˋ","w":["岔路","出岔"]},{"c":"盆","z":"ㄆㄣˊ","w":["盆栽","臉盆"]}]},{"l":12,"t":"near","items":[{"c":"欄","z":"ㄌㄢˊ","w":["柵欄","專欄"]},{"c":"攔","z":"ㄌㄢˊ","w":["阻攔","攔截"]},{"c":"瀾","z":"ㄌㄢˊ","w":["波瀾","狂瀾"]},{"c":"爛","z":"ㄌㄢˋ","w":["燦爛","破爛"]}]},{"l":12,"t":"near","items":[{"c":"柵","z":"ㄓㄚˋ","w":["柵欄","柵門"]},{"c":"刪","z":"ㄕㄢ","w":["刪除","刪減"]},{"c":"珊","z":"ㄕㄢ","w":["珊瑚","意興闌珊"]}]},{"l":12,"t":"near","items":[{"c":"陰","z":"ㄧㄣ","w":["陰暗","光陰"]},{"c":"蔭","z":"ㄧㄣˋ","w":["庇蔭"]}]},{"l":12,"t":"near","items":[{"c":"扔","z":"ㄖㄥ","w":["扔掉","扔下"]},{"c":"仍","z":"ㄖㄥˊ","w":["仍然","仍舊"]}]},{"l":12,"t":"poly","items":[{"c":"悶","z":"ㄇㄣˋ","w":["苦悶","鬱悶","悶悶不樂"]},{"c":"悶","z":"ㄇㄣ","w":["悶熱","悶不吭聲"]}]}],"W":[{"l":1,"w":"壓軸","z":"ㄧㄚ ㄓㄡˊ","d":"戲劇的最後一齣稱大軸，大軸前一齣稱壓軸。比喻最精采、最引人注目的節目或事件。","s":"這場晚會的壓軸好戲，就是魔術師的經典脫逃秀。","k":0},{"l":1,"w":"爭奪","z":"ㄓㄥ ㄉㄨㄛˊ","d":"爭相奪取，互不退讓。","s":"學校將在下個月舉行班際壘球比賽，屆時本班會全力以赴爭奪冠軍。","k":0},{"l":1,"w":"委屈","z":"ㄨㄟˇ ㄑㄩ","d":"因遭受不合理的待遇而感到難過；或壓制自己的意志以遷就他人。","s":"他因承受不住壓力，落下委屈的眼淚。","k":0},{"l":1,"w":"偏心","z":"ㄆㄧㄢ ㄒㄧㄣ","d":"偏袒一方，對某一方存私心。","s":"爸媽對待我和弟弟向來一視同仁，絲毫沒有偏心。","k":0},{"l":1,"w":"搬運","z":"ㄅㄢ ㄩㄣˋ","d":"把東西搬動、運送到別處。","s":"哥哥的電腦不小心在搬運過程中摔壞了，他非常懊惱。","k":0},{"l":1,"w":"芥蒂","z":"ㄐㄧㄝˋ ㄉㄧˋ","d":"微小的梗塞物。比喻心裡不舒服或與人有嫌隙。","s":"真正的友誼應該坦誠相對，不該讓小事演變成彼此間的芥蒂。","k":0},{"l":1,"w":"壓抑","z":"ㄧㄚ ㄧˋ","d":"對人的思想、情感、行為等加以抑止或限制。","s":"他壓抑不住心中的悲傷，眼淚奪眶而出。","k":0},{"l":1,"w":"拒絕","z":"ㄐㄩˋ ㄐㄩㄝˊ","d":"不接受、不答應。","s":"只要你能真心對待，別人怎麼會拒絕你的善意呢？","k":0},{"l":1,"w":"尷尬","z":"ㄍㄢ ㄍㄚˋ","d":"處境困窘或事情棘手，難以應付；亦指不好意思、難為情。","s":"面對雙方提出的不同意見，身為主導的他顯得很尷尬。","k":0},{"l":1,"w":"後悔","z":"ㄏㄡˋ ㄏㄨㄟˇ","d":"事後懊悔當初的不該。","s":"他在發現自己的決定造成傷害後，感到十分後悔。","k":0},{"l":1,"w":"拱手讓人","z":"ㄍㄨㄥˇ ㄕㄡˇ ㄖㄤˋ ㄖㄣˊ","d":"輕易的把東西讓給別人。","s":"我方因為主將受傷，無法上場比賽，冠軍只好拱手讓人。","k":1},{"l":1,"w":"距離","z":"ㄐㄩˋ ㄌㄧˊ","d":"時間或空間、有形或無形的間隔；相隔。","s":"同學們要互相接觸、溝通，才能縮短彼此的距離。","k":0},{"l":1,"w":"默默","z":"ㄇㄛˋ ㄇㄛˋ","d":"沉靜不說話。","s":"每當我訴說遇到的困難時，姐姐總是默默的傾聽並給予鼓勵。","k":0},{"l":1,"w":"鬥志","z":"ㄉㄡˋ ㄓˋ","d":"奮發進取的意志。","s":"雖然屢次遭遇挫折，他仍然鬥志旺盛，毫不氣餒。","k":0},{"l":1,"w":"扭曲","z":"ㄋㄧㄡˇ ㄑㄩ","d":"扭動物體使其形態改變；歪曲、顛倒。","s":"爸爸用力扭曲鐵絲，將牆上鬆脫的電線固定好。","k":0},{"l":1,"w":"猛然","z":"ㄇㄥˇ ㄖㄢˊ","d":"突然、驟然。","s":"他猛然想起剛才擦身而過的人，是他多年不見的朋友。","k":0},{"l":1,"w":"無理取鬧","z":"ㄨˊ ㄌㄧˇ ㄑㄩˇ ㄋㄠˋ","d":"毫無理由的跟人吵鬧、滋事。","s":"弟弟明知我在寫功課，還要我陪他堆積木，真是無理取鬧。","k":1},{"l":1,"w":"勝券在握","z":"ㄕㄥˋ ㄑㄩㄢˋ ㄗㄞˋ ㄨㄛˋ","d":"比喻很有把握獲勝。","s":"原本勝券在握的接力賽，因故變成勢均力敵的比賽。","k":1},{"l":1,"w":"勢均力敵","z":"ㄕˋ ㄐㄩㄣ ㄌㄧˋ ㄉㄧˊ","d":"雙方力量相當，不分高下。","s":"這場球賽雙方實力勢均力敵，比賽形成拉鋸戰。","k":1},{"l":1,"w":"盡心盡力","z":"ㄐㄧㄣˋ ㄒㄧㄣ ㄐㄧㄣˋ ㄌㄧˋ","d":"竭盡心力，毫無保留。","s":"接力賽就是團隊精神的表現，只要每位選手都能盡心盡力，就是最閃亮的明星。","k":1},{"l":1,"w":"不相上下","z":"ㄅㄨˋ ㄒㄧㄤ ㄕㄤˋ ㄒㄧㄚˋ","d":"實力、程度彼此相當，分不出高低。","s":"這兩位羽球選手的實力不相上下，打了幾個回合還分不出勝負。","k":1},{"l":1,"w":"巧奪天工","z":"ㄑㄧㄠˇ ㄉㄨㄛˊ ㄊㄧㄢ ㄍㄨㄥ","d":"雖是人工製造，但精巧勝過天然。形容技藝巧妙神奇。","s":"這幅山水畫竟然是用花瓣貼成的，巧奪天工，令人讚嘆不已！","k":2},{"l":1,"w":"屈指可數","z":"ㄑㄩ ㄓˇ ㄎㄜˇ ㄕㄨˇ","d":"形容數目很少，扳著手指頭就能數得出來。","s":"現代人手一機，像他這樣使用傳統手機的人已經屈指可數了。","k":2},{"l":2,"w":"綢繆","z":"ㄔㄡˊ ㄇㄡˊ","d":"纏繞束縛。本課指修補器物，使之更加堅固（未雨綢繆）。","s":"要預防土石流，就得未雨綢繆，先做好山坡地保護措施。","k":0},{"l":2,"w":"掘井","z":"ㄐㄩㄝˊ ㄐㄧㄥˇ","d":"挖井。常與「臨渴」連用指事到臨頭才想辦法。","s":"村民決定要掘井解決缺水的困境，大家齊心協力終於找到水源。","k":0},{"l":2,"w":"纏繞","z":"ㄔㄢˊ ㄖㄠˋ","d":"圍繞束縛。","s":"葡萄藤纏繞著竹架向上攀生。","k":0},{"l":2,"w":"束縛","z":"ㄕㄨˋ ㄈㄨˊ","d":"拘束或限制。","s":"他被繁重的工作束縛住，無法實現出國進修的夢想。","k":0},{"l":2,"w":"瓦缶","z":"ㄨㄚˇ ㄈㄡˇ","d":"一種有蓋、腹大口小，用來盛裝酒或水的陶器。","s":"在這個偏遠的小山村裡，村民依然習慣用瓦缶盛水。","k":0},{"l":2,"w":"珍饈","z":"ㄓㄣ ㄒㄧㄡ","d":"珍奇美味的食物。","s":"今天為了慶祝爺爺的生日，全家人準備了滿桌的珍饈佳餚招待賓客。","k":0},{"l":2,"w":"陶器","z":"ㄊㄠˊ ㄑㄧˋ","d":"用陶土燒製的器物，質地較瓷器粗糙，具吸水性。","s":"這間店陳列了許多陶藝師傅製作的陶器，每件都充滿藝術氣息。","k":0},{"l":2,"w":"施惠","z":"ㄕ ㄏㄨㄟˋ","d":"給予恩惠、德澤。","s":"他長年施惠於弱勢團體，默默提供物資幫助改善生活。","k":0},{"l":2,"w":"預留","z":"ㄩˋ ㄌㄧㄡˊ","d":"事先保留。","s":"媽媽替晚歸的哥哥預留了一份熱騰騰的飯菜。","k":0},{"l":2,"w":"樂極生悲","z":"ㄌㄜˋ ㄐㄧˊ ㄕㄥ ㄅㄟ","d":"歡樂至極，往往會轉生悲愁。","s":"他一拿到新車就開快車兜風，結果樂極生悲，撞壞了車身。","k":0},{"l":2,"w":"深入淺出","z":"ㄕㄣ ㄖㄨˋ ㄑㄧㄢˇ ㄔㄨ","d":"指說話或文章內容深刻，但表達淺顯易懂。","s":"他的解說方式深入淺出，讓原本複雜的科學原理變得容易理解。","k":1},{"l":2,"w":"未雨綢繆","z":"ㄨㄟˋ ㄩˇ ㄔㄡˊ ㄇㄡˊ","d":"比喻事先做好防備工作。","s":"大樓清洗水塔前，我們都會未雨綢繆，先儲備足夠的飲用水。","k":1},{"l":2,"w":"臨渴掘井","z":"ㄌㄧㄣˊ ㄎㄜˇ ㄐㄩㄝˊ ㄐㄧㄥˇ","d":"比喻事到臨頭才著手準備，為時已晚。","s":"要避免臨渴掘井的情況發生，就應該提前做好萬全規劃。","k":1},{"l":2,"w":"山珍海味","z":"ㄕㄢ ㄓㄣ ㄏㄞˇ ㄨㄟˋ","d":"山野海洋產製的珍美菜餚。泛指豐盛奢華的美食。","s":"吃遍了山珍海味，他反而覺得家常小菜最令人回味無窮。","k":1},{"l":2,"w":"稱心如意","z":"ㄔㄣˋ ㄒㄧㄣ ㄖㄨˊ ㄧˋ","d":"完全合乎心意。","s":"經過多年奮鬥，他終於找到稱心如意的工作，實現自己的抱負。","k":1},{"l":2,"w":"得意忘形","z":"ㄉㄜˊ ㄧˋ ㄨㄤˋ ㄒㄧㄥˊ","d":"因高興而失去常態，忘記自我約束。","s":"凡事應當預留退路，稱心如意時更不可得意忘形，以免招致失敗。","k":1},{"l":2,"w":"腰纏萬貫","z":"ㄧㄠ ㄔㄢˊ ㄨㄢˋ ㄍㄨㄢˋ","d":"身上帶著大筆金錢。比喻財富極為豐富。","s":"這位腰纏萬貫的企業家，每年都會固定捐出善款資助偏鄉教育。","k":2},{"l":2,"w":"作繭自縛","z":"ㄗㄨㄛˋ ㄐㄧㄢˇ ㄗˋ ㄈㄨˊ","d":"蠶吐絲結繭將自己包裹在內。比喻人自設障礙，陷入困境。","s":"如果不誠實面對問題，只想敷衍了事，只會讓自己作繭自縛。","k":2},{"l":2,"w":"悲天憫人","z":"ㄅㄟ ㄊㄧㄢ ㄇㄧㄣˇ ㄖㄣˊ","d":"憂傷時局多變，哀憐百姓疾苦。形容胸懷大愛的情懷。","s":"德蕾莎修女救助貧苦無依之人，其悲天憫人的精神令世人敬佩。","k":2},{"l":3,"w":"卓越","z":"ㄓㄨㄛˊ ㄩㄝˋ","d":"非常優秀，遠遠超出常人。","s":"他在財經界展現了卓越的見解，深受同業推崇。","k":0},{"l":3,"w":"培養","z":"ㄆㄟˊ ㄧㄤˇ","d":"長期策畫和訓練；或在適宜環境中培植養育。","s":"加入球隊不僅能強健身心，更可以培養良好的團隊合作精神。","k":0},{"l":3,"w":"總裁","z":"ㄗㄨㄥˇ ㄘㄞˊ","d":"政黨領袖或大型企業財團首領的職稱。","s":"這位總裁一上任，馬上大刀闊斧革新了公司制度。","k":0},{"l":3,"w":"瑣事","z":"ㄙㄨㄛˇ ㄕˋ","d":"細小零碎的事情。","s":"他一直被生活瑣事牽絆，構思已久的文章遲遲沒有動筆。","k":0},{"l":3,"w":"方仲永","z":"ㄈㄤ ㄓㄨㄥˋ ㄩㄥˇ","d":"北宋王安石〈傷仲永〉的主角，五歲能作詩的神童，後因未持續學習而淪為常人。","s":"方仲永因父親唯利是圖、放棄求學，最終才能枯竭，令人惋惜。","k":0},{"l":3,"w":"耕田","z":"ㄍㄥ ㄊㄧㄢˊ","d":"翻土耕種田地。","s":"這塊土地經過農民辛勤耕田，現在已是一片綠油油的稻浪。","k":0},{"l":3,"w":"賺錢","z":"ㄓㄨㄢˋ ㄑㄧㄢˊ","d":"賺取財利；利潤較高的。","s":"開這間店鋪不單是為了賺錢，更希望能提供街坊交流的溫馨空間。","k":0},{"l":3,"w":"無異","z":"ㄨˊ ㄧˋ","d":"相同、毫無差異。","s":"遇到困難就選擇逃避，無異於直接放棄。","k":0},{"l":3,"w":"惋惜","z":"ㄨㄢˋ ㄒㄧˊ","d":"嘆惜、令人覺得十分可惜。","s":"這棵百年古樹不敵強風吹襲而折斷，令居民深感惋惜。","k":0},{"l":3,"w":"欠缺","z":"ㄑㄧㄢˋ ㄑㄩㄝ","d":"缺少、不夠充足。","s":"這項研發計畫目前欠缺關鍵技術，進度只得暫時擱置。","k":0},{"l":3,"w":"砥礪","z":"ㄉㄧˇ ㄌㄧˋ","d":"砥與礪皆為磨刀石。引申為磨練品格、互勉奮發。","s":"同窗好友在求學階段相互砥礪，共同朝著理想前進。","k":0},{"l":3,"w":"驕傲自滿","z":"ㄐㄧㄠ ㄠˋ ㄗˋ ㄇㄢˇ","d":"自以為了不起而傲慢自大、感到滿足現狀。","s":"取得小小成就千萬不能驕傲自滿，否則容易停滯不前。","k":0},{"l":3,"w":"耕耘","z":"ㄍㄥ ㄩㄣˊ","d":"耕田與除草。比喻付出辛勤的勞力與精神。","s":"老師常勉勵我們：唯有辛勤耕耘，將來的夢想才能順利開花結果。","k":0},{"l":3,"w":"茁壯","z":"ㄓㄨㄛˊ ㄓㄨㄤˋ","d":"成長強壯、蓬勃發展。","s":"在師長的細心呵護與引導下，幼苗一天天成長茁壯。","k":0},{"l":3,"w":"日積月累","z":"ㄖˋ ㄐㄧ ㄩㄝˋ ㄌㄟˇ","d":"長時間不斷積聚累積。","s":"學問和能力都是靠日積月累而來的，絕不可能一蹴可幾。","k":1},{"l":3,"w":"持之以恆","z":"ㄔˊ ㄓ ㄧˇ ㄏㄥˊ","d":"做事有恆心，能長久堅持下去。","s":"學習任何專長都必須持之以恆，才能真正熟練通達。","k":1},{"l":3,"w":"精益求精","z":"ㄐㄧㄥ ㄧˋ ㄑㄧㄡˊ ㄐㄧㄥ","d":"追求好還要更好。","s":"大師對工藝技術精益求精，力求每件作品皆達完美之境。","k":1},{"l":3,"w":"更上層樓","z":"ㄍㄥˋ ㄕㄤˋ ㄘㄥˊ ㄌㄡˊ","d":"達到更高的境界或水準。","s":"希望你在這次優秀表現的基礎上，持之以恆，課業更上層樓。","k":1},{"l":3,"w":"踏實","z":"ㄊㄚˋ ㄕˊ","d":"認真切實、不虛浮，心裡安定充實。","s":"唯有一步一腳印、踏實努力，心裡才會感到無比心安與篤定。","k":1},{"l":3,"w":"別出心裁","z":"ㄅㄧㄝˊ ㄔㄨ ㄒㄧㄣ ㄘㄞˊ","d":"獨創一格，不同於尋常格局想法。","s":"這場別出心裁的露天音樂會，帶給觀眾全新的視覺與聽覺震撼。","k":2},{"l":3,"w":"伯仲之間","z":"ㄅㄛˊ ㄓㄨㄥˋ ㄓ ㄐㄧㄢ","d":"比喻實力、水準相當，難分高下。","s":"這兩位優秀選手棋力在伯仲之間，對局過程精采萬分。","k":2},{"l":3,"w":"恃才傲物","z":"ㄕˋ ㄘㄞˊ ㄠˋ ㄨˋ","d":"依仗自己的才華而傲慢自大，看不起他人。","s":"他雖然聰穎過人，但切莫恃才傲物，以免失去人際支持。","k":2},{"l":4,"w":"鼎邊趖","z":"ㄉㄧㄥˇ ㄅㄧㄢ ㄙㄨㄛ","d":"臺灣著名傳統小吃。將米漿沿熱鍋邊緣淋下燙熟，配海鮮佐料煮成。","s":"基隆廟口夜市的鼎邊趖香氣撲鼻，是遊客必嘗的名產。","k":0},{"l":4,"w":"颳風","z":"ㄍㄨㄚ ㄈㄥ","d":"起風、吹起強風。","s":"外面正在颳風下雨，外出時一定要格外小心安全。","k":0},{"l":4,"w":"廚師","z":"ㄔㄨˊ ㄕ","d":"掌理廚房烹飪廚務的專業師傅。","s":"這位廚師擅長運用在地食材烹製美味佳餚。","k":0},{"l":4,"w":"晒乾","z":"ㄕㄞˋ ㄍㄢ","d":"將潮溼物品置於陽光下曝晒使水分蒸發。","s":"把洗淨的蔬菜晒乾後，便能長時間儲存保存風味。","k":0},{"l":4,"w":"竹筍","z":"ㄓㄨˊ ㄙㄨㄣˇ","d":"竹子地下嫩莖所生的幼芽，清脆可口可供食用。","s":"鮮採的竹筍不論是用來涼拌或是煮湯，都十分鮮甜開胃。","k":0},{"l":4,"w":"醃製","z":"ㄧㄢ ㄓˋ","d":"以鹽、糖、醬油等調味料浸漬食物的加工方式。","s":"肉質經過精心醃製後，口感更加入味軟嫩。","k":0},{"l":4,"w":"攪拌","z":"ㄐㄧㄠˇ ㄅㄢˋ","d":"以工具攪動混合，使物質均勻混合。","s":"製作麵糊時要充分攪拌均勻，蛋糕烘烤出來才會蓬鬆細緻。","k":0},{"l":4,"w":"油炸","z":"ㄧㄡˊ ㄓㄚˊ","d":"利用滾燙的沸油將食物加熱熟透。","s":"油炸食物雖然酥脆誘人，但不宜過量食用以維護健康。","k":0},{"l":4,"w":"晶瑩","z":"ㄐㄧㄥ ㄧㄥˊ","d":"光潔透明、光采閃耀的樣子。","s":"荷葉上滾動著晶瑩剔透的露珠，在朝陽下熠熠生輝。","k":0},{"l":4,"w":"饗宴","z":"ㄒㄧㄤˇ ㄧㄢˋ","d":"招待賓客的豐盛宴席；引申指極豐富美好的感受。","s":"音樂會為廣大聽眾帶來了一場洗滌心靈的視聽饗宴。","k":0},{"l":4,"w":"彰化","z":"ㄓㄤ ㄏㄨㄚˋ","d":"地名，位於臺灣西部中段，以肉圓等小吃聞名遐邇。","s":"媽媽的老家在彰化，每次造訪總要品嘗道地的肉圓小吃。","k":0},{"l":4,"w":"街頭巷尾","z":"ㄐㄧㄝ ㄊㄡˊ ㄒㄧㄤˋ ㄨㄟˇ","d":"大街小巷，到處、各處。","s":"中秋佳節時，街頭巷尾都飄散著烤肉與柚子的香氣。","k":1},{"l":4,"w":"華燈初上","z":"ㄏㄨㄚˊ ㄉㄥ ㄔㄨ ㄕㄤˋ","d":"夜幕降臨，街道商家的燈火剛剛點亮的美景。","s":"華燈初上時分，整座城市的夜景顯得格外璀璨耀眼。","k":1},{"l":4,"w":"人來人往","z":"ㄖㄣˊ ㄌㄞˊ ㄖㄣˊ ㄨㄤˇ","d":"形容街市行人絡繹不絕、熱鬧繁華。","s":"車站大廳人來人往，旅客們步履匆匆奔向各自的目的地。","k":1},{"l":4,"w":"一言九鼎","z":"ㄧ ㄧㄢˊ ㄐㄧㄡˇ ㄉㄧㄥˇ","d":"形容說話極有分量，信用極佳。","s":"他在商業界一言九鼎，大家遇到紛爭都樂意請他主持公道。","k":2},{"l":4,"w":"淋漓盡致","z":"ㄌㄧㄣˊ ㄌㄧˊ ㄐㄧㄣˋ ㄓˋ","d":"形容文章、言語或表演發揮得詳盡暢達、毫無保留。","s":"演員將主角內心的矛盾掙扎詮釋得淋漓盡致，令人拍案叫絕。","k":2},{"l":4,"w":"雨後春筍","z":"ㄩˇ ㄏㄡˋ ㄔㄨㄣ ㄙㄨㄣˇ","d":"春雨過後竹筍快速生長。比喻事物在某一時期大量湧現。","s":"文創咖啡館如雨後春筍般在老街各處設立，吸引大批文青造訪。","k":2},{"l":4,"w":"目不識丁","z":"ㄇㄨˋ ㄅㄨˋ ㄕˊ ㄉㄧㄥ","d":"連一個「丁」字都不認得。比喻毫無學問或不識字的人。","s":"過去失學的人雖然目不識丁，但往往具備豐富的生活智慧。","k":2},{"l":4,"w":"相得益彰","z":"ㄒㄧㄤ ㄉㄜˊ ㄧˋ ㄓㄤ","d":"互相配合對照，更能突顯各自的長處與特色。","s":"這道料理搭配特製醬汁，使食材美味相得益彰。","k":2},{"l":4,"w":"欲蓋彌彰","z":"ㄩˋ ㄍㄞˋ ㄇㄧˊ ㄓㄤ","d":"想要掩蓋真相，反而讓破綻更加明顯暴露。","s":"他想編造謊言掩飾過錯，沒想到破綻百出，反倒欲蓋彌彰。","k":2},{"l":5,"w":"泡沫","z":"ㄆㄠˋ ㄇㄛˋ","d":"聚在水面或液體表面上的許多細小氣泡。","s":"清洗碗盤時添加適量洗潔精，產生的柔細泡沫能輕易去油汙。","k":0},{"l":5,"w":"下午茶","z":"ㄒㄧㄚˋ ㄨˇ ㄔㄚˊ","d":"午後四、五點左右所享用的茶水點心；亦指午後的休閒活動。","s":"忙碌了一下午，享受一杯花草茶與鬆餅，是悠閒的下午茶時光。","k":0},{"l":5,"w":"粉身碎骨","z":"ㄈㄣˇ ㄕㄣ ㄙㄨㄟˋ ㄍㄨˇ","d":"身體骨頭粉碎，比喻犧牲生命；本課轉品形容將果肉切碎打成汁。","s":"把芭樂切成小塊投入果汁機，在刀刃轉動間瞬間粉身碎骨化為香純果汁。","k":0},{"l":5,"w":"退避三舍","z":"ㄊㄨㄟˋ ㄅㄧˋ ㄙㄢ ㄕㄜˋ","d":"舍為古代行軍三十里。比喻主動退讓，避免正面衝突。","s":"弟弟脾氣暴躁，見他大發雷霆，大家紛紛退避三舍不敢招惹。","k":0},{"l":5,"w":"熬煮","z":"ㄠˊ ㄓㄨˇ","d":"以小火慢慢烹煮，使食材入味或黏稠。","s":"媽媽細火慢燉熬煮這鍋老母雞高湯，湯頭濃郁鮮美。","k":0},{"l":5,"w":"砂糖","z":"ㄕㄚ ㄊㄤˊ","d":"由甘蔗或甜菜製成的顆粒狀結晶糖。","s":"烘焙甜點時加入適量砂糖，能增添迷人風味與香氣。","k":0},{"l":5,"w":"混合","z":"ㄏㄨㄣˋ ㄏㄜˊ","d":"將多種物質摻雜均勻調和在一起。","s":"將麵粉、奶油與砂糖均勻混合，便能揉出扎實的麵糰。","k":0},{"l":5,"w":"焦糖","z":"ㄐㄧㄠ ㄊㄤˊ","d":"砂糖加熱至高溫後製成的濃褐色糖汁，散發特殊焦香。","s":"剛出爐的焦糖布丁表面覆蓋著一層微脆的金黃糖霜，令人垂涎。","k":0},{"l":5,"w":"熱騰騰","z":"ㄖㄜˋ ㄊㄥˊ ㄊㄥˊ","d":"形容熱氣蒸騰、冒著陣陣白煙的樣子。","s":"寒冬早晨喝上一碗熱騰騰的番茄牛肉湯，整個人都溫暖起來。","k":0},{"l":5,"w":"啜飲","z":"ㄔㄨㄛˋ ㄧㄣˇ","d":"一口口細細飲用品嘗。","s":"他坐在窗邊啜飲著香醇熱咖啡，靜靜欣賞窗外綿綿細雨。","k":0},{"l":5,"w":"流淌","z":"ㄌㄧㄡˊ ㄊㄤˇ","d":"液體緩緩流動或流出。","s":"清澈甘洌的溪水在山谷間蜿蜒流淌，滋養了兩岸的草木。","k":0},{"l":5,"w":"豐沛","z":"ㄈㄥ ㄆㄟˋ","d":"充足充沛、水量豐富的樣子。","s":"夏季連綿的梅雨為全臺水庫帶來豐沛的水量。","k":0},{"l":5,"w":"雀躍","z":"ㄑㄩㄝˋ ㄩㄝˋ","d":"如麻雀般高興跳躍，形容極為欣喜興奮。","s":"得知獲得全國競賽首獎那一刻，大家忍不住雀躍歡呼。","k":1},{"l":5,"w":"遊說","z":"ㄧㄡˊ ㄕㄨㄟˋ","d":"以言語勸說或遊歷勸導他人採納己見。","s":"環保志工挨家挨戶遊說居民參與垃圾減量與資源回收。","k":1},{"l":5,"w":"四面八方","z":"ㄙˋ ㄇㄧㄢˋ ㄅㄚ ㄈㄤ","d":"周圍各處、所有方向。","s":"演唱會現場湧入來自四面八方的樂迷，將會場擠得水洩不通。","k":1},{"l":5,"w":"相濡以沫","z":"ㄒㄧㄤ ㄖㄨˊ ㄧˇ ㄇㄛˋ","d":"泉水乾涸，魚兒以口沫互相滋潤。比喻同處困境中相互救助關懷。","s":"患難夫妻在艱苦歲月中相濡以沫，攜手走過人生風雨。","k":2},{"l":5,"w":"魚目混珠","z":"ㄩˊ ㄇㄨˋ ㄏㄨㄣˋ ㄓㄨ","d":"以魚眼假充珍珠。比喻以假亂真、以次充好。","s":"不肖商家拿廉價仿冒品當正品販售，魚目混珠，遭到警方取締。","k":2},{"l":5,"w":"按部就班","z":"ㄢˋ ㄅㄨˋ ㄐㄧㄡˋ ㄅㄢ","d":"按照一定的次序與步驟做事。","s":"學習知識沒有捷徑，必須按部就班、循序漸進才能紮穩根基。","k":2},{"l":6,"w":"風靡","z":"ㄈㄥ ㄇㄧˇ","d":"比喻如風吹草伏般流行普遍、轟動一時。","s":"臺灣珍珠奶茶憑藉獨特口感，迅速風靡世界各地。","k":0},{"l":6,"w":"烹茶","z":"ㄆㄥ ㄔㄚˊ","d":"煮茶、泡茶。","s":"古人講求泉水水質與火候，將烹茶視為高雅的生活藝術。","k":0},{"l":6,"w":"樹薯","z":"ㄕㄨˋ ㄕㄨˇ","d":"大戟科落葉灌木，地下塊根富含澱粉，為粉圓主要原料。","s":"將樹薯粉加水揉和搓製，便能煮出粒粒彈牙的黑糖粉圓。","k":0},{"l":6,"w":"粉末","z":"ㄈㄣˇ ㄇㄛˋ","d":"極細碎如塵的微小固體顆粒。","s":"烘焙師傅在提拉米蘇上均勻撒上細緻的可可粉末。","k":0},{"l":6,"w":"增添","z":"ㄗㄥ ㄊㄧㄢ","d":"增加、添加。","s":"客廳牆上掛了幾幅色彩繽紛的水彩畫，為家裡增添了許多生氣。","k":0},{"l":6,"w":"擴展","z":"ㄎㄨㄛˋ ㄓㄢˇ","d":"擴充延伸發展。","s":"隨著海外市場不斷擴展，本土品牌成功打入歐美主流商圈。","k":0},{"l":6,"w":"聯袂","z":"ㄌㄧㄢˊ ㄇㄟˋ","d":"衣袖相連，比喻結伴攜手同行或共同合作。","s":"兩位知名音樂大師聯袂登臺演出，吸引無數古典樂迷前往朝聖。","k":0},{"l":6,"w":"黏稠","z":"ㄋㄧㄢˊ ㄔㄡˊ","d":"濃稠且帶有附著黏性。","s":"李子果醬經過長時間慢火熬煮，水分收乾轉為濃郁黏稠的膏狀。","k":0},{"l":6,"w":"平衡","z":"ㄆㄧㄥˊ ㄏㄥˊ","d":"相對立的力量或事物維持均等抵消狀態；內外調和。","s":"在忙碌的高壓課業與休閒運動之間，必須維持健康良好的平衡。","k":0},{"l":6,"w":"徜徉","z":"ㄔㄤˊ ㄧㄤˊ","d":"安閒自在地徘徊漫步或沉浸其中。","s":"微風徐徐的午後，漫步徜徉在林蔭步道上，令人心曠神怡。","k":0},{"l":6,"w":"披薩","z":"ㄆㄧ ㄙㄚˋ","d":"源自義大利的著名烤餅麵食，表層鋪有起司、肉品或蔬果等餡料。","s":"現烤出爐的窯烤披薩散發濃濃乳酪香，讓人食指大動。","k":0},{"l":6,"w":"煉乳","z":"ㄌㄧㄢˋ ㄖㄨˇ","d":"鮮奶經過高溫濃縮加工精製後的濃稠甜乳品。","s":"在清涼刨冰淋上一圈香濃煉乳，是盛夏最過癮的甜點享受。","k":0},{"l":6,"w":"舍本逐末","z":"ㄕㄜˇ ㄅㄣˇ ㄓㄨˊ ㄇㄛˋ","d":"拋棄根本而只追求枝微末節。比喻輕重倒置。","s":"求學若不紮實打好基本功，只是一味猜題背答案，無異於舍本逐末。","k":2},{"l":6,"w":"畫蛇添足","z":"ㄏㄨㄚˋ ㄕㄜˊ ㄊㄧㄢ ㄗㄨˊ","d":"畫蛇原本無腳卻添上腳。比喻做多餘的事，反而弄巧成拙。","s":"寫作這段說明已很清晰，再補充瑣碎枝節只會顯得畫蛇添足。","k":2},{"l":7,"w":"仰光","z":"ㄧㄤˇ ㄍㄨㄤ","d":"緬甸最大城市與重要工商港口，舊首都。","s":"作者走在仰光雨季的街頭，發現當地民眾獨特的穿鞋習慣。","k":0},{"l":7,"w":"緬甸","z":"ㄇㄧㄢˇ ㄉㄧㄢˋ","d":"東南亞中南半島的國家，盛產稻米、柚木與玉石珠寶。","s":"緬甸保留了許多淳厚古樸的傳統生活文化與風俗特色。","k":0},{"l":7,"w":"腳踝","z":"ㄐㄧㄠˇ ㄏㄨㄞˊ","d":"小腿與腳掌相接部位兩旁突出的骨頭結構。","s":"這件手工刺繡長裙剪裁得宜，裙長恰好露出一截優雅的腳踝。","k":0},{"l":7,"w":"呢絨","z":"ㄋㄧˊ ㄖㄨㄥˊ","d":"用獸毛或人造毛等織成的厚實保暖毛織品總稱。","s":"冬季穿上這件質地細緻的呢絨大衣，既防風又顯俐落大方。","k":0},{"l":7,"w":"下襬","z":"ㄒㄧㄚˋ ㄅㄞˇ","d":"衣衫、長袍、裙子等服裝的底緣下端部分。","s":"為了避免雨季泥水濺汙，裁縫師貼心地將長袍下襬稍微改短。","k":0},{"l":7,"w":"恣意","z":"ㄗˋ ㄧˋ","d":"放任放縱，完全順隨己意而不受拘束。","s":"考完期末考後，同學們在操場草地上恣意奔跑嬉鬧。","k":0},{"l":7,"w":"批判","z":"ㄆㄧ ㄆㄢˋ","d":"評論事物的是非優劣；加以審查反省。","s":"培養獨立思考能力，懂得客觀批判生活中的各類訊息。","k":0},{"l":7,"w":"行徑","z":"ㄒㄧㄥˊ ㄐㄧㄥˋ","d":"行為舉止、作風作法。","s":"他在公眾場所大聲喧嘩並推擠他人，惡劣行徑令人側目。","k":0},{"l":7,"w":"謹記","z":"ㄐㄧㄣˇ ㄐㄧˋ","d":"恭敬而牢固深刻地記在心裡。","s":"哥哥始終謹記師長的訓勉，在職場上謙沖自牧、勤奮負責。","k":0},{"l":7,"w":"恰恰","z":"ㄑㄧㄚˋ ㄑㄧㄚˋ","d":"正好、恰好。","s":"這塊新買的花紋地毯，大小恰恰能鋪在客廳茶几的正中央。","k":0},{"l":7,"w":"乏人問津","z":"ㄈㄚˊ ㄖㄣˊ ㄨㄣˋ ㄐㄧㄣ","d":"問津指打聽渡口。比喻事物受冷落，無人洽詢或探求。","s":"這款商品因設計不合實用需求，上市幾個月依然乏人問津。","k":0},{"l":7,"w":"放之四海而皆準","z":"ㄈㄤˋ ㄓ ㄙˋ ㄏㄞˇ ㄦˊ ㄐㄧㄝ ㄓㄨㄣˇ","d":"拿到任何地方、面對任何情境都可作為準則。比喻普遍適用真理。","s":"不同文化有不同風俗習慣，我們認定的常理未必是放之四海而皆準。","k":0},{"l":7,"w":"嗤之以鼻","z":"ㄔ ㄓ ㄧˇ ㄅㄧˊ","d":"從鼻子裡發出冷笑哼聲。表示極度輕蔑、不屑一顧的態度。","s":"面對那些捕風捉影的不實謠言，他始終嗤之以鼻、不予理會。","k":0},{"l":7,"w":"理所當然","z":"ㄌㄧˇ ㄙㄨㄛˇ ㄉㄤ ㄖㄢˊ","d":"依常理看來應當如此，毫無疑問。","s":"父母對子女無微不至的呵護付出，我們切莫視為理所當然。","k":1},{"l":7,"w":"受用不盡","z":"ㄕㄡˋ ㄩㄥˋ ㄅㄨˋ ㄐㄧㄣˋ","d":"獲益極大，一輩子享受其好處用之不竭。","s":"從小養成勤勉自律與閱讀的好習慣，一生將會受用不盡。","k":1},{"l":7,"w":"捏一把冷汗","z":"ㄋㄧㄝ ㄧ ㄅㄚˇ ㄌㄥˇ ㄏㄢˋ","d":"形容為人處境險惡而極度緊張擔憂。","s":"特技演員在高空走鋼索時身形微晃，令底下觀眾替他捏一把冷汗。","k":1},{"l":7,"w":"洛陽紙貴","z":"ㄌㄨㄛˋ ㄧㄤˊ ㄓˇ ㄍㄨㄟˋ","d":"西晉左思寫成三都賦眾人爭相抄寫使紙價上漲。比喻著作風行一時暢銷全城。","s":"這本科普鉅作一出版便造成洛陽紙貴，再版多次仍供不應求。","k":2},{"l":7,"w":"終南捷徑","z":"ㄓㄨㄥ ㄋㄢˊ ㄐㄧㄝˊ ㄐㄧㄥˋ","d":"唐代盧藏用藉隱居終南山求取官職名位。比喻謀求官職或名利的便捷途徑。","s":"腳踏實地苦讀深耕才是正道，切莫成天妄想走終南捷徑一飛沖天。","k":2},{"l":7,"w":"弄巧成拙","z":"ㄋㄨㄥˋ ㄑㄧㄠˇ ㄔㄥˊ ㄓㄨㄛˊ","d":"本想賣弄聰明靈巧，結果反而把事情弄壞了。","s":"他企圖用小聰明掩飾遲到理由，結果謊言被拆穿，反倒弄巧成拙。","k":2},{"l":8,"w":"戰國策","z":"ㄓㄢˋ ㄍㄨㄛˊ ㄘㄜˋ","d":"書名，西漢劉向編纂，記錄戰國時代各諸侯國君臣謀士的政治策論與遊說言行。","s":"《戰國策》收錄了許多膾炙人口的寓言典故，具極高史料與文學價值。","k":0},{"l":8,"w":"劉向","z":"ㄌㄧㄡˊ ㄒㄧㄤˋ","d":"西漢著名文學家、經學家，曾校訂群書並編纂整理《戰國策》、《說苑》等。","s":"劉向博學多聞，為先秦古籍的整理保存做出了無可磨滅的貢獻。","k":0},{"l":8,"w":"編纂","z":"ㄅㄧㄢ ㄗㄨㄢˇ","d":"蒐集整理各方資料，加以鑑別分類並編輯成書。","s":"這批文史學者花了十年歲月，終於完成整套地方志的編纂工程。","k":0},{"l":8,"w":"寓言","z":"ㄩˋ ㄧㄢˊ","d":"以寄託淺近假託的故事或動植物擬人手法，藉此闡發深刻哲理或寄予諷刺的文學體裁。","s":"《伊索寓言》篇幅雖短，但字裡行間蘊藏著發人深省的人生智慧。","k":0},{"l":8,"w":"鷸蚌相爭","z":"ㄩˋ ㄅㄤˋ ㄒㄧㄤ ㄓㄥ","d":"鷸啄蚌肉被蚌緊合雙殼夾住互不相讓，結果雙雙被漁夫捕捉。比喻兩者相爭兩敗俱傷讓第三方得利。","s":"兩家同業若只顧惡性殺價競爭，最終恐落得鷸蚌相爭、漁翁得利的下場。","k":0},{"l":8,"w":"記述","z":"ㄐㄧˋ ㄕㄨˋ","d":"將所見所聞以文字詳細記載敘述。","s":"這本回憶錄翔實記述了開闢山林橫貫公路時無名英雄的辛酸歷史。","k":0},{"l":8,"w":"顯赫","z":"ㄒㄧㄢˇ ㄏㄜˋ","d":"名望、聲威、權勢極其顯耀盛大。","s":"出身名門世家的他待人謙和誠懇，從不刻意炫耀自己顯赫的家世背景。","k":0},{"l":8,"w":"畏懼","z":"ㄨㄟˋ ㄐㄩˋ","d":"害怕、恐懼、心存膽怯。","s":"面對艱困挫折時若心生畏懼退縮，就難以登上成功的頂峰。","k":0},{"l":8,"w":"詢問","z":"ㄒㄩㄣˊ ㄨㄣˋ","d":"開口查問、打聽探詢。","s":"迷路的觀光客走向服務臺，禮貌地詢問前往展覽館的方向路線。","k":0},{"l":8,"w":"諷刺","z":"ㄈㄥˋ ㄘˋ","d":"用委婉含蓄或嘲弄的語言及文字，指出人或事的缺失短處。","s":"這幅政治諷刺漫畫寓意深遠，以幽默詼諧的筆調引起社會廣泛省思。","k":0},{"l":8,"w":"蒙蔽","z":"ㄇㄥˊ ㄅㄧˋ","d":"欺騙隱瞞，遮掩事情的客觀真相。","s":"明辨是非需要客觀理性的眼睛，切莫讓個人的偏見蒙蔽了理智。","k":0},{"l":8,"w":"不妨","z":"ㄅㄨˋ ㄈㄤˊ","d":"可以、沒有妨礙，表示提出可行的選擇或建議。","s":"趁著假日天氣晴朗，我們不妨到郊外健行踏青，放鬆緊繃的身心。","k":0},{"l":8,"w":"虛張聲勢","z":"ㄒㄩ ㄓㄤ ㄕㄥ ㄕˋ","d":"故意誇大聲威氣勢，用以嚇阻、唬弄或欺騙他人。","s":"狡猾的狐狸走在老虎前頭，不過是虛張聲勢，藉老虎的威風嚇走百獸。","k":0},{"l":8,"w":"誘導","z":"ㄧㄡˋ ㄉㄠˇ","d":"勸誘開導、循序漸進地引導啟發。","s":"優秀的教師善於提出啟發性問題，誘導孩子們自主思考尋找答案。","k":0},{"l":8,"w":"狐假虎威","z":"ㄏㄨˊ ㄐㄧㄚˇ ㄏㄨˇ ㄨㄟ","d":"狐狸假借老虎的威風威嚇百獸。比喻藉著別人的權勢作威作福、欺凌他人。","s":"他成天仗著長官的器重耀武揚威，這種狐假虎威的行徑真令人厭惡。","k":0},{"l":8,"w":"急中生智","z":"ㄐㄧˊ ㄓㄨㄥ ㄕㄥ ㄓˋ","d":"在緊急危難的緊要關頭，突然想出應對的好辦法。","s":"面對失控的火勢，他急中生智關閉瓦斯總開關，化解了一場災難。","k":1},{"l":8,"w":"落荒而逃","z":"ㄌㄨㄛˋ ㄏㄨㄤ ㄦˊ ㄊㄠˊ","d":"倉皇狼狽地朝荒野方向逃竄散去。","s":"警察鳴笛趕抵現場，做賊心虛的歹徒當場嚇得落荒而逃。","k":1},{"l":8,"w":"作威作福","z":"ㄗㄨㄛˋ ㄨㄟ ㄗㄨㄛˋ ㄈㄨˊ","d":"藉著權勢作踐他人、橫行霸道、為所欲為。","s":"身居主管高位應體恤基層同仁，絕不可憑恃職權作威作福。","k":1},{"l":8,"w":"後生可畏","z":"ㄏㄡˋ ㄕㄥ ㄎㄜˇ ㄨㄟˋ","d":"後輩青年成就出眾超越前輩，令人敬畏佩服。","s":"這些年僅國中的小小發明家展現驚人創造力，真是後生可畏！","k":2},{"l":8,"w":"支吾其詞","z":"ㄓ ㄨˊ ㄑㄧˊ ㄘˊ","d":"言詞含混閃爍、搪塞掩飾，不敢正面明確回答。","s":"當被問及打翻花瓶的始末時，弟弟心虛得支吾其詞、不敢直視母親。","k":2},{"l":8,"w":"循循善誘","z":"ㄒㄩㄣˊ ㄒㄩㄣˊ ㄕㄢˋ ㄧㄡˋ","d":"善於遵循順序、有條理地耐心啟發開導。","s":"在張老師循循善誘的指引下，許多迷惘的孩子重新找回了學習動力。","k":2},{"l":9,"w":"旗幟","z":"ㄑㄧˊ ㄓˋ","d":"泛指標幟用的各種旗子；亦指旗號聲威。","s":"校慶運動會開幕式上，各班迎風揮動鮮豔五彩的旗幟入場。","k":0},{"l":9,"w":"崗位","z":"ㄍㄤˇ ㄨㄟˋ","d":"值勤守衛的處所；亦指人所應擔負的職責或本分。","s":"海巡官兵日夜堅守國土防線崗位，嚴密監控海域安全。","k":0},{"l":9,"w":"百姓","z":"ㄅㄞˇ ㄒㄧㄥˋ","d":"泛指一般平民、國民大眾。","s":"為政者的首要責任在於勤政愛民，為天下百姓謀取福祉。","k":0},{"l":9,"w":"倘若","z":"ㄊㄤˇ ㄖㄨㄛˋ","d":"假如、假使，表假設條件的連詞。","s":"倘若當初沒有做好防洪設施，這場超大豪雨後果不堪設想。","k":0},{"l":9,"w":"書僮","z":"ㄕㄨ ㄊㄨㄥˊ","d":"舊時在富貴人家侍候主人及其子弟讀書雜役的未成年僕役。","s":"孔明登樓撫琴時，左右各侍立一名書僮，神態自若。","k":0},{"l":9,"w":"撤退","z":"ㄔㄜˋ ㄊㄨㄟˋ","d":"放棄陣地撤離據點退回後方；或從已佔領地區退出。","s":"眼看溪水暴漲即將淹沒便橋，救難指揮官立刻下令所有人員迅速撤退。","k":0},{"l":9,"w":"諸葛亮","z":"ㄓㄨ ㄍㄜˊ ㄌㄧㄤˋ","d":"字孔明，三國蜀漢丞相，以足智多謀、精通兵法、鞠躬盡瘁著稱。","s":"諸葛亮在西城設下空城奇計，成功退卻司馬懿十五萬大軍。","k":0},{"l":9,"w":"謹慎","z":"ㄐㄧㄣˇ ㄕㄣˋ","d":"仔細慎重、小心防備而不輕率魯莽。","s":"做重大決策前一定要反覆查核細節，謹慎以對，以免全盤皆輸。","k":0},{"l":9,"w":"丞相","z":"ㄔㄥˊ ㄒㄧㄤˋ","d":"古代輔佐天子總理全國政務的最高行政官員。","s":"古代賢明的丞相總是直言進諫，輔助君王推行惠民仁政。","k":0},{"l":9,"w":"不時之需","z":"ㄅㄨˋ ㄕˊ ㄓ ㄒㄩ","d":"隨時可能產生的意外緊急需要。","s":"家裡平時應常備防颱急救包與乾糧手電筒，以備不時之需。","k":1},{"l":9,"w":"驚慌失措","z":"ㄐㄧㄥ ㄏㄨㄤ ㄕ ㄘㄨㄛˋ","d":"因極度驚恐慌亂而不知如何應對處置。","s":"面對火警警鈴突然大作，千萬要保持冷靜迅速疏散，切莫驚慌失措。","k":1},{"l":9,"w":"氣定神閒","z":"ㄑㄧˋ ㄉㄧㄥˋ ㄕㄣˊ ㄒㄧㄢˊ","d":"神態安詳從容、平靜沉著而無絲毫慌亂慌張。","s":"面對對手強勢壓境，老棋王依舊氣定神閒、從容落子。","k":1},{"l":9,"w":"一探究竟","z":"ㄧ ㄊㄢˋ ㄐㄧㄡˋ ㄐㄧㄥˋ","d":"看清楚或深入探查到底、弄清來龍去脈。","s":"聽說後山古洞裡藏有罕見石筍，探險隊決定進去一探究竟。","k":1},{"l":9,"w":"旁若無人","z":"ㄆㄤˊ ㄖㄨㄛˋ ㄨˊ ㄖㄣˊ","d":"好像旁邊完全沒有人一樣。形容神情態度從容自若或態度傲慢毫無顧忌。","s":"孔明在城樓上端坐彈琴、神色自若，旁若無人，令敵軍疑雲重重。","k":1},{"l":9,"w":"迫不得已","z":"ㄆㄛˋ ㄅㄨˋ ㄉㄜˊ ㄧˇ","d":"受形勢環境所迫，不得不這樣做。","s":"若非情況危急迫不得已，孔明絕不會輕易冒險使用空城奇策。","k":1},{"l":9,"w":"神機妙算","z":"ㄕㄣˊ ㄐㄧ ㄇㄧㄠˋ ㄙㄨㄢˋ","d":"驚人的機智與高超精密的謀略算計。","s":"孔明料事如神、神機妙算，其兵法運用向來令後世讚嘆折服。","k":1},{"l":9,"w":"神鬼莫測","z":"ㄕㄣˊ ㄍㄨㄟˇ ㄇㄛˋ ㄘㄜˋ","d":"連神鬼都無法測度推估。形容變化極其神妙難以捉摸。","s":"這位特戰指揮官排兵布陣神鬼莫測，屢屢出奇制勝。","k":1},{"l":9,"w":"樂不可支","z":"ㄌㄜˋ ㄅㄨˋ ㄎㄜˇ ㄓ","d":"快樂高興到無法自持支撐的程度。","s":"弟弟拆開盼望已久的生日禮物時，整個人樂不可支、手舞足蹈。","k":2},{"l":9,"w":"旗鼓相當","z":"ㄑㄧˊ ㄍㄨˇ ㄒㄧㄤ ㄉㄤ","d":"兩軍陣容聲勢相稱。比喻雙方實力相當、不相伯仲。","s":"這場冠軍爭奪戰雙方旗鼓相當，拚戰到延長賽才分出勝負。","k":2},{"l":9,"w":"反求諸己","z":"ㄈㄢˇ ㄑㄧㄡˊ ㄓㄨ ㄐㄧˇ","d":"反過來從自己身上尋找問題或過失原因。","s":"遇到事情不順心時應先反求諸己，切莫一味推諉卸責於他人。","k":2},{"l":9,"w":"蜂擁而來","z":"ㄈㄥ ㄩㄥˇ ㄦˊ ㄌㄞˊ","d":"像成群的蜜蜂般成群結隊湧上前來。","s":"知名歌星抵達機場大廳，熱情的粉絲群立刻蜂擁而來索取簽名。","k":1},{"l":10,"w":"耶誕節","z":"ㄧㄝˊ ㄉㄢˋ ㄐㄧㄝˊ","d":"紀念耶穌基督誕生的節日，西曆十二月二十五日，歐美重要傳統慶節。","s":"每到耶誕節前夕，全家人總會聚在一起布置色彩斑斕的耶誕樹。","k":0},{"l":10,"w":"郊外","z":"ㄐㄧㄠ ㄨㄞˋ","d":"城鎮外圍的田野地區。","s":"為了擁有清幽開闊的生活空間，叔叔決定搬遷到郊外定居。","k":0},{"l":10,"w":"慈祥","z":"ㄘˊ ㄒㄧㄤˊ","d":"慈善祥和、和藹可親的容貌態度。","s":"祖母臉上常掛著慈祥的微笑，耐心地聆聽孫子們說話。","k":0},{"l":10,"w":"劈啪","z":"ㄆㄧ ㄆㄚ","d":"形容物體燃燒爆裂或撞擊拍打的狀聲詞。","s":"在寒冬夜裡，壁爐中的木柴燒得劈啪作響，散發融融暖意。","k":0},{"l":10,"w":"零用錢","z":"ㄌㄧㄥˊ ㄩㄥˋ ㄑㄧㄢˊ","d":"平時零碎花用的零星金錢。","s":"四姐妹決定把平時省吃儉用積攢的零用錢，湊起來為母親添購耶誕禮物。","k":0},{"l":10,"w":"厭倦","z":"ㄧㄢˋ ㄐㄩㄢˋ","d":"對事物感到厭煩，不再喜愛、提不起興致。","s":"長年重複單調機械的工廠生活，讓他漸漸感到無比厭倦。","k":0},{"l":10,"w":"辯護","z":"ㄅㄧㄢˋ ㄏㄨˋ","d":"提出理由、依據加以辯白申訴；法律上律師維護當事人權益。","s":"當弟弟遭到鄰人誤解時，喬立刻挺身而出為弟弟據理辯護。","k":0},{"l":10,"w":"自私自利","z":"ㄗˋ ㄙ ㄗˋ ㄌㄧˋ","d":"只圖自己的私人好處利益，完全不顧及他人感受與死活。","s":"凡事只想到自己好處的自私自利者，最終將失去所有真誠的夥伴朋友。","k":0},{"l":10,"w":"貧窮","z":"ㄆㄧㄣˊ ㄑㄩㄥˊ","d":"缺少錢財物質，生活困窘匱乏。","s":"雖然家境貧窮、物質條件困窘，但四姐妹內心卻擁有豐沛的精神財富。","k":0},{"l":10,"w":"關係","z":"ㄍㄨㄢ ㄒㄧˋ","d":"事物之間的牽涉、關聯、條件；或人際彼此間的情分聯繫。","s":"這項保護水資源的政策，跟全體居民的長遠健康有著切身的關係。","k":0},{"l":10,"w":"稍微","z":"ㄕㄠ ㄨㄟˊ","d":"程度或分量極為微少、略微。","s":"這道湯味道很清淡，如果稍微加點胡椒提味，口感層次會更豐富。","k":0},{"l":10,"w":"罕見","z":"ㄏㄢˇ ㄐㄧㄢˋ","d":"極少遇見、極其難得一見。","s":"這種生長在高山峭壁上的珍稀蘭花，平時在平地極為罕見。","k":0},{"l":10,"w":"暖烘烘","z":"ㄋㄨㄢˇ ㄏㄨㄥ ㄏㄨㄥ","d":"形容極為溫暖和暖舒適的樣子。","s":"坐在暖烘烘的壁爐旁喝上一杯熱可可，洗去了全身一整天的疲憊。","k":0},{"l":10,"w":"衷心","z":"ㄓㄨㄥ ㄒㄧㄣ","d":"出自內心最深處、真誠無欺的情意。","s":"在畢業典禮上，全體畢業生衷心感謝師長多年來春風化雨的教導。","k":0},{"l":10,"w":"鋼琴","z":"ㄍㄤ ㄑㄧㄣˊ","d":"鍵盤樂器，按鍵帶動木槌敲擊鋼絲弦發出悅耳優美的樂音。","s":"姐姐每天放學後固定坐在鋼琴前練琴一小時，琴藝精湛。","k":0},{"l":10,"w":"點醒","z":"ㄉㄧㄢˇ ㄒㄧㄥˇ","d":"指點提示使人猛然省悟、恍然大悟。","s":"父親的一封家書點醒了迷惘抱怨的四姐妹，讓大家懂得體恤互助。","k":1},{"l":10,"w":"感激涕零","z":"ㄍㄢˇ ㄐㄧˊ ㄊㄧˋ ㄌㄧㄥˊ","d":"感激深切到了感動流淚的程度。","s":"面對社會大眾善心解囊相助，受災災民個個感激涕零。","k":2},{"l":10,"w":"兵不厭詐","z":"ㄅㄧㄥ ㄅㄨˋ ㄧㄢˋ ㄓㄚˋ","d":"作戰用兵不排斥使用欺詐欺敵之術。比喻為求克敵制勝不排斥謀略手段。","s":"商場談判如同戰場，雙方攻防往往兵不厭詐，不可不慎。","k":2},{"l":10,"w":"孜孜不倦","z":"ㄗ ㄗ ㄅㄨˋ ㄐㄩㄢˋ","d":"勤勉努力而不感疲倦厭煩。","s":"他數十年如一日孜孜不倦地從事臺灣歷史文獻研究，成果豐碩。","k":2},{"l":10,"w":"大公無私","z":"ㄉㄚˋ ㄍㄨㄥ ㄨˊ ㄙ","d":"公正無私，毫無偏袒私心。","s":"法官審理案件必須秉持大公無私的原則，才能維持法律威信與社會正義。","k":2},{"l":11,"w":"恢復","z":"ㄏㄨㄟ ㄈㄨˋ","d":"回到原來的樣子或狀態；收回失去的事物。","s":"經過連續幾天的靜養休息，病童終於恢復了以往的生氣與活力。","k":0},{"l":11,"w":"活潑","z":"ㄏㄨㄛˊ ㄆㄛ","d":"生動鮮活而不呆板僵滯。","s":"戴安娜是個性格活潑熱情的小姑娘，深受同儕喜愛。","k":0},{"l":11,"w":"草莓","z":"ㄘㄠˇ ㄇㄟˊ","d":"多年生草本植物，漿果鮮紅多汁，酸甜可口可食或製果醬。","s":"這盒高山鮮採的草莓鮮嫩多汁，散發誘人的草莓香氣。","k":0},{"l":11,"w":"客廳","z":"ㄎㄜˋ ㄊㄧㄥ","d":"專門用來接待賓客、全家日常聚會休閒的房間。","s":"安妮邀請好友戴安娜坐在明亮溫馨的客廳裡享用下午茶茶點。","k":0},{"l":11,"w":"前額","z":"ㄑㄧㄢˊ ㄜˊ","d":"額頭的前方部位。","s":"妹妹下樓梯時不小心絆倒碰著了前額，腫起了一個小包。","k":0},{"l":11,"w":"灌醉","z":"ㄍㄨㄢˋ ㄗㄨㄟˋ","d":"強勸灌飲大量酒水致使對方爛醉神志不清。","s":"巴利夫人誤以為安妮心懷不軌故意將戴安娜灌醉，因而大發雷霆。","k":0},{"l":11,"w":"原諒","z":"ㄩㄢˊ ㄌㄧㄤˋ","d":"體諒寬恕對方的過失而不予計較追究。","s":"只要肯真誠認錯改過，大家終究會打開心扉原諒你的無心之過。","k":0},{"l":11,"w":"雙脣","z":"ㄕㄨㄤ ㄔㄨㄣˊ","d":"上嘴脣與下嘴脣的合稱。","s":"聽聞突如其來的噩耗，他驚訝得緊咬雙脣、久久說不出話來。","k":0},{"l":11,"w":"乞求","z":"ㄑㄧˇ ㄑㄧㄡˊ","d":"懇切請求、哀求。","s":"為了挽回珍貴的友誼，安妮親自登門向巴利夫人乞求諒解。","k":0},{"l":11,"w":"神采煥發","z":"ㄕㄣˊ ㄘㄞˇ ㄏㄨㄢˋ ㄈㄚ","d":"精神飽滿充沛，容光煥發，光彩照人。","s":"經過規律運動與充足睡眠，他看起來神采煥發、朝氣蓬勃。","k":0},{"l":11,"w":"雪橇","z":"ㄒㄩㄝˇ ㄑㄧㄠ","d":"在雪地上利用長條平滑木板滑行的無輪傳統交通載具。","s":"在北極銀白世界的雪地上，雪橇犬奮力拉動雪橇快速奔馳。","k":0},{"l":11,"w":"迴盪","z":"ㄏㄨㄟˊ ㄉㄤˋ","d":"聲音在空間或山谷中迴旋漂浮震響。","s":"嘹亮歡暢的歌聲在白雪皚皚的山谷樹林間久久迴盪。","k":0},{"l":11,"w":"有模有樣","z":"ㄧㄡˇ ㄇㄨˊ ㄧㄡˇ ㄧㄤˋ","d":"像模像樣，架勢十足的樣子。","s":"兩個小女孩學著大人的社交禮儀互道問候，看起來真是有模有樣。","k":1},{"l":11,"w":"手足無措","z":"ㄕㄡˇ ㄗㄨˊ ㄨˊ ㄘㄨㄛˋ","d":"形容舉動慌亂緊張，不知手腳該往哪裡擺放放好。","s":"面對突如其來的酒醉意外，安妮嚇得手足無措、不知如何是好。","k":1},{"l":11,"w":"暴跳如雷","z":"ㄅㄠˋ ㄊㄧㄠˋ ㄖㄨˊ ㄌㄟˊ","d":"氣急敗壞、憤怒到極點而猛烈跳躍吼叫如同打雷。","s":"得知女兒喝醉酒回家，巴利夫人氣得暴跳如雷，嚴禁兩人往來。","k":1},{"l":11,"w":"淚流滿面","z":"ㄌㄟˋ ㄌㄧㄡˊ ㄇㄢˇ ㄇㄧㄢˋ","d":"眼淚直流布滿整張臉孔。形容悲痛至極哭泣不止。","s":"一想到將被迫與摯友分開，安妮傷心絕望得淚流滿面。","k":1},{"l":11,"w":"無心之過","z":"ㄨˊ ㄒㄧㄣ ㄓ ㄍㄨㄛˋ","d":"並非故意造成、在無意間犯下的過失疏忽。","s":"安妮誤把葡萄酒當成覆盆子果汁招待好友，完全是一場無心之過。","k":1},{"l":11,"w":"垂頭喪氣","z":"ㄔㄨㄟˊ ㄊㄡˊ ㄙㄤˋ ㄑㄧˋ","d":"低垂著頭，神情頹喪失意。形容失望懊惱的樣子。","s":"遭到對方家長厲聲拒絕後，安妮垂頭喪氣地緩步走回家。","k":1},{"l":11,"w":"無精打采","z":"ㄨˊ ㄐㄧㄥ ㄉㄚˇ ㄘㄞˇ","d":"精神渙散萎靡，毫無興致與生氣。","s":"連日失眠加上心情沉重，他整天顯得無精打采、呵欠連連。","k":1},{"l":11,"w":"不眠不休","z":"ㄅㄨˋ ㄇㄧㄢˊ ㄅㄨˋ ㄒㄧㄡ","d":"不睡覺不休息。形容極為辛勞勤奮地連續工作。","s":"安妮為了照顧罹患重病的幼童，在床邊不眠不休地守候了一整夜。","k":1},{"l":11,"w":"和好如初","z":"ㄏㄜˊ ㄏㄠˇ ㄖㄨˊ ㄔㄨ","d":"彼此恢復以往原有的良好融洽關係。","s":"經過一場患難相助的考驗，兩家人化解誤會，兩個小姊妹終於和好如初。","k":1},{"l":11,"w":"焦頭爛額","z":"ㄐㄧㄠ ㄊㄡˊ ㄌㄢˋ ㄜˊ","d":"形容做事極其困苦疲憊或處境極度困窘混亂狼狽。","s":"為了解決接踵而至的訂單危機，主管這幾天忙得焦頭爛額。","k":2},{"l":11,"w":"脣亡齒寒","z":"ㄔㄨㄣˊ ㄨㄤˊ ㄔˇ ㄏㄢˊ","d":"嘴脣沒有了，牙齒就會受寒。比喻關係極其密切，利害休戚相關。","s":"這兩個鄰邦在軍事與經濟上脣亡齒寒，必須共同禦敵、互助合作。","k":2},{"l":12,"w":"車廂","z":"ㄔㄜ ㄒㄧㄤ","d":"火車、地鐵或客運車輛上用來搭載乘客或裝載貨物的隔間車室。","s":"這節二等火車車廂裡乘客寥寥無幾，氣氛顯得十分沉悶冷清。","k":0},{"l":12,"w":"臉頰","z":"ㄌㄧㄢˇ ㄐㄧㄚˊ","d":"臉部兩側腮部。","s":"鄉下小女孩在寒風吹拂下，臉頰凍得紅通通的。","k":0},{"l":12,"w":"包袱","z":"ㄅㄠ ˙ㄈㄨ","d":"用布包裹便於攜帶的隨身行李衣物；引申指心理的沉重負擔。","s":"小女孩手裡緊緊抱著用土布包裹的粗糙包袱，神情靦腆侷促。","k":0},{"l":12,"w":"凍瘡","z":"ㄉㄨㄥˋ ㄔㄨㄤ","d":"人體局部皮膚在受低溫寒冷刺激下，末梢血管收縮循環障礙所造成的紅腫刺痛發炎疾病。","s":"她伸出一雙長滿紅腫凍瘡的乾裂小手，使勁去推動那扇卡緊的窗戶。","k":0},{"l":12,"w":"狼狽","z":"ㄌㄤˊ ㄅㄟˋ","d":"本指情勢窘迫進退兩難；亦形容神態困頓疲憊、儀態不整難堪。","s":"小女孩滿身泥塵、衣衫襤褸，神色慌張而狼狽地擠進車廂。","k":0},{"l":12,"w":"疲憊","z":"ㄆㄧˊ ㄅㄟˋ","d":"極為疲困倦怠，毫無力氣。","s":"主角拖著疲憊沉重的心情坐在車廂角落，對周遭一切感到索然無味。","k":0},{"l":12,"w":"全神貫注","z":"ㄑㄩㄢˊ ㄕㄣˊ ㄍㄨㄢˋ ㄓㄨˋ","d":"將所有的心思精力與精神完全高度集中在某事物上。","s":"小女孩全神貫注地盯著鐵道前方的柵欄，焦急等待著什麼出現。","k":0},{"l":12,"w":"陰暗","z":"ㄧㄣ ㄢˋ","d":"光線昏暗不明亮；亦形容心情陰鬱壓抑。","s":"火車穿入陰暗潮溼的長長隧道，車廂內瀰漫著令人窒息的煤煙煤灰。","k":0},{"l":12,"w":"鬱悶","z":"ㄩˋ ㄇㄣˋ","d":"胸懷愁悶、煩悶不舒暢的情緒感受。","s":"面對現實生活的沉重壓力與無奈，他內心常感到一股說不出的鬱悶。","k":0},{"l":12,"w":"卯足全力","z":"ㄇㄠˇ ㄗㄨˊ ㄑㄩㄢˊ ㄌㄧˋ","d":"卯足即竭盡。使出全身所有的力氣與精力。","s":"小女孩卯足全力奮力往上一扳，沉重生鏽的車窗終於被推開一條縫隙。","k":0},{"l":12,"w":"漫不經心","z":"ㄇㄢˋ ㄅㄨˋ ㄐㄧㄥ ㄒㄧㄣ","d":"隨隨便便、心不在焉，毫不在意。","s":"他漫不經心地翻閱著報紙，心思早已飄向千里之外。","k":1},{"l":12,"w":"若無其事","z":"ㄖㄨㄛˋ ㄨˊ ㄑㄧˊ ㄕˋ","d":"好像完全沒有發生任何事情一樣從容平靜。","s":"惹了這麼大的禍端，他竟然還能若無其事地在一旁談笑風生。","k":1},{"l":12,"w":"索然無味","z":"ㄙㄨㄛˇ ㄖㄢˊ ㄨˊ ㄨㄟˋ","d":"索然為枯燥毫無興趣的樣子。形容事物或生活枯燥單調乏味至極。","s":"生病住院這段期間整天躺在病床上，日子過得索然無味。","k":1},{"l":12,"w":"心灰意冷","z":"ㄒㄧㄣ ㄏㄨㄟ ㄧˋ ㄌㄥˇ","d":"意志消沉頹喪，喪失熱情與鬥志。","s":"經歷數次失敗打擊後，切莫心灰意冷，只要堅持信念終能撥雲見日。","k":1},{"l":12,"w":"冷眼旁觀","z":"ㄌㄥˇ ㄧㄢˇ ㄆㄤˊ ㄍㄨㄢ","d":"以冷淡超然、漠不關心的態度在一旁看著事情演變發展。","s":"社會公益需要人人親身投入關懷，絕不可只是袖手冷眼旁觀。","k":1},{"l":12,"w":"恍然大悟","z":"ㄏㄨㄤˇ ㄖㄢˊ ㄉㄚˋ ㄨˋ","d":"心裡猛然豁亮頓開，對原本不明白的事物徹底清楚領悟明白。","s":"看到窗外歡呼雀躍的幼童，主角這才恍然大悟小女孩開窗拋橘的用心。","k":1},{"l":12,"w":"一廂情願","z":"ㄧ ㄒㄧㄤ ㄑㄧㄥˊ ㄩㄢˋ","d":"完全出自單方面的主觀願望，完全不考慮客觀現實或對方意願。","s":"談合作必須立足於互利雙贏的基礎上，絕非單憑一廂情願就能談成。","k":2},{"l":12,"w":"狼狽為奸","z":"ㄌㄤˊ ㄅㄟˋ ㄨㄟˊ ㄐㄧㄢ","d":"傳說狼與狽互相勾結一同偷襲羊群。比喻壞人相互串通勾結幹壞事。","s":"這兩個不法商人狼狽為奸、哄抬物價，最終雙雙遭到檢警法辦。","k":2}]};
+const LS_KEY='guoyu6a-v1';
+const $=(s,r)=>(r||document).querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const uniq=a=>Array.from(new Set(a));
+const CNUM=['','一','二','三','四','五','六','七','八','九','十','十一','十二'];
+const TYPES={r:'看字選音',c:'看音選字',g:'形近字辨析',d:'語詞解釋',e:'解釋選詞',f:'語詞填空',w:'手寫國字',k:'生字手寫＋部首'};
+const RADS='一丨丶丿乙亅二亠人儿入八冂冖冫几凵刀力勹匕匚匸十卜卩厂厶又口囗土士夂夊夕大女子宀寸小尢尸屮山巛工己巾干幺广廴廾弋弓彐彡彳心戈戶手支攴文斗斤方无日曰月木欠止歹殳毋比毛氏气水火爪父爻爿片牙牛犬玄玉瓜瓦甘生用田疋疒癶白皮皿目矛矢石示禸禾穴立竹米糸缶网羊羽老而耒耳聿肉臣自至臼舌舛舟艮色艸虍虫血行衣襾見角言谷豆豕豸貝赤走足身車辛辰辵邑酉釆里金長門阜隶隹雨青非面革韋韭音頁風飛食首香馬骨高髟鬥鬯鬲鬼魚鳥鹵鹿麥麻黃黍黑黹黽鼎鼓鼠鼻齊齒龍龜龠';
+const RFORM={水:'氵',手:'扌',心:'忄',艸:'艹',人:'亻',犬:'犭',辵:'辶',玉:'王',肉:'月',示:'礻',衣:'衤',阜:'阝在左',邑:'阝在右',火:'灬',网:'罒',刀:'刂',攴:'攵',食:'飠',老:'耂',爪:'爫'};
+const CONF={};'軸田|奪隹寸|屈山|偏戶|搬舟殳|芥人|蒂巾|抑卩|拒匚|尷皿尸|尬人|悔毋|拱八|距止|默犬|鬥門|扭又|猛子皿|愣方|粥弓|縷女|碗宀|綢口|繆羽|毋母|掘尸|纏广|縛寸|瓦一|缶山|蔬疋|饈羊|腹月|陶缶|施人|惠十|勿丿|預亅|悲非|卓日|培口|裁戈|瑣貝|仲口|耕木|賺八|異八|惋宀|欠人|砥氏|礪厂|驕口|傲攴|耘二|隔口|茁山|鼎目|颳舌|廚寸|淋木|晒襾|筍日|丁亅|醃大|攪見|炸人|瑩火|饗食|宴女|彰立|煮老|豬犬|削月|沫木|茶木|嗅自|按宀|碎十|舍人|熬攴|砂小|混日|焦隹|舀爪|勺丶|熄心|騰月|啜又|淌小|沛巾|舔心|靡麻|嫁宀|贊儿|干十|烹亠|薯日|末一|添心|擴广|袂大|稠口|衡魚|徜小|徉羊|撫火|薩生|乳子|仰卩|緬面|甸勹|踝木|絨戈|濺戈|襬网|弄玉|恣欠|批比|徑工|謹廾|恰口|乏丶|皆比|嗤虫|嗯心|策木|劉金|纂竹|寓禸|鷸矛|蚌丨|述木|赫土|畏衣|詢勹|曰日|吾二|遂豕|諷風|蔽攴|妨方|虛一|誘禾|亭一|支十|縣目|懿士|剩禾|魏禾|旗八|幟音|崗冂|姓生|倘小|憧立|薰火|撤攴|諸日|葛日|慎目|丞水|耶阜|郊阜|慈玄|祥羊|劈辛|啪白|零人|厭犬|倦己|辯言|私厶|貧八|係糸|趁人|稍月|罕干|烘八|衷丨|鋼山|楓風|恢火|潑癶|莓毋|廳耳|額口|灌隹|醉十|釀衣|替日|諒亠|脣辰|奔十|乞人|某甘|煥大|橇毛|鈴人|迴口|廂目|頰大|袱犬|瘡人|狽貝|憊用|淒女|隧辵|卯卜|貫毋|岔刀|欄門|柵冂|矮女|陰人|扔丿|茫水|悶門'.split('|').forEach(x=>{const a=Array.from(x);CONF[a[0]]=a.slice(1);});
+const radLabel=r=>esc(r)+(RFORM[r]?'<small>'+RFORM[r]+'</small>':'');
+const TGROUP=[['zy','國字注音互選',['r','c']],['g','形近字辨析',['g']],['def','語詞意思配對',['d','e']],['f','語詞填空',['f']],['w','手寫國字',['w']]];
+
+/* ---------- 資料索引 ---------- */
+const CH=D.C, WD=D.W, GR=D.G;
+const charBy={}, wordBy={}, RW={}, known=new Set(), groupsOf={};
+CH.forEach(c=>{charBy[c.c]=c;});
+WD.forEach(w=>{wordBy[w.w]=w;});
+function setRW(c,w,z){known.add(w);const k=c+'|'+w;if(!(k in RW))RW[k]=z;}
+CH.forEach(c=>{c.w.forEach(w=>setRW(c.c,w,c.z));(c.alt||[]).forEach(a=>a.w.forEach(w=>setRW(c.c,w,a.z)));});
+GR.forEach((g,gi)=>{g.items.forEach(it=>{it.w.forEach(w=>setRW(it.c,w,it.z));if(g.t==='near'){(groupsOf[it.c]=groupsOf[it.c]||[]).push(gi);}});});
+WD.forEach(w=>{const syl=w.z.split(' ');known.add(w.w);Array.from(w.w).forEach((ch,i)=>{const k=ch+'|'+w.w;if(!(k in RW)||(charBy[ch]&&charBy[ch].noread))RW[k]=syl[i];});});
+const allWordsOf=c=>c.w.concat(...(c.alt||[]).map(a=>a.w));
+function radOpts(o){const ans=o.r,ok=x=>x!==ans&&RADS.includes(x);
+  const pool=shuffle((CONF[o.c]||[]).filter(ok)),same=shuffle(uniq(CH.filter(c=>c.l===o.l).map(c=>c.r))).filter(ok),
+    common=shuffle(['人','口','手','水','心','木','艸','言','火','土','糸','金','女','日','月','目','石','竹','衣','貝']).filter(ok);
+  return shuffle([ans].concat(uniq(pool.concat(same,common)).slice(0,3)));}
+function trialWord(o){const ws=WD.filter(w=>w.l===o.l&&w.w.includes(o.c)&&RW[o.c+'|'+w.w]);if(ws.length)return rnd(ws).w;const a=allWordsOf(o).filter(w=>RW[o.c+'|'+w]);return a.length?rnd(a):o.c;}
+const readingsOf=ch=>{const s=new Set();const c=charBy[ch];if(c){s.add(c.z);(c.alt||[]).forEach(a=>s.add(a.z));}GR.forEach(g=>g.items.forEach(it=>{if(it.c===ch)s.add(it.z);}));return s;};
+const BL=new Set(['下襬|擺','裙襬|擺','一廂情願|相','稠密|綢','車廂|相']);
+const TRICKY={'勝券在握':'券','遊說':'說','稱心如意':'稱','日積月累':'累','屈指可數':'數','更上層樓':'更','狐假虎威':'假','丞相':'相','感激涕零':'涕','孜孜不倦':'孜','恃才傲物':'恃','悲天憫人':'憫','作繭自縛':'繭','相濡以沫':'濡','雀躍':'躍','鼎邊趖':'趖','呢絨':'呢','垂頭喪氣':'喪','蜂擁而來':'擁','樂極生悲':'樂','有模有樣':'模','狼狽為奸':'為','落荒而逃':'落','迫不得已':'迫','欲蓋彌彰':'彌'};
+const SYN=[['勢均力敵','不相上下','伯仲之間','旗鼓相當'],['驚慌失措','手足無措'],['垂頭喪氣','無精打采','心灰意冷'],['神機妙算','神鬼莫測'],['氣定神閒','若無其事','旁若無人','漫不經心','冷眼旁觀'],['日積月累','持之以恆','孜孜不倦','精益求精','盡心盡力','卯足全力','不眠不休','全神貫注'],['得意忘形','驕傲自滿','恃才傲物'],['惋惜','後悔'],['謹慎','謹記'],['山珍海味','珍饈'],['弄巧成拙','畫蛇添足'],['熱騰騰','暖烘烘'],['作威作福','狐假虎威','虛張聲勢'],['街頭巷尾','四面八方'],['雀躍','樂不可支'],['別出心裁','巧奪天工'],['卓越','顯赫'],['增添','擴展'],['恰恰','稍微'],['未雨綢繆','不時之需','綢繆'],['臨渴掘井','掘井'],['耕田','耕耘'],['狼狽','疲憊'],['陰暗','鬱悶'],['畏懼','驚慌失措'],['詢問','遊說'],['培養','砥礪'],['急中生智','神機妙算'],['稱心如意','理所當然'],['淚流滿面','感激涕零'],['暴跳如雷','無理取鬧']];
+const synOf=w=>{const s=new Set();SYN.forEach(g=>{if(g.includes(w))g.forEach(x=>s.add(x));});return s;};
+const lessonName=n=>'第'+CNUM[n]+'課';
+
+/* ---------- 狀態 ---------- */
+function fresh(){return {v:1,t:0,stars:0,days:{},item:{},mist:{},hist:[],badges:{},ls:{},ts:{},hw:0,hadMist:0,passed:{},trial:null,pref:{lessons:[1],n:10,types:['zy','g','def','f','w']}};}
+let S=fresh(), storeOK=true;
+try{const raw=localStorage.getItem(LS_KEY);if(raw){const o=JSON.parse(raw);if(o&&o.v===1)S=Object.assign(fresh(),o);}}catch(e){storeOK=false;}
+let cloud={ref:null,state:'none',busy:false,dirty:false};
+function save(){S.t=Date.now();try{localStorage.setItem(LS_KEY,JSON.stringify(S));storeOK=true;}catch(e){storeOK=false;}pushCloud();}
+async function pushCloud(){if(!cloud.ref)return;if(cloud.busy){cloud.dirty=true;return;}cloud.busy=true;
+  try{do{cloud.dirty=false;await cloud.ref.set({t:S.t,json:JSON.stringify(S)});}while(cloud.dirty);cloud.state='ok';}catch(e){cloud.state='fail';}cloud.busy=false;if(route()==='parent'&&!sess)render();}
+async function initCloud(){try{
+  if(!window.claude||!window.claude.use)return;
+  const [db,user]=await Promise.all([window.claude.use('db'),window.claude.use('user')]);
+  if(!db||!user)return;const uid=await user.id();if(!uid)return;
+  cloud.ref=db.doc('data/users/'+uid+'/progress');
+  const snap=await cloud.ref.get();cloud.state='ok';
+  if(snap.exists){const d=snap.data();
+    if(d&&d.json&&d.t>(S.t||0)){const o=JSON.parse(d.json);if(o&&o.v===1&&!sess){S=Object.assign(fresh(),o);try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){}render();}}
+    else if(d&&(S.t||0)>d.t)pushCloud();
+  }else if(S.t)pushCloud();
+  if(route()==='parent'&&!sess)render();
+}catch(e){cloud.state='fail';}}
+let dl=null;
+async function initDownloads(){try{if(window.claude&&window.claude.use){dl=await window.claude.use('downloads');if(route()==='print')render();}}catch(e){dl=null;}}
+
+const dayKey=d=>{d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+function streak(){let n=0;const d=new Date();if(!S.days[dayKey(d)])d.setDate(d.getDate()-1);while(S.days[dayKey(d)]){n++;d.setDate(d.getDate()-1);}return n;}
+const RANKS=[[0,'小書僮'],[50,'小秀才'],[150,'舉人'],[300,'進士'],[500,'探花'],[750,'榜眼'],[1000,'狀元']];
+function rank(){let i=0;RANKS.forEach((r,k)=>{if(S.stars>=r[0])i=k;});const next=RANKS[i+1];return {name:RANKS[i][1],next:next?next[1]:null,need:next?next[0]-S.stars:0,pct:next?Math.round((S.stars-RANKS[i][0])/(next[0]-RANKS[i][0])*100):100};}
+function coreItems(l){return CH.filter(c=>c.l===l).map(c=>'c:'+c.c).concat(WD.filter(w=>w.l===l).map(w=>'w:'+w.w));}
+function mastery(l){const ids=coreItems(l);let ok=0;ids.forEach(id=>{if(S.item[id]&&S.item[id][2]===1)ok++;});return Math.round(ok/ids.length*100);}
+function cover(l){const cs=CH.filter(c=>c.l===l),ws=WD.filter(w=>w.l===l);return {c:cs.filter(c=>S.item['c:'+c.c]).length,cn:cs.length,w:ws.filter(w=>S.item['w:'+w.w]).length,wn:ws.length};}
+const totalQ=()=>Object.values(S.ts).reduce((a,v)=>a+v[0],0);
+const totalRight=()=>Object.values(S.ts).reduce((a,v)=>a+v[1],0);
+const BADGES=[
+ ['first','啟程','完成第一回練習',()=>S.hist.length>=1],
+ ['s3','三日','連續練習 3 天',()=>streak()>=3],
+ ['s7','七日','連續練習 7 天',()=>streak()>=7],
+ ['perfect','滿分','一回全部答對',()=>S.hist.some(h=>h.n>=10&&h.r===h.n)],
+ ['q100','百題','累積作答 100 題',()=>totalQ()>=100],
+ ['q500','五百','累積作答 500 題',()=>totalQ()>=500],
+ ['mock90','金榜','模擬考 90 分以上',()=>S.hist.some(h=>h.m==='mock'&&h.r/h.n>=0.9)],
+ ['clear','清零','把錯題本清空',()=>S.hadMist&&Object.keys(S.mist).length===0],
+ ['all12','全冊','十二課都練習過',()=>D.L.every(l=>S.ls[l.n]&&S.ls[l.n][0]>0)],
+ ['hw50','妙筆','手寫寫對 50 個字',()=>S.hw>=50]
+];
+
+/* ---------- 出題 ---------- */
+const toneVars=z=>{const b=z.replace(/[˙ˊˇˋ]/g,'');return [b,b+'ˊ',b+'ˇ',b+'ˋ'].filter(x=>x!==z);};
+function itemIdFor(c,w){if(charBy[c])return 'c:'+c;if(w&&wordBy[w])return 'w:'+w;return null;}
+function lessonFor(c,w){if(charBy[c])return charBy[c].l;if(wordBy[w])return wordBy[w].l;const gs=groupsOf[c];return gs?GR[gs[0]].l:0;}
+function subOK(word,from,to){return !known.has(word.split(from).join(to))&&!BL.has(word+'|'+to);}
+function charInfo(ch,w){
+  const c=charBy[ch];let s='';
+  if(c){s='<b class="kai">'+c.c+'</b> '+c.z+'（'+c.r+'部）'+(c.w.length?'：'+c.w.join('、'):'');
+    (c.alt||[]).forEach(a=>{s+='<br>又讀 '+a.z+'：'+a.w.join('、');});if(c.note)s+='<br>'+esc(c.note);}
+  else{s='<b class="kai">'+ch+'</b> '+(RW[ch+'|'+w]||'')+(w?'：'+w:'');}
+  const gs=groupsOf[ch];
+  if(gs){const g=GR[gs[0]];s+='<br>形近字：'+g.items.filter(it=>it.c!==ch).map(it=>'<b class="kai">'+it.c+'</b> '+it.z+'（'+it.w.join('、')+'）').join('　');}
+  if(w&&wordBy[w])s+='<br>'+esc(w)+'：'+esc(wordBy[w].d);
+  return s;}
+function wordInfo(w){const o=wordBy[w];return '<b class="kai">'+esc(o.w)+'</b> '+o.z+'<br>'+esc(o.d)+'<br>例句：'+esc(o.s);}
+function pickWords(word,n,extraBad){
+  const o=wordBy[word],bad=synOf(word),idiom=o.w.length>=4;
+  const ok=x=>x.w!==word&&!bad.has(x.w)&&(x.w.length>=4)===idiom&&!(extraBad&&extraBad(x));
+  const same=shuffle(WD.filter(x=>x.l===o.l&&ok(x))),other=shuffle(WD.filter(x=>x.l!==o.l&&ok(x)));
+  return same.concat(other).slice(0,n);}
+function makeQ(key){
+  const p=key.split('|'),t=p[0];
+  if(t==='k'){const c=p[1],w=p[2],o=charBy[c];if(!o||!w||!w.includes(c))return null;const z=RW[c+'|'+w]||(w===c?o.z:null);if(!z)return null;
+    return {key,t,l:o.l,id:'c:'+c,c,w,z,kind:'hw',ans:c,rad:o.r,ropts:radOpts(o),exp:charInfo(c,w)};}
+  if(t==='r'||t==='c'||t==='w'){
+    const c=p[1],w=p[2],z=RW[c+'|'+w];if(!z||!w.includes(c))return null;
+    const base={key,t,l:lessonFor(c,w),id:itemIdFor(c,w),c,w,z,exp:charInfo(c,w)};
+    if(t==='r'){
+      let ds=[];readingsOf(c).forEach(x=>ds.push(x));
+      (groupsOf[c]||[]).forEach(gi=>GR[gi].items.forEach(it=>{if(it.c!==c)ds.push(it.z);}));
+      ds=uniq(ds.concat(shuffle(toneVars(z)))).filter(x=>x!==z).slice(0,3);
+      return Object.assign(base,{kind:'mc',ans:z,opts:shuffle([z].concat(ds)),cls:''});}
+    if(t==='w')return Object.assign(base,{kind:'hw',ans:c});
+    let ds=[];(groupsOf[c]||[]).forEach(gi=>GR[gi].items.forEach(it=>{if(it.c!==c&&subOK(w,c,it.c))ds.push(it.c);}));
+    ds=shuffle(uniq(ds));
+    const pool=shuffle(CH.filter(x=>x.l===base.l&&x.c!==c&&x.z!==z&&!(x.alt||[]).some(a=>a.z===z)&&subOK(w,c,x.c)).map(x=>x.c));
+    ds=uniq(ds.concat(pool)).slice(0,3);
+    return Object.assign(base,{kind:'mc',ans:c,opts:shuffle([c].concat(ds)),cls:'han'});}
+  if(t==='g'){
+    const g=GR[+p[1]];if(!g)return null;const it=g.items[+p[2]],w=p[3];if(!it||!it.w.includes(w))return null;
+    const opts=uniq(g.items.map(x=>x.c));
+    return {key,t,l:g.l,id:itemIdFor(it.c,w),c:it.c,w,kind:'mc',ans:it.c,opts:shuffle(opts),cls:'han',
+      exp:g.items.map(x=>'<b class="kai">'+x.c+'</b> '+x.z+'：'+x.w.join('、')).join('<br>')};}
+  const o=wordBy[p[1]];if(!o)return null;
+  const base={key,t,l:o.l,id:'w:'+o.w,w:o.w,kind:'mc',exp:wordInfo(o.w)};
+  if(t==='d'){const ds=pickWords(o.w,3).map(x=>x.d);return Object.assign(base,{ans:o.d,opts:shuffle([o.d].concat(ds)),cls:'txt'});}
+  if(t==='e'){const ds=pickWords(o.w,3).map(x=>x.w);return Object.assign(base,{ans:o.w,opts:shuffle([o.w].concat(ds)),cls:'wd',def:o.d.split(o.w).join('～')});}
+  if(t==='f'){const ds=pickWords(o.w,3,x=>o.s.includes(x.w)||o.w.includes(x.w)||x.w.includes(o.w)).map(x=>x.w);return Object.assign(base,{ans:o.w,opts:shuffle([o.w].concat(ds)),cls:'wd',sent:o.s});}
+  return null;}
+function seedsFor(lessons){
+  const L=new Set(lessons),out={r:[],c:[],w:[],g:[],d:[],e:[],f:[]};
+  CH.forEach(c=>{if(!L.has(c.l)||!c.w.length)return;
+    if(!c.noread){out.r.push('r|'+c.c+'|'+rnd(c.w));(c.alt||[]).forEach(a=>out.r.push('r|'+c.c+'|'+rnd(a.w)));}
+    const all=allWordsOf(c);out.c.push('c|'+c.c+'|'+rnd(all));out.w.push('w|'+c.c+'|'+rnd(all));});
+  WD.forEach(w=>{if(!L.has(w.l))return;['d','e','f'].forEach(t=>out[t].push(t+'|'+w.w));if(TRICKY[w.w])out.r.push('r|'+TRICKY[w.w]+'|'+w.w);});
+  GR.forEach((g,gi)=>{if(g.t!=='near'||!L.has(g.l))return;g.items.forEach((it,ci)=>{
+    const ws=it.w.filter(w=>g.items.every(o=>o.c===it.c||subOK(w,it.c,o.c)));if(ws.length)out.g.push('g|'+gi+'|'+ci+'|'+rnd(ws));});});
+  return out;}
+const prio=id=>{const s=id&&S.item[id];return (!s?0.6:s[2]===1?2:0)+Math.random()*1.2;};
+function buildSession(lessons,alloc){
+  const seeds=seedsFor(lessons),used=new Set(),qs=[];
+  const take=(t,n)=>{let got=0;const list=seeds[t].map(k=>{const p=k.split('|');const id=t==='g'?'c:'+GR[+p[1]].items[+p[2]].c:(t==='d'||t==='e'||t==='f')?'w:'+p[1]:'c:'+p[1];return {k,id,g:t==='g'?'g'+p[1]:null,s:prio(t==='g'?null:id)};}).sort((a,b)=>a.s-b.s);
+    for(const x of list){if(got>=n)break;if(used.has(x.id)||(x.g&&used.has(x.g)))continue;const q=makeQ(x.k);if(!q||(q.kind==='mc'&&q.opts.length<2))continue;used.add(x.id);if(x.g)used.add(x.g);qs.push(q);got++;}return got;};
+  let short=0;Object.keys(alloc).forEach(t=>{short+=alloc[t]-take(t,alloc[t]);});
+  const ts=shuffle(Object.keys(alloc));let guard=0;
+  while(short>0&&guard++<40){const t=ts[guard%ts.length];if(take(t,1))short--;}
+  return shuffle(qs);}
+function allocFor(groups,n){
+  const gs=TGROUP.filter(g=>groups.includes(g[0])),alloc={};
+  let nw=groups.includes('w')?Math.max(1,Math.round(n*0.2)):0;const rest=gs.filter(g=>g[0]!=='w');
+  if(!rest.length)nw=n;if(nw)alloc.w=nw;
+  let left=n-nw;rest.forEach((g,i)=>{const share=Math.round(left/(rest.length-i));left-=share;
+    if(g[2].length===1)alloc[g[2][0]]=share;else{const a=Math.ceil(share/2);alloc[g[2][0]]=a;alloc[g[2][1]]=share-a;}});
+  Object.keys(alloc).forEach(k=>{if(!alloc[k])delete alloc[k];});return alloc;}
+
+/* ---------- 練習流程 ---------- */
+let sess=null,timer=null;
+function startSession(mode,lessons,qs){
+  if(!qs.length)return false;
+  sess={mode,lessons,qs,i:0,ans:qs.map(()=>null),stage:'quiz',start:Date.now(),confirm:false};
+  if(location.hash!=='#practice')location.hash='practice';else render();
+  window.scrollTo(0,0);return true;}
+function isRight(q,a){if(q.kind==='hw')return !!(a&&a.ok===true&&(!q.rad||a.rad===q.rad));return a===q.ans;}
+function answered(q,a){if(a===null||a===undefined)return false;if(q.kind!=='hw')return true;if(q.rad&&!a.rad)return false;return !!(a.img||a.skip);}
+const trialChars=ls=>uniq(CH.filter(c=>ls.includes(c.l)).map(c=>c.c));
+function startTrial(ls){const q=shuffle(trialChars(ls));if(!q.length)return;S.trial={ls:ls.slice().sort((a,b)=>a-b),q,n:q.length,r:0,t:Date.now()};save();nextRound();}
+function nextRound(){const T=S.trial;if(!T||!T.q.length)return;const qs=T.q.slice(0,10).map(c=>makeQ('k|'+c+'|'+trialWord(charBy[c]))).filter(Boolean);startSession('trial',T.ls.slice(),qs);}
+function finish(){
+  const n=sess.qs.length;let r=0;const before=Object.keys(S.badges).length;
+  sess.qs.forEach((q,i)=>{const ok=isRight(q,sess.ans[i]);if(ok)r++;
+    const ts=S.ts[q.t]=S.ts[q.t]||[0,0];ts[0]++;if(ok)ts[1]++;
+    if(q.l){const ls=S.ls[q.l]=S.ls[q.l]||[0,0];ls[0]++;if(ok)ls[1]++;}
+    if(q.id){const it=S.item[q.id]=S.item[q.id]||[0,0,0];it[0]++;if(ok)it[1]++;it[2]=ok?1:0;}
+    if(q.kind==='hw'&&ok)S.hw++;
+    if(!ok){const m=S.mist[q.key]=S.mist[q.key]||{n:0,ok:0};m.n++;m.ok=0;m.t=Date.now();S.hadMist=1;}
+    else if(S.mist[q.key]){S.mist[q.key].ok++;if(S.mist[q.key].ok>=2)delete S.mist[q.key];}});
+  let gain=r;const pct=r/n;if(n>=10&&pct===1)gain+=10;else if(n>=10&&pct>=0.9)gain+=5;if(sess.mode==='mock'&&pct>=0.9)gain+=10;
+  let trial=null;
+  if(sess.mode==='trial'&&S.trial){const T=S.trial,wrong=[];T.r++;
+    sess.qs.forEach((q,i)=>{const k=T.q.indexOf(q.c);if(k>=0)T.q.splice(k,1);if(!isRight(q,sess.ans[i]))wrong.push(q.c);});
+    T.q=T.q.concat(wrong);trial={round:T.r,left:T.q.length,total:T.n,wrong:wrong.length,ls:T.ls};
+    if(!T.q.length){trial.done=true;T.ls.forEach(l=>{S.passed[l]=Date.now();});gain+=10*T.ls.length;S.trial=null;}}
+  S.stars+=gain;const dk=dayKey();S.days[dk]=(S.days[dk]||0)+n;
+  S.hist.unshift({t:Date.now(),m:sess.mode,l:sess.lessons,n,r,s:Math.round((Date.now()-sess.start)/1000)});S.hist=S.hist.slice(0,80);
+  const newB=[];BADGES.forEach(b=>{if(!S.badges[b[0]]&&b[3]()){S.badges[b[0]]=Date.now();newB.push(b);}});
+  sess.result={n,r,gain,newB,trial};sess.stage='result';sess.filter='all';
+  if(timer){clearInterval(timer);timer=null;}
+  save();render();window.scrollTo(0,0);if(pct>=0.8||(trial&&trial.done))confetti();}
+function submit(){
+  if(sess.qs.some((q,i)=>q.kind==='hw'&&sess.ans[i]&&sess.ans[i].img)){sess.stage='check';render();window.scrollTo(0,0);}else finish();}
+
+/* ---------- 畫面 ---------- */
+const ROUTES=[['home','首','首頁'],['practice','練','練習'],['cards','卡','字卡'],['mistakes','錯','錯題本'],['print','卷','列印卷'],['parent','家','家長']];
+const route=()=>{const h=location.hash.replace('#','');return ROUTES.some(r=>r[0]===h)?h:'home';};
+let ui={cardL:1,cardMode:'c',cardI:0,cardFlip:false,printL:null,printSrc:'rand',paper:null,resetAsk:false,quitAsk:false};
+function render(){
+  const r=route(),inQuiz=!!sess&&r==='practice';
+  $('#top').innerHTML='<div class="brand"><i>語</i>六上國語字詞闖關</div><div class="pills"><span class="pill star"><b>★</b>'+S.stars+'</span><span class="pill"><b>連續</b>'+streak()+' 天</span></div>';
+  $('#tabs').style.display=inQuiz&&sess.stage!=='result'?'none':'';
+  $('#tabs').innerHTML=ROUTES.map(x=>'<button data-act="go" data-to="'+x[0]+'" class="'+(x[0]===r?'on':'')+'"'+(x[0]===r?' aria-current="page"':'')+'><i>'+x[1]+'</i>'+x[2]+'</button>').join('');
+  const app=$('#app');
+  if(r==='home')app.innerHTML=vHome();
+  else if(r==='practice')app.innerHTML=sess?(sess.stage==='quiz'?vQuiz():sess.stage==='check'?vCheck():vResult()):vSetup();
+  else if(r==='cards')app.innerHTML=vCards();
+  else if(r==='mistakes')app.innerHTML=vMist();
+  else if(r==='print')app.innerHTML=vPrint();
+  else app.innerHTML=vParent();
+  if(inQuiz&&sess.stage==='quiz')afterQuiz();}
+function meterCls(p){return p>=70?'':p>=35?' warn':' low';}
+function vHome(){
+  const rk=rank(),today=S.days[dayKey()]||0,mc=Object.keys(S.mist).length;
+  return '<div class="hero"><div class="card rank"><p>目前稱號</p><div class="title">'+rk.name+'</div><div class="lvbar"><i style="width:'+rk.pct+'%"></i></div><p style="margin-top:8px">'+(rk.next?'再 '+rk.need+' 顆星升上「'+rk.next+'」':'已達最高稱號')+'</p></div>'+
+  '<div class="card today"><p class="muted">今天已練習</p><p><b>'+today+'</b> 題</p><p class="muted">累積 '+totalQ()+' 題，答對 '+totalRight()+' 題</p></div></div>'+
+  '<h2>今天想做什麼</h2><div class="grid tiles">'+
+   '<button class="card tile t1" data-act="go" data-to="practice"><i>練</i><b>開始練習</b><span>自己選課次和題數</span></button>'+
+   '<button class="card tile t2" data-act="mock-home"><i>考</i><b>段考模擬考</b><span>25 題計時，滿分 100</span></button>'+
+   '<button class="card tile t3" data-act="go" data-to="cards"><i>卡</i><b>字卡複習</b><span>生字和語詞翻翻看</span></button>'+
+   '<button class="card tile t5" data-act="trial-home"><i>字</i><b>生字關卡</b><span>'+(S.trial?'還有 '+S.trial.q.length+' 個字沒過':'每個字寫到對才過關')+'</span></button>'+
+   '<button class="card tile t4" data-act="go" data-to="mistakes"><i>錯</i><b>錯題本</b><span>目前 '+mc+' 題</span></button></div>'+
+  '<h2>各課精熟度</h2><div class="grid lessons">'+D.L.map(l=>{const m=mastery(l.n),cv=cover(l.n);return '<button class="lesson" data-act="pick-lesson" data-n="'+l.n+'"><small>'+lessonName(l.n)+'</small><b>'+esc(l.name)+'</b><div class="meter'+meterCls(m)+'"><i style="width:'+m+'%"></i></div><small>精熟 '+m+'%・語詞 '+cv.w+'/'+cv.wn+'</small>'+(S.passed[l.n]?'<small class="pass">✓ 生字已過關</small>':'')+'</button>';}).join('')+'</div>'+
+  '<h2>徽章</h2><div class="badges">'+BADGES.map(b=>'<div class="badge'+(S.badges[b[0]]?' got':'')+'"><i>'+b[1]+'</i>'+b[2]+'</div>').join('')+'</div>';}
+function lessonPicker(sel,scope){
+  const units={};D.L.forEach(l=>{(units[l.unit]=units[l.unit]||[]).push(l);});
+  return Object.keys(units).map(u=>'<div class="unit"><span>'+esc(u)+'</span>'+units[u].map(l=>'<button class="chip'+(sel.includes(l.n)?' on':'')+'" data-act="tog-lesson" data-scope="'+scope+'" data-n="'+l.n+'" aria-pressed="'+sel.includes(l.n)+'">'+l.n+'<small>'+esc(l.name)+'</small></button>').join('')+'</div>').join('')+
+  '<div class="row"><button class="btn sm" data-act="all-lesson" data-scope="'+scope+'">全選</button><button class="btn sm" data-act="no-lesson" data-scope="'+scope+'">清除</button></div>';}
+function vSetup(){
+  const p=S.pref,T=S.trial,nc=trialChars(p.lessons).length;
+  const trialCard=T?'<p>上次的生字關卡（第'+T.ls.map(cnNum).join('、')+'課）已過 '+(T.n-T.q.length)+' 個字，還有 <b>'+T.q.length+'</b> 個字沒過。</p><div class="row" style="margin-top:12px"><button class="btn pri" data-act="trial-go">繼續寫</button>'+(ui.dropAsk?'<span>確定不要這次的進度？</span><button class="btn sm hot" data-act="trial-drop-yes">確定放棄</button><button class="btn sm" data-act="trial-drop-no">取消</button>':'<button class="btn sm" data-act="trial-drop">放棄，重新選課</button>')+'</div>'
+    :'<p>上面選到的課，每個生字都會出一題：在語詞裡把字寫出來，再選出它的部首。錯的字會在下一回再出現，全部寫對才過關，每課過關加 10 顆星。每回 10 題。</p><div class="row" style="margin-top:12px"><button class="btn pri" data-act="trial-start"'+(nc?'':' disabled')+'>開始生字關卡（'+nc+' 個字）</button></div>';
+  return '<h1>練習設定</h1><h2>要練哪幾課</h2><p class="muted" style="margin:-6px 0 10px">藍色打勾的是已選的課。</p>'+lessonPicker(p.lessons,'pref')+
+  '<h2>生字關卡</h2><div class="card trialcard">'+trialCard+'</div>'+
+  '<h2>一般練習</h2><div class="card"><h3>題數</h3><div class="seg" style="margin-top:8px">'+[10,20,30].map(n=>'<button data-act="set-n" data-n="'+n+'" class="'+(p.n===n?'on':'')+'">'+n+' 題</button>').join('')+'</div>'+
+  '<h3 style="margin-top:18px">題型</h3><p class="muted" style="margin:2px 0 10px">藍色打勾的會出題，白色的不會出，點一下可以切換。</p><div class="row">'+TGROUP.map(g=>'<button class="chip'+(p.types.includes(g[0])?' on':'')+'" data-act="tog-type" data-g="'+g[0]+'" aria-pressed="'+p.types.includes(g[0])+'">'+g[1]+'</button>').join('')+'</div>'+
+  '<p class="muted" style="margin-top:10px">作答時不會顯示對錯，整回寫完才一起公布答案和解析。</p>'+
+  '<div class="row" style="margin-top:18px"><button class="btn pri" data-act="start"'+(p.lessons.length&&p.types.length?'':' disabled')+'>開始練習</button><button class="btn sun" data-act="mock"'+(p.lessons.length?'':' disabled')+'>段考模擬考（25 題）</button></div></div>'+
+  (p.lessons.length?'':'<p class="note" style="margin-top:14px">請先選至少一課。</p>');}
+function wordHTML(q,mode){
+  const cs=Array.from(q.w);
+  return cs.map(ch=>ch!==q.c?esc(ch):mode==='hi'?'<em>'+esc(ch)+'</em>':mode==='zy'?'<span class="zy">'+q.z+'</span>':'<span class="bk"></span>').join('');}
+function promptHTML(q){
+  const long=q.w&&q.w.length>=5?' long':'';
+  if(q.t==='r')return '<div class="qword'+long+'">'+wordHTML(q,'hi')+'</div><p class="qask">「'+q.c+'」在這裡怎麼讀？</p>';
+  if(q.t==='c')return '<div class="qword'+long+'">'+wordHTML(q,'zy')+'</div><p class="qask">'+q.z+' 是哪一個字？</p>';
+  if(q.t==='g')return '<div class="qword'+long+'">'+wordHTML(q,'bk')+'</div><p class="qask">空格要填哪一個字？</p>';
+  if(q.t==='w'||q.t==='k'){const o=charBy[q.c],h=wordBy[q.w]?wordBy[q.w].d:(o&&o.note&&q.w===q.c?o.note:'');return '<div class="qword'+long+'">'+wordHTML(q,'zy')+'</div><p class="qask">把 '+q.z+' 的國字寫在田字格裡</p>'+(h?'<p class="qhint">提示：'+esc(h)+'</p>':'');}
+  if(q.t==='d')return '<div class="qword'+long+'">'+esc(q.w)+'</div><p class="qask">這個語詞是什麼意思？</p>';
+  if(q.t==='e')return '<p class="qsent">'+esc(q.def)+'</p><p class="qask">這是哪一個語詞的意思？</p>';
+  return '<p class="qsent">'+q.sent.split(q.w).map(esc).join('<u>&nbsp;</u>')+'</p><p class="qask">空格要填哪一個語詞？</p>';}
+function fmtTime(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function vQuiz(){
+  const q=sess.qs[sess.i],a=sess.ans[sess.i],n=sess.qs.length,last=sess.i===n-1;
+  const un=sess.qs.filter((x,i)=>!answered(x,sess.ans[i])).length;
+  let body;
+  if(q.kind==='hw')body='<div class="pad"><canvas id="pad" aria-label="手寫區"></canvas></div><div class="row" style="justify-content:center"><button class="btn sm" data-act="hw-clear">清除重寫</button><button class="btn sm" data-act="hw-skip">'+(a&&a.skip?'已標記不會寫':'這個字不會寫')+'</button></div>'+
+    (q.rad?'<div class="radq"><p class="qask">這個字的部首是哪一個？</p><div class="radopts">'+q.ropts.map((o,k)=>'<button class="opt rad'+(a&&a.rad===o?' on':'')+'" data-act="rad" data-k="'+k+'" aria-pressed="'+!!(a&&a.rad===o)+'">'+radLabel(o)+'</button>').join('')+'</div></div>':'');
+  else body='<div class="opts'+(q.cls==='txt'?' one':'')+'">'+q.opts.map((o,k)=>'<button class="opt '+q.cls+(a===o?' on':'')+'" data-act="ans" data-k="'+k+'" aria-pressed="'+(a===o)+'">'+esc(o)+'</button>').join('')+'</div>';
+  return '<div class="qtop"><button class="btn sm" data-act="quit">離開</button><div class="qbar"><i style="width:'+Math.round(sess.i/n*100)+'%"></i></div><span class="qcount">'+(sess.i+1)+' / '+n+'</span>'+(sess.mode==='mock'?'<span class="pill" id="clock">'+fmtTime(Math.round((Date.now()-sess.start)/1000))+'</span>':'')+'</div>'+
+  (ui.quitAsk?'<div class="confirm">現在離開，這一回不會計分。<button class="btn sm hot" data-act="quit-yes">確定離開</button><button class="btn sm" data-act="quit-no">繼續作答</button></div>':'')+
+  '<div class="card qcard"><span class="qtype">'+(sess.mode==='mock'?'模擬考｜':sess.mode==='mist'?'錯題重練｜':sess.mode==='trial'&&S.trial?'生字關卡第 '+(S.trial.r+1)+' 回｜':'')+TYPES[q.t]+'</span>'+promptHTML(q)+body+'</div>'+
+  (sess.confirm?'<div class="confirm">還有 '+un+' 題沒有作答，沒作答會算錯。<button class="btn sm hot" data-act="submit-yes">還是要交卷</button><button class="btn sm" data-act="submit-no">回去作答</button></div>':'')+
+  '<div class="qnav"><button class="btn" data-act="prev"'+(sess.i?'':' disabled')+'>上一題</button><button class="btn '+(last?'hot':'pri')+'" data-act="next">'+(last?'交卷看答案':'下一題')+'</button></div>';}
+/* 手寫板 */
+let pad=null;
+function afterQuiz(){
+  if(sess.mode==='mock'&&!timer)timer=setInterval(()=>{const c=$('#clock');if(c&&sess)c.textContent=fmtTime(Math.round((Date.now()-sess.start)/1000));},1000);
+  const cv=$('#pad');pad=null;if(!cv)return;
+  const rect=cv.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.width=Math.round(rect.width*dpr);cv.height=Math.round(rect.height*dpr);
+  const x=cv.getContext('2d');x.lineCap='round';x.lineJoin='round';x.strokeStyle='#22304f';x.lineWidth=cv.width/34;
+  pad={cv,x,ink:false,down:false,dirty:false};
+  const a=sess.ans[sess.i];if(a&&a.img){const im=new Image();im.onload=()=>{if(pad&&pad.cv===cv)x.drawImage(im,0,0,cv.width,cv.height);};im.src=a.img;pad.ink=true;}
+  const pos=e=>{const r=cv.getBoundingClientRect();return [(e.clientX-r.left)/r.width*cv.width,(e.clientY-r.top)/r.height*cv.height];};
+  cv.addEventListener('pointerdown',e=>{e.preventDefault();pad.down=true;pad.ink=true;pad.dirty=true;try{cv.setPointerCapture(e.pointerId);}catch(_){ }const p=pos(e);x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(p[0]+0.1,p[1]+0.1);x.stroke();});
+  cv.addEventListener('pointermove',e=>{if(!pad||!pad.down)return;e.preventDefault();const p=pos(e);x.lineTo(p[0],p[1]);x.stroke();x.beginPath();x.moveTo(p[0],p[1]);});
+  const up=()=>{if(pad)pad.down=false;};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);cv.addEventListener('pointerleave',up);}
+function keepPad(){
+  if(!pad||!sess)return;const q=sess.qs[sess.i];if(q.kind!=='hw')return;
+  if(pad.ink&&pad.dirty){const c=document.createElement('canvas');c.width=c.height=240;c.getContext('2d').drawImage(pad.cv,0,0,240,240);sess.ans[sess.i]=Object.assign({},sess.ans[sess.i]||{},{img:c.toDataURL('image/png'),ok:null,skip:false});}}
+function vCheck(){
+  const items=sess.qs.map((q,i)=>({q,i,a:sess.ans[i]})).filter(x=>x.q.kind==='hw'&&x.a&&x.a.img);
+  const done=items.every(x=>x.a.ok!==null);
+  return '<h1>對照手寫的字</h1><p class="muted">看看自己寫的字和正確的字一不一樣，筆畫、部件都對才算寫對。</p><div class="grid checks" style="margin-top:16px">'+
+  items.map(x=>'<div class="card chk"><div class="qword long" style="font-size:30px">'+wordHTML(x.q,'zy')+'</div><div class="pair"><div class="mine"><img alt="我寫的字" src="'+x.a.img+'"></div><div class="right">'+x.q.c+'</div></div>'+(x.q.rad?'<p class="radres '+(x.a.rad===x.q.rad?'ok':'no')+'">部首：你選「'+esc(x.a.rad||'未選')+'」'+(x.a.rad===x.q.rad?'，答對了':'，正確是「'+x.q.rad+'」')+'</p>':'')+'<div class="mk"><button class="btn sm ok'+(x.a.ok===true?' on':'')+'" data-act="mark" data-i="'+x.i+'" data-v="1">寫對了</button><button class="btn sm no'+(x.a.ok===false?' on':'')+'" data-act="mark" data-i="'+x.i+'" data-v="0">寫錯了</button></div></div>').join('')+
+  '</div><div class="row" style="margin-top:22px"><button class="btn hot" data-act="finish"'+(done?'':' disabled')+'>'+(sess.mode==='trial'?'看這一回的結果':'看成績')+'</button>'+(done?'':'<span class="muted">每個字都要選寫對或寫錯</span>')+'</div>';}
+function reviewPrompt(q){
+  if(q.t==='r')return '「'+esc(q.w)+'」的「'+q.c+'」怎麼讀';
+  if(q.t==='c'||q.t==='w'||q.t==='k')return Array.from(q.w).map(ch=>ch===q.c?'〔'+q.z+'〕':esc(ch)).join('');
+  if(q.t==='g')return Array.from(q.w).map(ch=>ch===q.c?'＿':esc(ch)).join('')+'　（'+q.opts.join('、')+'）';
+  if(q.t==='d')return '「'+esc(q.w)+'」的意思';
+  if(q.t==='e')return esc(q.def);
+  return q.sent.split(q.w).map(esc).join('＿＿');}
+function vResult(){
+  const R=sess.result,T=R.trial,pct=Math.round(R.r/R.n*100),score=sess.mode==='mock'?pct+'<small style="font-size:15px">分</small>':R.r+'/'+R.n;
+  let msg=pct===100?'全部答對，太厲害了':pct>=90?'只差一點點就滿分':pct>=70?'表現不錯，再把錯的看一遍':'沒關係，錯題都收進錯題本了，再練一次會更好';
+  let info=(sess.mode==='mock'?'模擬考':sess.mode==='mist'?'錯題重練':sess.mode==='trial'?'生字關卡':'練習')+'　用時 '+fmtTime(Math.round((Date.now()-sess.start)/1000))+'　答對 '+R.r+' 題，答錯 '+(R.n-R.r)+' 題';
+  let btns='<button class="btn pri" data-act="again">再練一回</button>'+(Object.keys(S.mist).length?'<button class="btn hot" data-act="mist-go">練錯題本</button>':'')+'<button class="btn" data-act="home">回首頁</button>';
+  if(T){const scope='第'+T.ls.map(cnNum).join('、')+'課';
+    if(T.done){msg=scope+'生字關卡過關了';info='全部 '+T.total+' 個生字都寫對、部首也選對了，共寫了 '+T.round+' 回。過關加 '+(10*T.ls.length)+' 顆星。';
+      btns='<button class="btn pri" data-act="go" data-to="practice">挑戰別課</button><button class="btn" data-act="home">回首頁</button>';}
+    else{msg='第 '+T.round+' 回完成';info=scope+'共 '+T.total+' 個生字，已過 '+(T.total-T.left)+' 個，還有 '+T.left+' 個。'+(T.wrong?'這回錯的 '+T.wrong+' 個字會再出現，寫對才算過。':'');
+      btns='<button class="btn pri" data-act="next-round">下一回（還有 '+T.left+' 個字）</button><button class="btn" data-act="home">先休息，下次接著寫</button>';}}
+  const rows=sess.qs.map((q,i)=>({q,a:sess.ans[i],ok:isRight(q,sess.ans[i]),i})).filter(x=>sess.filter==='all'||!x.ok);
+  return '<div class="card score"><div class="ring" style="background:conic-gradient(var(--mint) '+pct+'%,var(--coral-soft) 0)"><div>'+score+'</div></div><div><h1>'+msg+'</h1><p class="muted">'+info+'</p>'+
+  '<div class="gain"><span class="pill star"><b>★</b>+'+R.gain+'</span>'+R.newB.map(b=>'<span class="pill"><b>新徽章</b>'+b[1]+'</span>').join('')+'</div></div></div>'+
+  '<div class="row" style="margin-top:18px">'+btns+'</div>'+
+  '<h2>答案與解析</h2><div class="seg"><button data-act="rv" data-f="all" class="'+(sess.filter==='all'?'on':'')+'">全部</button><button data-act="rv" data-f="x" class="'+(sess.filter==='x'?'on':'')+'">只看錯題</button></div>'+
+  '<div class="card" style="margin-top:14px">'+(rows.length?rows.map(x=>{const q=x.q,a=x.a;
+    let mine=q.kind==='hw'?(a&&a.img?'<img alt="我寫的字" src="'+a.img+'">':'（沒有寫）')+(q.rad?'　部首：'+esc(a&&a.rad?a.rad:'未選'):''):(a===null?'（沒有作答）':esc(a));
+    const right=esc(q.ans)+(q.rad?'　部首：'+q.rad:'');
+    return '<div class="rv'+(x.ok?'':' x')+'"><span class="mark">'+(x.ok?'○':'✕')+'</span><div><span class="tag">'+(x.i+1)+'. '+TYPES[q.t]+'</span><div class="q">'+reviewPrompt(q)+'</div><div class="a">'+(x.ok?'你的答案：<b>'+mine+'</b>':'你的答案：<s>'+mine+'</s>　正確答案：<b>'+right+'</b>')+'</div><div class="e">'+q.exp+'</div></div></div>';}).join(''):'<p>這一回沒有錯題。</p>')+'</div>';}
+function vCards(){
+  const list=ui.cardMode==='c'?CH.filter(c=>c.l===ui.cardL):WD.filter(w=>w.l===ui.cardL);
+  if(ui.cardI>=list.length)ui.cardI=0;const it=list[ui.cardI];let face;
+  if(ui.cardMode==='c'){
+    if(!ui.cardFlip)face='<div class="big">'+it.c+'</div><p class="tap">點一下看注音和詞語</p>';
+    else{const gs=groupsOf[it.c];face='<div class="bigw">'+it.c+'</div><div class="zyb">'+it.z+(it.alt?' ／ '+it.alt.map(a=>a.z).join(' ／ '):'')+'</div><dl><dt>部首</dt><dd>'+it.r+'部</dd>'+
+      (it.w.length?'<dt>詞語</dt><dd class="kai">'+it.w.join('、')+'</dd>':'')+(it.alt||[]).map(a=>'<dt>'+a.z+'</dt><dd class="kai">'+a.w.join('、')+'</dd>').join('')+
+      (it.note?'<dt>注意</dt><dd>'+esc(it.note)+'</dd>':'')+
+      (gs?'<dt>形近字</dt><dd>'+GR[gs[0]].items.filter(x=>x.c!==it.c).map(x=>'<span class="kai">'+x.c+'</span> '+x.z+'（'+x.w.join('、')+'）').join('<br>')+'</dd>':'')+'</dl>';}
+  }else{
+    if(!ui.cardFlip)face='<div class="bigw">'+esc(it.w)+'</div><p class="tap">點一下看注音、解釋和例句</p>';
+    else face='<div class="bigw" style="font-size:44px">'+esc(it.w)+'</div><div class="zyb">'+it.z+'</div><dl><dt>解釋</dt><dd>'+esc(it.d)+'</dd><dt>例句</dt><dd class="kai">'+esc(it.s)+'</dd><dt>類別</dt><dd>'+['課文重點詞語','語句學習詞語','延伸成語'][it.k]+'</dd></dl>';}
+  return '<h1>字卡複習</h1><div class="scroll" style="margin-top:12px">'+D.L.map(l=>'<button class="chip'+(ui.cardL===l.n?' on':'')+'" data-act="card-l" data-n="'+l.n+'">'+l.n+'<small>'+esc(l.name)+'</small></button>').join('')+'</div>'+
+  '<div class="row" style="justify-content:space-between"><div class="seg"><button data-act="card-m" data-m="c" class="'+(ui.cardMode==='c'?'on':'')+'">生字</button><button data-act="card-m" data-m="w" class="'+(ui.cardMode==='w'?'on':'')+'">語詞</button></div><span class="qcount">'+(ui.cardI+1)+' / '+list.length+'</span></div>'+
+  '<button class="card flash" style="margin-top:14px" data-act="card-flip" aria-label="翻面">'+face+'</button>'+
+  '<div class="qnav"><button class="btn" data-act="card-prev">上一張</button><button class="btn pri" data-act="card-next">下一張</button></div>';}
+function keyLabel(key){const q=makeQ(key);if(!q)return null;return {q,html:reviewPrompt(q)};}
+function vMist(){
+  const keys=Object.keys(S.mist).sort((a,b)=>S.mist[b].n-S.mist[a].n||S.mist[b].t-S.mist[a].t);
+  const rows=keys.map(k=>{const x=keyLabel(k);if(!x)return '';const m=S.mist[k];return '<div class="mrow"><div><span class="tag">'+lessonName(x.q.l)+'</span><span class="tag">'+TYPES[x.q.t]+'</span><div class="rv" style="display:block;border:0;padding:4px 0 0"><div class="q">'+x.html+'</div><div class="a">正確答案：<b>'+esc(x.q.ans)+'</b></div></div></div><div><span class="tag red">錯 '+m.n+' 次</span><div class="muted">再對 '+(2-m.ok)+' 次畢業</div></div></div>';}).join('');
+  return '<h1>錯題本</h1><p class="muted">答錯的題目會自動收在這裡，之後答對兩次就會畢業移出。</p>'+
+  '<div class="row" style="margin:16px 0"><button class="btn hot" data-act="mist-go"'+(keys.length?'':' disabled')+'>重練錯題（最多 20 題）</button><span class="pill"><b>'+keys.length+'</b> 題</span></div>'+
+  '<div class="card">'+(keys.length?rows:'<p>目前沒有錯題。做完練習後，答錯的題目會出現在這裡。</p>')+'</div>';}
+function vPrint(){
+  if(!ui.printL)ui.printL=S.pref.lessons.slice();
+  const mc=Object.keys(S.mist).length;
+  return '<h1>列印 A4 測驗卷</h1><p class="muted">直式書寫，用 A4 橫向列印。</p><div class="seg" style="margin-top:12px"><button data-act="print-src" data-s="rand" class="'+(ui.printSrc==='rand'?'on':'')+'">隨機出卷</button><button data-act="print-src" data-s="mist" class="'+(ui.printSrc==='mist'?'on':'')+'">錯題卷（'+mc+' 題）</button></div>'+
+  (ui.printSrc==='rand'?'<h2>出題範圍</h2>'+lessonPicker(ui.printL,'print'):'<p class="muted" style="margin-top:12px">把錯題本裡的題目排成考卷，印出來重寫一次。</p>')+
+  '<div class="row" style="margin-top:20px"><button class="btn pri" data-act="paper"'+((ui.printSrc==='rand'?ui.printL.length:mc)?'':' disabled')+'>'+(ui.paper?'換一份新的':'產生測驗卷')+'</button>'+
+  (ui.paper?'<button class="btn hot" data-act="pdf">下載 PDF 來列印</button>':'')+'</div>'+
+  (ui.paper?'<p class="note" style="margin-top:14px">'+(ui.msg?esc(ui.msg):'共 '+ui.paper.length+' 頁，最後是解答頁。按「下載 PDF 來列印」，列印時選 A4 橫向。')+'</p><div class="pages">'+ui.paper.map((u,i)=>'<img alt="測驗卷第 '+(i+1)+' 頁" src="'+u+'">').join('')+'</div>':'');}
+function vParent(){
+  const tq=totalQ(),tr=totalRight(),days=Object.keys(S.days).length;
+  const tops=Object.keys(S.mist).sort((a,b)=>S.mist[b].n-S.mist[a].n).slice(0,12).map(k=>{const x=keyLabel(k);return x?'<tr><td>'+lessonName(x.q.l)+'</td><td>'+TYPES[x.q.t]+'</td><td class="kai">'+x.html+'</td><td class="kai">'+esc(String(x.q.ans).slice(0,14))+'</td><td class="n">'+S.mist[k].n+' 次</td></tr>':'';}).join('');
+  const cs=cloud.state==='ok'?'已備份到這個 Claude 帳號，用同一個帳號在別台裝置開啟會自動帶入':cloud.state==='fail'?'雲端備份暫時失敗，紀錄仍存在這台裝置':'紀錄只存在這台裝置的瀏覽器裡'+(storeOK?'':'（這個瀏覽器不允許儲存，關掉頁面後紀錄會消失）');
+  return '<h1>家長查看</h1><div class="grid stats" style="margin-top:14px">'+
+   [['練習天數',days+' 天'],['連續天數',streak()+' 天'],['累積題數',tq+' 題'],['整體正確率',(tq?Math.round(tr/tq*100):0)+'%']].map(x=>'<div class="card stat"><span class="muted">'+x[0]+'</span><b>'+x[1]+'</b></div>').join('')+'</div>'+
+  '<h2>各課狀況</h2><div class="card tblwrap"><table class="tbl"><thead><tr><th>課次</th><th>精熟度（最近一次答對的字詞比例）</th><th>生字練過</th><th>語詞練過</th><th>作答</th><th>正確率</th></tr></thead><tbody>'+
+   D.L.map(l=>{const m=mastery(l.n),s=S.ls[l.n]||[0,0],cv=cover(l.n);return '<tr><td>'+lessonName(l.n)+' '+esc(l.name)+'</td><td><div class="row" style="flex-wrap:nowrap"><div class="meter'+meterCls(m)+'" style="flex:1;min-width:90px"><i style="width:'+m+'%"></i></div><span class="n">'+m+'%</span></div></td><td class="n">'+cv.c+'/'+cv.cn+(S.passed[l.n]?'<br><span class="pass">✓ 關卡過關</span>':'')+'</td><td class="n">'+cv.w+'/'+cv.wn+'</td><td class="n">'+s[0]+' 題</td><td class="n">'+(s[0]?Math.round(s[1]/s[0]*100)+'%':'—')+'</td></tr>';}).join('')+'</tbody></table></div>'+
+  '<h2>各題型正確率</h2><div class="card tblwrap"><table class="tbl"><tbody>'+Object.keys(TYPES).map(t=>{const s=S.ts[t]||[0,0],p=s[0]?Math.round(s[1]/s[0]*100):0;return '<tr><td>'+TYPES[t]+'</td><td style="width:50%"><div class="meter'+(s[0]?meterCls(p):'')+'"><i style="width:'+p+'%"></i></div></td><td class="n">'+(s[0]?p+'%（'+s[1]+'/'+s[0]+'）':'還沒練')+'</td></tr>';}).join('')+'</tbody></table></div>'+
+  '<h2>最常錯的字詞</h2><div class="card tblwrap">'+(tops?'<table class="tbl"><thead><tr><th>課次</th><th>題型</th><th>題目</th><th>答案</th><th>答錯</th></tr></thead><tbody>'+tops+'</tbody></table>':'<p>目前沒有錯題紀錄。</p>')+'</div>'+
+  '<h2>最近的練習</h2><div class="card tblwrap">'+(S.hist.length?'<table class="tbl"><thead><tr><th>時間</th><th>類型</th><th>範圍</th><th>成績</th><th>用時</th></tr></thead><tbody>'+S.hist.slice(0,15).map(h=>{const d=new Date(h.t);return '<tr><td class="n">'+(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+'</td><td>'+({practice:'練習',mock:'模擬考',mist:'錯題重練',trial:'生字關卡'}[h.m])+'</td><td>'+(h.l&&h.l.length?'第 '+h.l.join('、')+' 課':'錯題本')+'</td><td class="n">'+h.r+'/'+h.n+'（'+Math.round(h.r/h.n*100)+'%）</td><td class="n">'+fmtTime(h.s)+'</td></tr>';}).join('')+'</tbody></table>':'<p>還沒有練習紀錄。</p>')+'</div>'+
+  '<h2>紀錄保存</h2><div class="card"><p>'+cs+'。</p><div class="row" style="margin-top:12px">'+(ui.resetAsk?'<span>所有星星、錯題和紀錄都會清掉，無法復原。</span><button class="btn sm hot" data-act="reset-yes">確定清除</button><button class="btn sm" data-act="reset-no">取消</button>':'<button class="btn sm" data-act="reset">清除全部紀錄</button>')+'</div></div>';}
+
+/* ---------- A4 測驗卷（Canvas 繪製 → JPEG → PDF） ---------- */
+const PW=1123,PH=794,MR=44,ML=44,MT=44,MB=52,PK=2;
+const PF='"BiauKaiTC","BiauKai","DFKai-SB","Kaiti TC","標楷體","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
+const VMAP={'（':'︵','）':'︶','「':'﹁','」':'﹂','『':'﹃','』':'﹄','【':'︻','】':'︼','〔':'︹','〕':'︺','《':'︽','》':'︾'};
+const VMID='，。、；：',VROT='～—…─－-';
+function cnNum(n){const d='零一二三四五六七八九',i=Math.floor(n);let s;
+  if(i<10)s=d[i];else if(i<20)s='十'+(i%10?d[i%10]:'');else if(i<100)s=d[Math.floor(i/10)]+'十'+(i%10?d[i%10]:'');else s='一百'+(i%100?(i%100<10?'零':'')+cnNum(i%100):'');
+  return n%1?s+'點五':s;}
+class VPaper{
+  constructor(){this.pages=[];this.newPage();}
+  newPage(){const c=document.createElement('canvas');c.width=PW*PK;c.height=PH*PK;const x=c.getContext('2d');x.scale(PK,PK);x.fillStyle='#fff';x.fillRect(0,0,PW,PH);x.fillStyle='#000';x.strokeStyle='#000';x.textBaseline='middle';x.textAlign='center';this.x=x;this.left=PW-MR;this.y=MT;this.pages.push(c);}
+  font(sz,b){this.x.font=(b?'bold ':'')+sz+'px '+PF;}
+  col(w,gap){let right=this.left-(gap||0);if(right-w<ML){this.newPage();right=this.left;}this.left=right-w;this.cw=w;this.cxm=this.left+w/2;this.y=MT;}
+  room(h){return this.y+h<=PH-MB;}
+  glyph(ch,cx,y,sz){const x=this.x,cy=y+sz*0.56;
+    if(VMAP[ch])x.fillText(VMAP[ch],cx,cy);
+    else if(VMID.includes(ch)){const m=x.measureText(ch);x.fillText(ch,cx-(m.actualBoundingBoxRight-m.actualBoundingBoxLeft)/2,cy-(m.actualBoundingBoxDescent-m.actualBoundingBoxAscent)/2);}
+    else if(VROT.includes(ch)){x.save();x.translate(cx,cy);x.rotate(Math.PI/2);x.fillText(ch,0,0);x.restore();}
+    else if(ch==='＿'){x.lineWidth=1;x.beginPath();x.moveTo(cx+sz*0.45,y);x.lineTo(cx+sz*0.45,y+sz*1.12);x.stroke();}
+    else x.fillText(ch,cx,cy);}
+  num(tk,cx,y,sz){const x=this.x,f=x.font;x.font=Math.round(sz*0.62)+'px '+PF;x.fillText(tk,cx,y+sz*0.45);x.font=f;}
+  zyH(z,sz){return (z.replace(/[˙ˊˇˋ]/g,'').length+(z[0]==='˙'?0.6:0))*sz*0.62+sz*0.2;}
+  zy(z,cx,y,sz){const x=this.x,f=x.font,s=sz*0.62,syms=Array.from(z.replace(/[˙ˊˇˋ]/g,'')),tone=(z.match(/[ˊˇˋ]/)||[''])[0];x.font=s+'px '+PF;let yy=y+sz*0.1;
+    if(z[0]==='˙'){x.fillText('˙',cx,yy+s*0.45);yy+=s*0.6;}
+    syms.forEach((c,i)=>x.fillText(c,cx,yy+s*(i+0.5)));if(tone)x.fillText(tone,cx+s*0.82,yy+s*(syms.length-0.3));x.font=f;}
+  vtext(str,o){const sz=o.size,w=o.w;this.col(w,o.gap||0);this.y=MT+(o.top||0);this.font(sz,o.b);
+    const toks=str.match(/\d+\.?|[ㄅ-ㄩ˙ˊˇˋ]+|[\s\S]/gu)||[];
+    for(const tk of toks){const isNum=/^\d/.test(tk),isZy=/^[ㄅ-ㄩ˙ˊˇˋ]+$/.test(tk),h=isNum?sz*0.95:isZy?this.zyH(tk,sz):/[①②③④]/.test(tk)?sz*1.35:sz*1.12;
+      if(this.y+h>PH-MB&&!/^[，。、；：？！）」』】〕]$/.test(tk)){this.col(w,0);this.y=MT+(o.hang||0);this.font(sz,o.b);}
+      if(isNum)this.num(tk,this.cxm,this.y,sz);else if(isZy)this.zy(tk,this.cxm,this.y,sz);else this.glyph(tk,this.cxm,this.y,sz);
+      this.y+=h;}}
+  footer(label){const n=this.pages.length;this.pages.forEach((c,i)=>{const x=c.getContext('2d');x.font='12px '+PF;x.fillStyle='#444';x.fillText(label+'　第 '+(i+1)+' / '+n+' 頁',PW/2,PH-22);x.fillStyle='#000';});}
+}
+const shortest=ws=>ws.slice().sort((a,b)=>a.length-b.length)[0];
+function paperItems(){
+  const it={hz:[],zy:[],grp:[],fill:[],mc:[]};
+  if(ui.printSrc==='rand'){
+    const L=new Set(ui.printL),cs=shuffle(CH.filter(c=>L.has(c.l)&&c.w.length));
+    const half=Math.min(10,Math.floor(cs.length/2));
+    cs.slice(0,half).forEach(c=>{const w=shortest(shuffle(allWordsOf(c)));it.hz.push({c:c.c,w,z:RW[c.c+'|'+w]});});
+    cs.slice(half).filter(c=>!c.noread).slice(0,half).forEach(c=>{const w=shortest(shuffle(c.w));it.zy.push({c:c.c,w,z:c.z});});
+    let blanks=0;shuffle(GR.map((g,gi)=>({g,gi})).filter(x=>x.g.t==='near'&&L.has(x.g.l))).forEach(x=>{if(blanks>=10)return;const row=groupRow(x.g,null);if(row&&blanks+row.length<=10){it.grp.push({g:x.g,row});blanks+=row.length;}});
+    const ws=shuffle(WD.filter(w=>L.has(w.l)));
+    const bank=[];ws.forEach(w=>{if(bank.length<8&&!bank.some(b=>synOf(b.w).has(w.w)||b.s.includes(w.w)||w.s.includes(b.w)))bank.push(w);});it.fill=bank;
+    ws.filter(w=>!bank.includes(w)).slice(0,8).forEach((w,i)=>{const q=makeQ((i%3?'e|':'d|')+w.w);if(q&&q.opts.length===4)it.mc.push(q);});
+  }else{
+    const keys=Object.keys(S.mist).sort((a,b)=>S.mist[b].n-S.mist[a].n),seenG=new Set(),seenW=new Set();
+    keys.forEach(k=>{const q=makeQ(k);if(!q)return;
+      if(q.t==='r'){if(it.zy.length<12)it.zy.push({c:q.c,w:q.w,z:q.z});}
+      else if(q.t==='c'||q.t==='w'||q.t==='k'){if(it.hz.length<12)it.hz.push({c:q.c,w:q.w,z:q.z});}
+      else if(q.t==='g'){const gi=+k.split('|')[1];if(!seenG.has(gi)&&it.grp.length<8){seenG.add(gi);const row=groupRow(GR[gi],{c:q.c,w:q.w});if(row)it.grp.push({g:GR[gi],row});}}
+      else if(q.t==='f'){if(it.fill.length<10&&!seenW.has(q.w)){seenW.add(q.w);it.fill.push(wordBy[q.w]);}}
+      else if(it.mc.length<10&&q.opts.length===4)it.mc.push(q);});}
+  return it;}
+function groupRow(g,fixed){
+  const row=[];const seen=new Set();
+  g.items.forEach(x=>{if(seen.has(x.c))return;seen.add(x.c);let ws=x.w.filter(w=>g.items.every(o=>o.c===x.c||subOK(w,x.c,o.c)));
+    if(fixed&&fixed.c===x.c)ws=[fixed.w];if(ws.length)row.push({c:x.c,w:shortest(shuffle(ws))});});
+  return row.length>=2?shuffle(row):null;}
+function drawPaper(){
+  const it=paperItems(),P=new VPaper(),isM=ui.printSrc==='mist',AV=PH-MT-MB;
+  const ls=ui.printL.slice().sort((a,b)=>a-b);
+  const scope=isM?'錯題重練卷':ls.length===12?'範圍：第一至十二課（全冊）':'範圍：第'+ls.map(cnNum).join('、')+'課';
+  const title='康軒六上國語　字音字形與語詞測驗卷';
+  P.vtext(title,{size:28,b:true,w:46,top:Math.max(0,(AV-title.length*28*1.12)/2)});
+  P.vtext(scope+'　　班級：＿＿＿　座號：＿＿＿　姓名：＿＿＿＿＿＿　得分：＿＿＿＿',{size:17,w:30,gap:4});
+  P.x.lineWidth=1.5;P.x.beginPath();P.x.moveTo(P.left-8,MT);P.x.lineTo(P.left-8,PH-MB);P.x.stroke();P.left-=12;
+  const ans=[],sec=['一','二','三','四'];let si=0;
+  const head=t=>P.vtext(t,{size:19,b:true,w:34,gap:12});
+  const s1=it.hz.map(o=>({o,k:'hz'})).concat(it.zy.map(o=>({o,k:'zy'})));
+  if(s1.length){
+    head(sec[si]+'、寫出國字或注音'+(isM?'':'（每格二分，共'+cnNum(s1.length*2)+'分）'));const a=[],CW=66,SZ=26;
+    P.col(CW,6);
+    s1.forEach((e,i)=>{const cs=Array.from(e.o.w);
+      const hs=cs.map(ch=>ch!==e.o.c?30:e.k==='hz'?Math.max(38,P.zyH(e.o.z,24)+4):52),h=22+hs.reduce((p,c)=>p+c,0);
+      if(!P.room(h))P.col(CW,0);
+      const cx=P.left+24,ax=P.left+52;P.font(SZ);P.num((i+1)+'.',cx,P.y,26);let y=P.y+22;
+      cs.forEach((ch,k)=>{const ch_h=hs[k];
+        if(ch!==e.o.c)P.glyph(ch,cx,y,SZ);
+        else if(e.k==='hz'){P.x.lineWidth=1.2;P.x.strokeRect(cx-16,y+(ch_h-32)/2,32,32);P.zy(e.o.z,ax,y+(ch_h-P.zyH(e.o.z,24))/2,24);}
+        else{P.glyph(ch,cx,y+(ch_h-30)/2,SZ);P.x.lineWidth=1.2;P.x.strokeRect(ax-12,y+3,24,ch_h-6);}
+        y+=ch_h;});
+      P.y+=h+16;a.push((i+1)+'.'+(e.k==='hz'?e.o.c:e.o.z));});
+    ans.push(sec[si]+'、'+a.join('　'));si++;}
+  if(it.grp.length){
+    const nb=it.grp.reduce((n,g)=>n+g.row.length,0);head(sec[si]+'、形近字選填'+(isM?'':'（每格二分，共'+cnNum(nb*2)+'分）'));const a=[];
+    it.grp.forEach((g,i)=>{P.vtext((i+1)+'.【'+uniq(g.g.items.map(z=>z.c)).join('、')+'】　'+g.row.map(r=>r.w.split(r.c).join('（　）')).join('　　'),{size:21,w:37,hang:28});a.push((i+1)+'.'+g.row.map(r=>r.c).join('、'));});
+    ans.push(sec[si]+'、'+a.join('　'));si++;}
+  if(it.fill.length){
+    head(sec[si]+'、語詞選填'+(isM?'':'（每題二點五分，共'+cnNum(it.fill.length*2.5)+'分）'));
+    const bank=shuffle(it.fill.map(w=>w.w)),BS=20,BC=BS*1.12,cols=[[]];let used=0;
+    bank.forEach(w=>{const h=w.length*BC+BC*0.9;if(used+h>AV-20&&cols[cols.length-1].length){cols.push([]);used=0;}cols[cols.length-1].push(w);used+=h;});
+    const bw=cols.length*36+14;P.col(bw,8);P.x.lineWidth=1.2;P.x.strokeRect(P.left,MT,bw,AV);P.font(BS);
+    cols.forEach((c,ci)=>{const cx=P.left+bw-7-18-ci*36;let y=MT+12;c.forEach(w=>{Array.from(w).forEach(ch=>{P.glyph(ch,cx,y,BS);y+=BC;});y+=BC*0.9;});});
+    const a=[];P.left-=6;
+    shuffle(it.fill).forEach((w,i)=>{P.vtext((i+1)+'.'+w.s.split(w.w).join('（　　　　　）'),{size:19,w:32,hang:26});a.push((i+1)+'.'+w.w);});
+    ans.push(sec[si]+'、'+a.join('　'));si++;}
+  if(it.mc.length){
+    head(sec[si]+'、選擇題'+(isM?'':'（每題二點五分，共'+cnNum(it.mc.length*2.5)+'分）'));const a=[],N='①②③④';
+    it.mc.forEach((q,i)=>{P.vtext('（　　）'+(i+1)+'.'+(q.t==='d'?'「'+q.w+'」的意思是什麼？':'「'+q.def+'」是哪一個語詞的意思？'),{size:18,w:31,hang:96,gap:8});
+      if(q.t==='d')q.opts.forEach((o,k)=>P.vtext(N[k]+o,{size:16,w:27,top:70,hang:92}));
+      else P.vtext(q.opts.map((o,k)=>N[k]+o).join('　　'),{size:18,w:31,top:70,hang:92});
+      a.push((i+1)+'.'+N[q.opts.indexOf(q.ans)]);});
+    ans.push(sec[si]+'、'+a.join('　'));si++;}
+  P.newPage();P.vtext('解　答',{size:26,b:true,w:46});P.vtext(scope,{size:16,w:28,gap:4});
+  ans.forEach(s=>P.vtext(s,{size:19,w:34,hang:30,gap:14}));
+  P.footer('康軒六上國語字詞測驗卷');
+  return P.pages;}
+let paperCanvases=null;
+function genPaper(){try{paperCanvases=drawPaper();ui.paper=paperCanvases.map(c=>c.toDataURL('image/jpeg',0.9));ui.msg='';}catch(e){ui.paper=null;ui.msg='';}render();}
+function b64bytes(u){const s=atob(u.split(',')[1]),b=new Uint8Array(s.length);for(let i=0;i<s.length;i++)b[i]=s.charCodeAt(i);return b;}
+function buildPdf(imgs){
+  const enc=new TextEncoder(),parts=[],offs=[];let off=0;
+  const push=v=>{const b=typeof v==='string'?enc.encode(v):v;parts.push(b);off+=b.length;};
+  const obj=(n,fn)=>{offs[n]=off;push(n+' 0 obj\n');fn();push('\nendobj\n');};
+  push('%PDF-1.4\n');const N=imgs.length;
+  obj(1,()=>push('<< /Type /Catalog /Pages 2 0 R >>'));
+  obj(2,()=>push('<< /Type /Pages /Count '+N+' /Kids ['+imgs.map((_,i)=>(3+i*3)+' 0 R').join(' ')+'] >>'));
+  imgs.forEach((im,i)=>{const p=3+i*3,cs='q 841.89 0 0 595.28 0 0 cm /Im0 Do Q';
+    obj(p,()=>push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 841.89 595.28] /Resources << /XObject << /Im0 '+(p+2)+' 0 R >> >> /Contents '+(p+1)+' 0 R >>'));
+    obj(p+1,()=>push('<< /Length '+cs.length+' >>\nstream\n'+cs+'\nendstream'));
+    obj(p+2,()=>{push('<< /Type /XObject /Subtype /Image /Width '+im.w+' /Height '+im.h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+im.b.length+' >>\nstream\n');push(im.b);push('\nendstream');});});
+  const xref=off,total=3+N*3;let x='xref\n0 '+total+'\n0000000000 65535 f \n';for(let n=1;n<total;n++)x+=String(offs[n]).padStart(10,'0')+' 00000 n \n';
+  push(x+'trailer\n<< /Size '+total+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF\n');
+  return new Blob(parts,{type:'application/pdf'});}
+async function savePdf(){
+  if(!ui.paper)return;
+  try{const blob=buildPdf(ui.paper.map(u=>({b:b64bytes(u),w:PW*PK,h:PH*PK}))),name='國語字詞測驗卷-'+dayKey()+'.pdf';
+    if(dl){await dl.save({filename:name,data:blob});ui.msg='已交給裝置儲存，打開 PDF 就可以列印。';}
+    else{const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);ui.msg='PDF 已下載，打開後選 A4 橫向列印。iPad 會先開啟預覽，按分享鍵就能列印或存到檔案。';}}
+  catch(e){ui.msg=e&&e.code==='declined'?'已取消下載。':'下載沒有成功，可以再按一次，或長按下面的圖片儲存後列印。';}
+  render();}
+
+/* ---------- 彩帶 ---------- */
+function confetti(){
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const c=$('#fx'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+  const cols=['#3d6df2','#ff6f61','#ffc83d','#1fae87'],ps=[];for(let i=0;i<90;i++)ps.push({x:Math.random()*c.width,y:-20-Math.random()*c.height*0.4,vx:(Math.random()-0.5)*3,vy:3+Math.random()*4,s:6+Math.random()*8,r:Math.random()*6,c:cols[i%4]});
+  let t=0;(function step(){x.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=0.15;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/3,p.s,p.s*0.66);x.restore();});if(++t<150)requestAnimationFrame(step);else x.clearRect(0,0,c.width,c.height);})();}
+
+/* ---------- 事件 ---------- */
+const scopeSel=s=>s==='pref'?S.pref.lessons:ui.printL;
+const A={
+  go(el){if(sess&&sess.stage==='result')sess=null;if(location.hash==='#'+el.dataset.to)render();else location.hash=el.dataset.to;window.scrollTo(0,0);},
+  home(){sess=null;location.hash='home';},
+  'pick-lesson'(el){S.pref.lessons=[+el.dataset.n];save();sess=null;location.hash='practice';},
+  'tog-lesson'(el){const a=scopeSel(el.dataset.scope),n=+el.dataset.n,i=a.indexOf(n);if(i>=0)a.splice(i,1);else a.push(n);a.sort((x,y)=>x-y);if(el.dataset.scope==='pref')save();render();},
+  'all-lesson'(el){const a=scopeSel(el.dataset.scope);a.length=0;D.L.forEach(l=>a.push(l.n));if(el.dataset.scope==='pref')save();render();},
+  'no-lesson'(el){scopeSel(el.dataset.scope).length=0;if(el.dataset.scope==='pref')save();render();},
+  'set-n'(el){S.pref.n=+el.dataset.n;save();render();},
+  'tog-type'(el){const a=S.pref.types,g=el.dataset.g,i=a.indexOf(g);if(i>=0)a.splice(i,1);else a.push(g);save();render();},
+  start(){const p=S.pref;startSession('practice',p.lessons.slice(),buildSession(p.lessons,allocFor(p.types,p.n)));},
+  mock(){startSession('mock',S.pref.lessons.slice(),buildSession(S.pref.lessons,{w:5,r:5,c:3,g:4,d:3,e:2,f:3}));},
+  'mock-home'(){sess=null;location.hash='practice';},
+  'mist-go'(){const keys=Object.keys(S.mist).sort((a,b)=>S.mist[b].n-S.mist[a].n).slice(0,20);startSession('mist',[],shuffle(keys.map(makeQ).filter(Boolean)));},
+  rad(el){keepPad();const q=sess.qs[sess.i];sess.ans[sess.i]=Object.assign({},sess.ans[sess.i]||{},{rad:q.ropts[+el.dataset.k]});sess.confirm=false;render();},
+  'trial-start'(){startTrial(S.pref.lessons);},'trial-go'(){nextRound();},
+  'trial-home'(){sess=null;if(S.trial)nextRound();else location.hash='practice';},
+  'next-round'(){sess=null;if(S.trial)nextRound();else render();},
+  'trial-drop'(){ui.dropAsk=true;render();},'trial-drop-no'(){ui.dropAsk=false;render();},
+  'trial-drop-yes'(){ui.dropAsk=false;S.trial=null;save();render();},
+  again(){const m=sess.mode;sess=null;if(m==='trial'){if(S.trial)nextRound();else render();return;}if(m==='mock')A.mock();else if(m==='mist'&&Object.keys(S.mist).length)A['mist-go']();else if(m==='practice')A.start();else render();},
+  ans(el){const q=sess.qs[sess.i];sess.ans[sess.i]=q.opts[+el.dataset.k];sess.confirm=false;render();},
+  'hw-clear'(){if(pad){pad.x.clearRect(0,0,pad.cv.width,pad.cv.height);pad.ink=false;pad.dirty=false;}const a=sess.ans[sess.i];sess.ans[sess.i]=a&&a.rad?{rad:a.rad}:null;},
+  'hw-skip'(){const a=sess.ans[sess.i]||{};sess.ans[sess.i]={skip:true,ok:false,rad:a.rad};if(pad)pad.x.clearRect(0,0,pad.cv.width,pad.cv.height);if(pad){pad.ink=false;pad.dirty=false;}A.next();},
+  prev(){keepPad();if(sess.i>0){sess.i--;sess.confirm=false;render();}},
+  next(){keepPad();if(sess.i<sess.qs.length-1){sess.i++;sess.confirm=false;render();window.scrollTo(0,0);}
+    else if(sess.qs.some((q,i)=>!answered(q,sess.ans[i]))&&!sess.confirm){sess.confirm=true;render();}else submit();},
+  'submit-yes'(){submit();},'submit-no'(){sess.confirm=false;const i=sess.qs.findIndex((q,k)=>!answered(q,sess.ans[k]));if(i>=0)sess.i=i;render();},
+  quit(){keepPad();ui.quitAsk=true;render();},'quit-no'(){ui.quitAsk=false;render();},
+  'quit-yes'(){ui.quitAsk=false;sess=null;if(timer){clearInterval(timer);timer=null;}render();},
+  mark(el){sess.ans[+el.dataset.i].ok=el.dataset.v==='1';render();},
+  finish(){finish();},
+  rv(el){sess.filter=el.dataset.f;render();},
+  'card-l'(el){ui.cardL=+el.dataset.n;ui.cardI=0;ui.cardFlip=false;render();},
+  'card-m'(el){ui.cardMode=el.dataset.m;ui.cardI=0;ui.cardFlip=false;render();},
+  'card-flip'(){ui.cardFlip=!ui.cardFlip;render();},
+  'card-next'(){const n=(ui.cardMode==='c'?CH:WD).filter(x=>x.l===ui.cardL).length;ui.cardI=(ui.cardI+1)%n;ui.cardFlip=false;render();},
+  'card-prev'(){const n=(ui.cardMode==='c'?CH:WD).filter(x=>x.l===ui.cardL).length;ui.cardI=(ui.cardI-1+n)%n;ui.cardFlip=false;render();},
+  'print-src'(el){ui.printSrc=el.dataset.s;ui.paper=null;render();},
+  paper(){genPaper();},pdf(){savePdf();},
+  reset(){ui.resetAsk=true;render();},'reset-no'(){ui.resetAsk=false;render();},
+  'reset-yes'(){ui.resetAsk=false;const pref=S.pref;S=fresh();S.pref=pref;save();render();}
+};
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el||el.disabled)return;const f=A[el.dataset.act];if(f)f(el);});
+window.addEventListener('hashchange',()=>{if(sess&&route()!=='practice'){if(sess.stage==='result'){sess=null;}else{location.hash='practice';return;}}render();});
+render();initCloud();initDownloads();
+
+</script>
+</body>
+</html>
