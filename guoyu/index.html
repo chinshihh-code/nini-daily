@@ -218,6 +218,9 @@ nav.tabs button.on i{background:var(--sun);border-color:transparent;box-shadow:v
 .trialcard p{max-width:62ch}
 @media (max-width:760px){.radopts{grid-template-columns:repeat(2,1fr)}}
 
+.quick{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--sun-soft);border-radius:18px;padding:10px 14px;margin-bottom:14px}
+.quick>span{font-size:14px;font-weight:700;color:var(--ink2);margin-right:4px}
+
 </style>
 </head>
 <body>
@@ -454,7 +457,8 @@ function vHome(){
   '<h2>徽章</h2><div class="badges">'+BADGES.map(b=>'<div class="badge'+(S.badges[b[0]]?' got':'')+'"><i>'+b[1]+'</i>'+b[2]+'</div>').join('')+'</div>';}
 function lessonPicker(sel,scope){
   const units={};D.L.forEach(l=>{(units[l.unit]=units[l.unit]||[]).push(l);});
-  return Object.keys(units).map(u=>'<div class="unit"><span>'+esc(u)+'</span>'+units[u].map(l=>'<button class="chip'+(sel.includes(l.n)?' on':'')+'" data-act="tog-lesson" data-scope="'+scope+'" data-n="'+l.n+'" aria-pressed="'+sel.includes(l.n)+'">'+l.n+'<small>'+esc(l.name)+'</small></button>').join('')+'</div>').join('')+
+  const quick='<div class="quick"><span>快速選範圍</span>'+Object.keys(units).map(u=>{const ns=units[u].map(l=>l.n),on=sel.length===ns.length&&ns.every(n=>sel.includes(n));return '<button class="chip'+(on?' on':'')+'" data-act="set-range" data-scope="'+scope+'" data-ns="'+ns.join(',')+'" aria-pressed="'+on+'">第 '+ns[0]+'～'+ns[ns.length-1]+' 課</button>';}).join('')+'</div>';
+  return quick+Object.keys(units).map(u=>'<div class="unit"><span>'+esc(u)+'</span>'+units[u].map(l=>'<button class="chip'+(sel.includes(l.n)?' on':'')+'" data-act="tog-lesson" data-scope="'+scope+'" data-n="'+l.n+'" aria-pressed="'+sel.includes(l.n)+'">'+l.n+'<small>'+esc(l.name)+'</small></button>').join('')+'</div>').join('')+
   '<div class="row"><button class="btn sm" data-act="all-lesson" data-scope="'+scope+'">全選</button><button class="btn sm" data-act="no-lesson" data-scope="'+scope+'">清除</button></div>';}
 function vSetup(){
   const p=S.pref,T=S.trial,nc=trialChars(p.lessons).length;
@@ -744,6 +748,7 @@ const A={
   home(){sess=null;location.hash='home';},
   'pick-lesson'(el){S.pref.lessons=[+el.dataset.n];save();sess=null;location.hash='practice';},
   'tog-lesson'(el){const a=scopeSel(el.dataset.scope),n=+el.dataset.n,i=a.indexOf(n);if(i>=0)a.splice(i,1);else a.push(n);a.sort((x,y)=>x-y);if(el.dataset.scope==='pref')save();render();},
+  'set-range'(el){const a=scopeSel(el.dataset.scope);a.length=0;el.dataset.ns.split(',').forEach(n=>a.push(+n));if(el.dataset.scope==='pref')save();else ui.paper=null;render();},
   'all-lesson'(el){const a=scopeSel(el.dataset.scope);a.length=0;D.L.forEach(l=>a.push(l.n));if(el.dataset.scope==='pref')save();render();},
   'no-lesson'(el){scopeSel(el.dataset.scope).length=0;if(el.dataset.scope==='pref')save();render();},
   'set-n'(el){S.pref.n=+el.dataset.n;save();render();},
