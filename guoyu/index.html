@@ -666,13 +666,13 @@ function drawPaper(){
   const scope=isM?'錯題重練卷':ls.length===12?'範圍：第一至十二課（全冊）':'範圍：第'+ls.map(cnNum).join('、')+'課';
   const title=ui.printKind==='zy'?'康軒六上國語　字音字形測驗卷':'康軒六上國語　字音字形與語詞測驗卷';
   P.vtext(title,{size:28,b:true,w:46,top:Math.max(0,(AV-title.length*28*1.12)/2)});
-  P.vtext(scope+'　　班級：＿＿＿　座號：＿＿＿　姓名：＿＿＿＿＿＿　得分：＿＿＿＿',{size:17,w:30,gap:4});
+  P.vtext(scope+'　　班級：＿＿＿　座號：＿＿＿　姓名：＿＿＿＿＿＿　扣分：＿＿＿＿',{size:17,w:30,gap:4});
   P.x.lineWidth=1.5;P.x.beginPath();P.x.moveTo(P.left-8,MT);P.x.lineTo(P.left-8,PH-MB);P.x.stroke();P.left-=12;
   const ans=[],sec=['一','二','三','四'];let si=0;
   const head=t=>P.vtext(t,{size:19,b:true,w:34,gap:12});
   const s1=it.hz.map(o=>({o,k:'hz'})).concat(it.zy.map(o=>({o,k:'zy'})));
   if(s1.length){
-    head(sec[si]+'、寫出國字或注音'+(isM?'':'（每格二分，共'+cnNum(s1.length*2)+'分）'));const a=[],CW=66,SZ=26;
+    head(sec[si]+'、寫出國字或注音（每錯一格扣二分）');const a=[],CW=66,SZ=26;
     P.col(CW,6);
     s1.forEach((e,i)=>{const cs=Array.from(e.o.w);
       const hs=cs.map(ch=>ch!==e.o.c?30:e.k==='hz'?Math.max(38,P.zyH(e.o.z,24)+4):52),h=22+hs.reduce((p,c)=>p+c,0);
@@ -686,11 +686,11 @@ function drawPaper(){
       P.y+=h+16;a.push((i+1)+'.'+(e.k==='hz'?e.o.c:e.o.z));});
     ans.push(sec[si]+'、'+a.join('　'));si++;}
   if(it.grp.length){
-    const nb=it.grp.reduce((n,g)=>n+g.row.length,0);head(sec[si]+'、形近字選填'+(isM?'':'（每格二分，共'+cnNum(nb*2)+'分）'));const a=[];
+    const nb=it.grp.reduce((n,g)=>n+g.row.length,0);head(sec[si]+'、形近字選填（每錯一格扣二分）');const a=[];
     it.grp.forEach((g,i)=>{P.vtext((i+1)+'.【'+uniq(g.g.items.map(z=>z.c)).join('、')+'】　'+g.row.map(r=>r.w.split(r.c).join('（　）')).join('　　'),{size:21,w:37,hang:28});a.push((i+1)+'.'+g.row.map(r=>r.c).join('、'));});
     ans.push(sec[si]+'、'+a.join('　'));si++;}
   if(it.fill.length){
-    head(sec[si]+'、語詞選填'+(isM?'':'（每題二點五分，共'+cnNum(it.fill.length*2.5)+'分）'));
+    head(sec[si]+'、語詞選填（每錯一題扣二分）');
     const bank=shuffle(it.fill.map(w=>w.w)),BS=20,BC=BS*1.12,cols=[[]];let used=0;
     bank.forEach(w=>{const h=w.length*BC+BC*0.9;if(used+h>AV-20&&cols[cols.length-1].length){cols.push([]);used=0;}cols[cols.length-1].push(w);used+=h;});
     const bw=cols.length*36+14;P.col(bw,8);P.x.lineWidth=1.2;P.x.strokeRect(P.left,MT,bw,AV);P.font(BS);
@@ -699,7 +699,7 @@ function drawPaper(){
     shuffle(it.fill).forEach((w,i)=>{P.vtext((i+1)+'.'+w.s.split(w.w).join('（　　　　　）'),{size:19,w:32,hang:26});a.push((i+1)+'.'+w.w);});
     ans.push(sec[si]+'、'+a.join('　'));si++;}
   if(it.mc.length){
-    head(sec[si]+'、選擇題'+(isM?'':'（每題二點五分，共'+cnNum(it.mc.length*2.5)+'分）'));const a=[],N='①②③④';
+    head(sec[si]+'、選擇題（每錯一題扣二分）');const a=[],N='①②③④';
     it.mc.forEach((q,i)=>{P.vtext('（　　）'+(i+1)+'.'+(q.t==='d'?'「'+q.w+'」的意思是什麼？':'「'+q.def+'」是哪一個語詞的意思？'),{size:18,w:31,hang:96,gap:8});
       if(q.t==='d')q.opts.forEach((o,k)=>P.vtext(N[k]+o,{size:16,w:27,top:70,hang:92}));
       else P.vtext(q.opts.map((o,k)=>N[k]+o).join('　　'),{size:18,w:31,top:70,hang:92});
