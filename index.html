@@ -181,6 +181,13 @@
                         <div class="text-sm font-black text-sky-800">讀新聞集星星</div>
                     </div>
                 </a>
+                <a href="guoyu/" class="hidden md:flex items-center bg-violet-50 hover:bg-violet-100 border-2 border-violet-200 px-3 py-1.5 rounded-2xl transition">
+                    <span class="text-xl mr-1.5">📖</span>
+                    <div>
+                        <div class="text-[10px] text-violet-700 font-bold leading-none">六上國語</div>
+                        <div class="text-sm font-black text-violet-800">字詞闖關</div>
+                    </div>
+                </a>
                 <div class="flex items-center bg-orange-50 border-2 border-orange-200 px-2 md:px-3 py-1 md:py-1.5 rounded-2xl" title="連續準時睡覺">
                     <span class="text-base md:text-xl mr-1 md:mr-1.5">🔥</span>
                     <div>
@@ -1036,10 +1043,11 @@
     <!-- 底部狀態提示彈出框 (Toast) -->
     <!-- 手機底部導覽列 (iPhone) -->
     <nav id="bottom-nav" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-pink-100 shadow-[0_-4px_16px_rgba(255,107,139,0.12)]" style="padding-bottom: env(safe-area-inset-bottom);">
-        <div class="grid grid-cols-5 max-w-md mx-auto">
+        <div class="grid grid-cols-6 max-w-md mx-auto">
             <button onclick="switchMainView('schedule')" data-view="schedule" class="bnav-btn active"><span class="bnav-ico">📅</span><span>任務</span></button>
             <button onclick="switchMainView('shop')" data-view="shop" class="bnav-btn"><span class="bnav-ico">🎁</span><span>許願池</span></button>
             <a href="news/" class="bnav-btn"><span class="bnav-ico">📰</span><span>英文新聞</span></a>
+            <a href="guoyu/" class="bnav-btn"><span class="bnav-ico">📖</span><span>國語闖關</span></a>
             <button onclick="switchMainView('rules')" data-view="rules" class="bnav-btn"><span class="bnav-ico">💡</span><span>秘訣</span></button>
             <button onclick="switchMainView('settings')" data-view="settings" class="bnav-btn"><span class="bnav-ico">⚙️</span><span>家長</span></button>
         </div>
