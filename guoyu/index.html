@@ -425,7 +425,7 @@ function submit(){
 /* ---------- 畫面 ---------- */
 const ROUTES=[['home','首','首頁'],['practice','練','練習'],['cards','卡','字卡'],['mistakes','錯','錯題本'],['print','卷','列印卷'],['parent','家','家長']];
 const route=()=>{const h=location.hash.replace('#','');return ROUTES.some(r=>r[0]===h)?h:'home';};
-let ui={cardL:1,cardMode:'c',cardI:0,cardFlip:false,printL:null,printSrc:'rand',paper:null,resetAsk:false,quitAsk:false};
+let ui={printKind:'all',cardL:1,cardMode:'c',cardI:0,cardFlip:false,printL:null,printSrc:'rand',paper:null,resetAsk:false,quitAsk:false};
 function render(){
   const r=route(),inQuiz=!!sess&&r==='practice';
   $('#top').innerHTML='<div class="brand"><i>語</i>六上國語字詞闖關</div><div class="pills"><span class="pill star"><b>★</b>'+S.stars+'</span><span class="pill"><b>連續</b>'+streak()+' 天</span></div>';
@@ -568,6 +568,8 @@ function vPrint(){
   if(!ui.printL)ui.printL=S.pref.lessons.slice();
   const mc=Object.keys(S.mist).length;
   return '<h1>列印 A4 測驗卷</h1><p class="muted">直式書寫，用 A4 橫向列印。</p><div class="seg" style="margin-top:12px"><button data-act="print-src" data-s="rand" class="'+(ui.printSrc==='rand'?'on':'')+'">隨機出卷</button><button data-act="print-src" data-s="mist" class="'+(ui.printSrc==='mist'?'on':'')+'">錯題卷（'+mc+' 題）</button></div>'+
+  '<h2>考卷內容</h2><div class="seg"><button data-act="print-kind" data-k="all" class="'+(ui.printKind==='all'?'on':'')+'">字音字形＋語詞</button><button data-act="print-kind" data-k="zy" class="'+(ui.printKind==='zy'?'on':'')+'">只考字音字形</button></div>'+
+  '<p class="muted" style="margin-top:8px">'+(ui.printKind==='zy'?'只有「寫出國字或注音」和「形近字選填」兩大題，題數加多。':'包含寫國字注音、形近字、語詞選填、語詞選擇題四大題。')+'</p>'+
   (ui.printSrc==='rand'?'<h2>出題範圍</h2>'+lessonPicker(ui.printL,'print'):'<p class="muted" style="margin-top:12px">把錯題本裡的題目排成考卷，印出來重寫一次。</p>')+
   '<div class="row" style="margin-top:20px"><button class="btn pri" data-act="paper"'+((ui.printSrc==='rand'?ui.printL.length:mc)?'':' disabled')+'>'+(ui.paper?'換一份新的':'產生測驗卷')+'</button>'+
   (ui.paper?'<button class="btn hot" data-act="pdf">下載 PDF 來列印</button>':'')+'</div>'+
@@ -623,21 +625,31 @@ function paperItems(){
   const it={hz:[],zy:[],grp:[],fill:[],mc:[]};
   if(ui.printSrc==='rand'){
     const L=new Set(ui.printL),cs=shuffle(CH.filter(c=>L.has(c.l)&&c.w.length));
-    const half=Math.min(10,Math.floor(cs.length/2));
-    cs.slice(0,half).forEach(c=>{const w=shortest(shuffle(allWordsOf(c)));it.hz.push({c:c.c,w,z:RW[c.c+'|'+w]});});
-    cs.slice(half).filter(c=>!c.noread).slice(0,half).forEach(c=>{const w=shortest(shuffle(c.w));it.zy.push({c:c.c,w,z:c.z});});
-    let blanks=0;shuffle(GR.map((g,gi)=>({g,gi})).filter(x=>x.g.t==='near'&&L.has(x.g.l))).forEach(x=>{if(blanks>=10)return;const row=groupRow(x.g,null);if(row&&blanks+row.length<=10){it.grp.push({g:x.g,row});blanks+=row.length;}});
-    const ws=shuffle(WD.filter(w=>L.has(w.l)));
+    const zo=ui.printKind==='zy',half=Math.min(zo?15:10,Math.floor(cs.length/2)),maxB=zo?20:10,H=new Set(),G=new Set();
+    let blanks=0;shuffle(GR.map((g,gi)=>({g,gi})).filter(x=>x.g.t==='near'&&L.has(x.g.l))).forEach(x=>{if(blanks>=Math.min(maxB,Math.ceil(cs.length/2)))return;const row=groupRow(x.g,null);if(row&&blanks+row.length<=maxB){it.grp.push({g:x.g,row});blanks+=row.length;x.g.items.forEach(i=>G.add(i.c));}});
+    const grpWords=it.grp.flatMap(g=>g.row.map(r=>r.w)).join('');
+    for(const c of cs){if(it.hz.length>=half)break;if(G.has(c.c)||grpWords.includes(c.c)||it.hz.some(e=>e.w.includes(c.c)))continue;
+      const ws=allWordsOf(c).filter(w=>RW[c.c+'|'+w]&&!Array.from(w).some(ch=>ch!==c.c&&H.has(ch)));if(!ws.length)continue;
+      const w=shortest(shuffle(ws));it.hz.push({c:c.c,w,z:RW[c.c+'|'+w]});H.add(c.c);}
+    const leak=str=>Array.from(String(str)).some(ch=>H.has(ch));
+    const zyN=Math.max(half,(zo?30:20)-it.hz.length);
+    for(const c of cs){if(it.zy.length>=zyN)break;if(H.has(c.c)||c.noread)continue;const ws=c.w.filter(w=>!leak(w));if(ws.length)it.zy.push({c:c.c,w:shortest(shuffle(ws)),z:c.z});}
+    if(zo)return it;
+    const ws=shuffle(WD.filter(w=>L.has(w.l)&&!leak(w.w)&&!leak(w.s)));
     const bank=[];ws.forEach(w=>{if(bank.length<8&&!bank.some(b=>synOf(b.w).has(w.w)||b.s.includes(w.w)||w.s.includes(b.w)))bank.push(w);});it.fill=bank;
-    ws.filter(w=>!bank.includes(w)).slice(0,8).forEach((w,i)=>{const q=makeQ((i%3?'e|':'d|')+w.w);if(q&&q.opts.length===4)it.mc.push(q);});
+    shuffle(WD.filter(w=>L.has(w.l)&&!leak(w.w)&&!bank.includes(w))).forEach(w=>{if(it.mc.length>=8)return;
+      for(const t of (it.mc.length%3?['e','d']:['d','e'])){let ok=null;for(let k=0;k<4&&!ok;k++){const q=makeQ(t+'|'+w.w);if(q&&q.opts.length===4&&!leak(q.opts.join('')+(q.def||'')))ok=q;}if(ok){it.mc.push(ok);break;}}});
   }else{
-    const keys=Object.keys(S.mist).sort((a,b)=>S.mist[b].n-S.mist[a].n),seenG=new Set(),seenW=new Set();
-    keys.forEach(k=>{const q=makeQ(k);if(!q)return;
-      if(q.t==='r'){if(it.zy.length<12)it.zy.push({c:q.c,w:q.w,z:q.z});}
-      else if(q.t==='c'||q.t==='w'||q.t==='k'){if(it.hz.length<12)it.hz.push({c:q.c,w:q.w,z:q.z});}
-      else if(q.t==='g'){const gi=+k.split('|')[1];if(!seenG.has(gi)&&it.grp.length<8){seenG.add(gi);const row=groupRow(GR[gi],{c:q.c,w:q.w});if(row)it.grp.push({g:GR[gi],row});}}
-      else if(q.t==='f'){if(it.fill.length<10&&!seenW.has(q.w)){seenW.add(q.w);it.fill.push(wordBy[q.w]);}}
-      else if(it.mc.length<10&&q.opts.length===4)it.mc.push(q);});}
+    const keys=Object.keys(S.mist).sort((a,b)=>S.mist[b].n-S.mist[a].n),seenG=new Set(),seenW=new Set(),qs=keys.map(k=>({k,q:makeQ(k)})).filter(x=>x.q);
+    const H=new Set();
+    qs.forEach(({q})=>{if((q.t==='c'||q.t==='w'||q.t==='k')&&it.hz.length<12&&!H.has(q.c)&&!it.hz.some(e=>e.w.includes(q.c))&&!Array.from(q.w).some(ch=>ch!==q.c&&H.has(ch))){it.hz.push({c:q.c,w:q.w,z:q.z});H.add(q.c);}});
+    const leak=str=>Array.from(String(str)).some(ch=>H.has(ch));
+    qs.forEach(({k,q})=>{
+      if(q.t==='r'){if(it.zy.length<12&&!H.has(q.c)&&!leak(q.w))it.zy.push({c:q.c,w:q.w,z:q.z});}
+      else if(q.t==='g'){const gi=+k.split('|')[1];if(!seenG.has(gi)&&it.grp.length<8&&!GR[gi].items.some(i=>H.has(i.c))){const row=groupRow(GR[gi],{c:q.c,w:q.w});if(row&&!row.some(r=>leak(r.w))){seenG.add(gi);it.grp.push({g:GR[gi],row});}}}
+      else if(ui.printKind==='zy'||q.t==='c'||q.t==='w'||q.t==='k')return;
+      else if(q.t==='f'){const w=wordBy[q.w];if(it.fill.length<10&&!seenW.has(q.w)&&!leak(w.w+w.s)){seenW.add(q.w);it.fill.push(w);}}
+      else if(it.mc.length<10&&q.opts.length===4&&!leak(q.w+q.opts.join('')+(q.def||'')))it.mc.push(q);});}
   return it;}
 function groupRow(g,fixed){
   const row=[];const seen=new Set();
@@ -648,7 +660,7 @@ function drawPaper(){
   const it=paperItems(),P=new VPaper(),isM=ui.printSrc==='mist',AV=PH-MT-MB;
   const ls=ui.printL.slice().sort((a,b)=>a-b);
   const scope=isM?'錯題重練卷':ls.length===12?'範圍：第一至十二課（全冊）':'範圍：第'+ls.map(cnNum).join('、')+'課';
-  const title='康軒六上國語　字音字形與語詞測驗卷';
+  const title=ui.printKind==='zy'?'康軒六上國語　字音字形測驗卷':'康軒六上國語　字音字形與語詞測驗卷';
   P.vtext(title,{size:28,b:true,w:46,top:Math.max(0,(AV-title.length*28*1.12)/2)});
   P.vtext(scope+'　　班級：＿＿＿　座號：＿＿＿　姓名：＿＿＿＿＿＿　得分：＿＿＿＿',{size:17,w:30,gap:4});
   P.x.lineWidth=1.5;P.x.beginPath();P.x.moveTo(P.left-8,MT);P.x.lineTo(P.left-8,PH-MB);P.x.stroke();P.left-=12;
@@ -764,6 +776,7 @@ const A={
   'card-flip'(){ui.cardFlip=!ui.cardFlip;render();},
   'card-next'(){const n=(ui.cardMode==='c'?CH:WD).filter(x=>x.l===ui.cardL).length;ui.cardI=(ui.cardI+1)%n;ui.cardFlip=false;render();},
   'card-prev'(){const n=(ui.cardMode==='c'?CH:WD).filter(x=>x.l===ui.cardL).length;ui.cardI=(ui.cardI-1+n)%n;ui.cardFlip=false;render();},
+  'print-kind'(el){ui.printKind=el.dataset.k;ui.paper=null;render();},
   'print-src'(el){ui.printSrc=el.dataset.s;ui.paper=null;render();},
   paper(){genPaper();},pdf(){savePdf();},
   reset(){ui.resetAsk=true;render();},'reset-no'(){ui.resetAsk=false;render();},
