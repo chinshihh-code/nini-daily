@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>六上國語字詞闖關</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Huninn&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
   /* 版面想法：柔和的粉彩文具感——圓角白卡、淡淡陰影、粉圓字體 */
@@ -14,9 +14,9 @@
   --sun:#ffdc85; --sun-soft:#fff7e0; --mint:#56c8a7; --mint-soft:#e2f7ef; --bad:#f07a8a;
   --mint-ink:#1c8f72; --bad-ink:#d04a60;
   --soft:0 6px 18px rgba(123,110,170,.13); --press:0 3px 0 rgba(123,110,170,.16),0 6px 16px rgba(123,110,170,.12);
-  --display:"Huninn","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
-  --body:"PingFang TC","Noto Sans TC","Microsoft JhengHei","Heiti TC",sans-serif;
-  --kai:"BiauKaiTC","BiauKai","DFKai-SB","Kaiti TC","標楷體","PingFang TC","Noto Sans TC",serif;
+  --display:"BiauKai","DFKai-SB","標楷體","TW-Kai","Kaiti TC","LXGW WenKai TC","PingFang TC",serif;
+  --body:"BiauKai","DFKai-SB","標楷體","TW-Kai","Kaiti TC","LXGW WenKai TC","PingFang TC",serif;
+  --kai:"BiauKai","DFKai-SB","標楷體","TW-Kai","Kaiti TC","LXGW WenKai TC","PingFang TC",serif;
   color-scheme:light;
 }
 *{box-sizing:border-box}
@@ -229,6 +229,8 @@ nav.tabs button.on i{background:var(--sun);border-color:transparent;box-shadow:v
 .ghost{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--kai);font-size:min(230px,54vw);line-height:1;color:rgba(111,130,238,.18);pointer-events:none}
 @media (max-width:760px){.cardrow{grid-template-columns:1fr}}
 
+.back{display:inline-flex;align-items:center;gap:4px;min-height:40px;padding:4px 14px;border-radius:999px;background:var(--card);border:1.5px solid var(--edge);color:var(--ink);font-weight:700;text-decoration:none;box-shadow:0 2px 0 rgba(123,110,170,.1);font-size:15px}
+
 </style>
 </head>
 <body>
@@ -439,7 +441,7 @@ const route=()=>{const h=location.hash.replace('#','');return ROUTES.some(r=>r[0
 let ui={printKind:'all',cardL:1,cardMode:'c',cardI:0,cardFlip:false,printL:null,printSrc:'rand',paper:null,resetAsk:false,quitAsk:false};
 function render(){
   const r=route(),inQuiz=!!sess&&r==='practice';
-  $('#top').innerHTML='<div class="brand"><i>語</i>六上國語字詞闖關</div><div class="pills"><span class="pill star"><b>★</b>'+S.stars+'</span><span class="pill"><b>連續</b>'+streak()+' 天</span></div>';
+  $('#top').innerHTML=(inQuiz&&sess.stage!=='result'?'':'<a class="back" href="../">‹ 回打卡網站</a>')+'<div class="brand"><i>語</i>六上國語字詞闖關</div><div class="pills"><span class="pill star"><b>★</b>'+S.stars+'</span><span class="pill"><b>連續</b>'+streak()+' 天</span></div>';
   $('#tabs').style.display=inQuiz&&sess.stage!=='result'?'none':'';
   $('#tabs').innerHTML=ROUTES.map(x=>'<button data-act="go" data-to="'+x[0]+'" class="'+(x[0]===r?'on':'')+'"'+(x[0]===r?' aria-current="page"':'')+'><i>'+x[1]+'</i>'+x[2]+'</button>').join('');
   const app=$('#app');
@@ -615,7 +617,7 @@ function vParent(){
 
 /* ---------- A4 測驗卷（Canvas 繪製 → JPEG → PDF） ---------- */
 const PW=1123,PH=794,MR=44,ML=44,MT=44,MB=52,PK=2;
-const PF='"BiauKaiTC","BiauKai","DFKai-SB","Kaiti TC","標楷體","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
+const PF='"BiauKai","DFKai-SB","標楷體","TW-Kai","Kaiti TC","LXGW WenKai TC","PingFang TC",serif';
 const VMAP={'（':'︵','）':'︶','「':'﹁','」':'﹂','『':'﹃','』':'﹄','【':'︻','】':'︼','〔':'︹','〕':'︺','《':'︽','》':'︾'};
 const VMID='，。、；：',VROT='～—…─－-';
 function cnNum(n){const d='零一二三四五六七八九',i=Math.floor(n);let s;
@@ -682,8 +684,8 @@ function groupRow(g,fixed){
   g.items.forEach(x=>{if(seen.has(x.c))return;seen.add(x.c);let ws=x.w.filter(w=>g.items.every(o=>o.c===x.c||subOK(w,x.c,o.c)));
     if(fixed&&fixed.c===x.c)ws=[fixed.w];if(ws.length)row.push({c:x.c,w:shortest(shuffle(ws))});});
   return row.length>=2?shuffle(row):null;}
-function drawPaper(){
-  const it=paperItems(),P=new VPaper(),isM=ui.printSrc==='mist',AV=PH-MT-MB;
+function drawPaper(itIn){
+  const it=itIn||paperItems(),P=new VPaper(),isM=ui.printSrc==='mist',AV=PH-MT-MB;
   const ls=ui.printL.slice().sort((a,b)=>a-b);
   const scope=isM?'錯題重練卷':ls.length===12?'範圍：第一至十二課（全冊）':'範圍：第'+ls.map(cnNum).join('、')+'課';
   const title=ui.printKind==='zy'?'康軒六上國語　字音字形測驗卷':'康軒六上國語　字音字形與語詞測驗卷';
@@ -732,7 +734,13 @@ function drawPaper(){
   P.footer('康軒六上國語字詞測驗卷');
   return P.pages;}
 let paperCanvases=null;
-function genPaper(){try{paperCanvases=drawPaper();ui.paper=paperCanvases.map(c=>c.toDataURL('image/jpeg',0.9));ui.msg='';}catch(e){ui.paper=null;ui.msg='';}render();}
+async function genPaper(){
+  try{const it=paperItems();
+    if(document.fonts&&document.fonts.load){const txt=JSON.stringify([it.hz,it.zy,it.grp.map(g=>[g.g.items,g.row]),it.fill,it.mc.map(q=>[q.w,q.def,q.opts])])+'康軒六上國語字音字形與語詞測驗卷範圍第至十二課全冊班級座號姓名扣分寫出國字或注音每錯一格題扣二分形近字選填語詞選擇哪一個的意思是什麼解答頁一二三四五六七八九零點①②③④';
+      try{await Promise.race([Promise.all([document.fonts.load('20px "LXGW WenKai TC"',txt),document.fonts.load('bold 20px "LXGW WenKai TC"',txt)]),new Promise(r=>setTimeout(r,6000))]);}catch(_){}}
+    paperCanvases=drawPaper(it);ui.paper=paperCanvases.map(c=>c.toDataURL('image/jpeg',0.9));ui.msg='';}
+  catch(e){ui.paper=null;ui.msg='';}
+  render();}
 function b64bytes(u){const s=atob(u.split(',')[1]),b=new Uint8Array(s.length);for(let i=0;i<s.length;i++)b[i]=s.charCodeAt(i);return b;}
 function buildPdf(imgs){
   const enc=new TextEncoder(),parts=[],offs=[];let off=0;
