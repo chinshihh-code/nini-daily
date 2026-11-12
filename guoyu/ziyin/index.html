@@ -39,6 +39,7 @@ main{width:100%;max-width:760px;margin:0 auto;padding:4px 16px calc(40px + env(s
 .muted{color:var(--ink2);font-size:15px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:8px 20px;border-radius:18px;border:1.5px solid var(--edge);background:var(--card);font-weight:700;font-size:18px;box-shadow:var(--press);transition:transform .08s}
 .btn:active{transform:translateY(2px) scale(.98)}
+a.btn{text-decoration:none;color:var(--ink)}
 .btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
 .btn.sun{background:var(--sun);border-color:var(--sun)}
 .btn.sm{min-height:42px;font-size:16px;padding:6px 14px;border-radius:14px}
@@ -249,7 +250,8 @@ function vHome(){
   return '<p class="muted" style="margin:2px 2px 12px">《字音字形 基礎訓練》第 1～32 回。先選主題，再選第幾回或一個範圍。</p><div class="topics">'+
    TK.map(t=>{const d=topicDone(t);return '<button class="topic t'+t+'" data-go="#/t/'+t+'"><i>'+T[t].icon+'</i><span><b>'+T[t].name+'</b>'+T[t].desc+
      '<div class="meter"><u style="width:'+Math.round(d/32*100)+'%"></u></div></span><em>★ '+topicStars(t)+'<br><span>'+d+'/32 回</span></em></button>';}).join('')+
-   '<button class="topic tM" data-go="#/m"><i>錯</i><span><b>錯題本</b>答錯的題目會收在這裡</span><em style="color:var(--bad-ink)">'+mc+' 題</em></button></div>';
+   '<button class="topic tM" data-go="#/m"><i>錯</i><span><b>錯題本</b>答錯的題目會收在這裡</span><em style="color:var(--bad-ink)">'+mc+' 題</em></button></div>'+
+   '<div class="row" style="margin-top:22px;justify-content:center"><a class="btn sm" href="../">‹ 回國語闖關</a><a class="btn sm" href="../../">‹ 回打卡網站</a></div>';
 }
 function vTopic(t){
   const N=allIds(t,ui.from,ui.to).length;
