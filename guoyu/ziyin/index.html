@@ -120,6 +120,11 @@ main{width:100%;max-width:760px;margin:0 auto;padding:4px 16px calc(40px + env(s
 #toast{position:fixed;left:50%;top:18%;transform:translate(-50%,-20px) scale(.8);z-index:10;background:var(--sun);border-radius:999px;padding:10px 24px;font-weight:700;font-size:22px;box-shadow:0 10px 30px rgba(123,110,170,.3);opacity:0;pointer-events:none;white-space:nowrap}
 #toast.show{animation:toast 1.7s both}
 @keyframes toast{0%{opacity:0;transform:translate(-50%,-20px) scale(.6)}15%{opacity:1;transform:translate(-50%,0) scale(1.12)}25%{transform:translate(-50%,0) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-10px) scale(1)}}
+/* 練習卷 */
+.pages{display:grid;gap:14px;justify-items:center;margin-top:14px}
+.pages img{width:100%;border:1.5px solid var(--edge);border-radius:8px;box-shadow:var(--soft);background:#fff}
+.note{background:var(--sun-soft);border:1.5px solid #f3e3ad;border-radius:18px;padding:10px 14px;font-size:15px}
+.seg2{display:flex;gap:8px;flex-wrap:wrap}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:9;width:100%;height:100%}
 .brand i{display:none}
 @media (min-width:620px){.brand i{display:inline-grid}.rounds{grid-template-columns:repeat(8,1fr)}.topics{grid-template-columns:1fr 1fr}.qsent{font-size:26px}.qword{font-size:60px}}
@@ -226,13 +231,13 @@ function confetti(){
 }
 
 /* ---------- 畫面 ---------- */
-let sess=null, ui={from:1,to:3,n:10};
+let sess=null, ui={from:1,to:3,n:10,pf:1,pt:1,pk:{f:true,m:true},paper:null,pmsg:''};
 const route=()=>(location.hash.replace(/^#\/?/,'')||'home').split('/');
 function drawTop(){
   const tot=TK.reduce((n,t)=>n+topicStars(t),0),r=route();
   let back='<a class="back" href="../">‹ 回國語闖關</a>';
   if(sess)back='<button class="back" data-act="quit">✕ 離開</button>';
-  else if(r[0]==='r')back='<a class="back" href="#/t/'+r[1]+'">‹ '+T[r[1]].name+'</a>';
+  else if(r[0]==='r'||r[0]==='p')back='<a class="back" href="#/t/'+r[1]+'">‹ '+T[r[1]].name+'</a>';
   else if(r[0]!=='home')back='<a class="back" href="#/home">‹ 首頁</a>';
   $('#top').innerHTML=back+(sess?'':'<div class="brand"><i>音</i>字音字形</div>')+
     '<div class="pills"><span class="pill"><b>★</b>'+tot+'</span><button class="pill" data-act="mute" aria-label="音效開關">'+(S.mute?'🔇':'🔊')+'</button></div>';
@@ -256,7 +261,7 @@ function vTopic(t){
     '<div class="row"><span class="lab">快速選範圍</span>'+quick.map(q=>'<button class="chip'+(ui.from===q[0]&&ui.to===q[1]?' on':'')+'" data-act="rng" data-a="'+q[0]+'" data-b="'+q[1]+'">'+(q[0]===1&&q[1]===32?'全部':q[0]+'～'+q[1]+' 回')+'</button>').join('')+'</div>'+
     '<div class="row"><span class="lab">自己選</span>'+sel('from',ui.from)+'<span>到</span>'+sel('to',ui.to)+'</div>'+
     '<div class="row"><span class="lab">題數（這個範圍共 '+N+' 題）</span>'+cnts.map(n=>'<button class="chip'+(ui.n===n?' on':'')+'" data-act="cnt" data-n="'+n+'">'+(n?n+' 題':'全部 '+N+' 題')+'</button>').join('')+'</div>'+
-    '<button class="btn pri" data-act="start-range" data-t="'+t+'">開始練習</button></div>';
+    '<div class="row"><button class="btn pri" data-act="start-range" data-t="'+t+'">開始練習</button><button class="btn sun" data-act="to-print" data-t="'+t+'" data-a="'+ui.from+'" data-b="'+ui.to+'">🖨 列印練習卷</button></div></div>';
 }
 function vRound(t,r){
   const R=D[t][r-1],b=S.best[t+r];let body='';
@@ -267,7 +272,8 @@ function vRound(t,r){
       g.r.filter(y=>y.c===x.c).map(y=>esc(y.w)).join('、')+'</span></span></div>').join('')+'</div>').join('');
   return '<div class="stickybar"><div class="row" style="justify-content:space-between"><div><b style="font-size:20px">'+T[t].name+'・第 '+r+' 回</b><br><span class="muted">'+(b?'最佳成績：扣 '+b.d+' 分　<span style="color:var(--star)">'+'★'.repeat(b.s)+'</span>':'共 '+R.q.length+' 題，還沒測驗過')+'</span></div>'+
     '<button class="btn pri" data-act="start-round" data-t="'+t+'" data-r="'+r+'">開始測驗</button></div></div><div class="learn">'+body+'</div>'+
-    '<div class="row" style="margin-top:16px;justify-content:space-between">'+(r>1?'<a class="btn sm" href="#/r/'+t+'/'+(r-1)+'">‹ 第 '+(r-1)+' 回</a>':'<span></span>')+(r<32?'<a class="btn sm" href="#/r/'+t+'/'+(r+1)+'">第 '+(r+1)+' 回 ›</a>':'')+'</div>';
+    '<div class="row" style="margin-top:16px"><button class="btn sun" data-act="to-print" data-t="'+t+'" data-a="'+r+'" data-b="'+r+'">🖨 列印這一回的練習卷</button></div>'+
+    '<div class="row" style="margin-top:12px;justify-content:space-between">'+(r>1?'<a class="btn sm" href="#/r/'+t+'/'+(r-1)+'">‹ 第 '+(r-1)+' 回</a>':'<span></span>')+(r<32?'<a class="btn sm" href="#/r/'+t+'/'+(r+1)+'">第 '+(r+1)+' 回 ›</a>':'')+'</div>';
 }
 function vMist(){
   const all=mistIds();
@@ -304,9 +310,128 @@ function render(){
   else if(r[0]==='t'&&T[r[1]])h=vTopic(r[1]);
   else if(r[0]==='r'&&T[r[1]]&&D[r[1]][r[2]-1])h=vRound(r[1],+r[2]);
   else if(r[0]==='m')h=vMist();
+  else if(r[0]==='p'&&T[r[1]])h=vPrint(r[1]);
   else h=vHome();
   $('#app').innerHTML=h;
 }
+
+/* ---------- A4 練習卷（直式，Canvas 繪製 → JPEG → PDF） ---------- */
+function vPrint(t){
+  const sel=(k,v)=>'<select data-sel="'+k+'" aria-label="'+(k==='pf'?'起始回':'結束回')+'">'+D[t].map((_,i)=>'<option value="'+(i+1)+'"'+(v===i+1?' selected':'')+'>第 '+(i+1)+' 回</option>').join('')+'</select>';
+  const N=allIds(t,ui.pf,ui.pt).length,quick=[[1,3],[4,6],[7,9],[10,12]];
+  const kinds=t==='I'?['成語填空（附詞庫）','選擇題']:t==='P'?['寫出注音','選擇題']:['寫出國字','選擇題'];
+  return '<h2 style="margin-top:6px">'+T[t].name+'・列印練習卷</h2><p class="muted" style="margin-bottom:10px">直式書寫，A4 橫向列印。題目卷和解析分開下載。</p><div class="card range">'+
+   '<div class="row"><span class="lab">範圍（共 '+N+' 題，全部出）</span>'+sel('pf',ui.pf)+'<span>到</span>'+sel('pt',ui.pt)+'</div>'+
+   '<div class="row"><span class="lab">快速選範圍</span>'+quick.map(q=>'<button class="chip'+(ui.pf===q[0]&&ui.pt===q[1]?' on':'')+'" data-act="prng" data-a="'+q[0]+'" data-b="'+q[1]+'">'+q[0]+'～'+q[1]+' 回</button>').join('')+'</div>'+
+   '<div class="row"><span class="lab">題型（可以都選；都選時每回題目一半填空、一半選擇）</span>'+
+    ['f','m'].map((k,i)=>'<button class="chip'+(ui.pk[k]?' on':'')+'" data-act="pk" data-k="'+k+'" aria-pressed="'+ui.pk[k]+'">'+(ui.pk[k]?'✓ ':'')+kinds[i]+'</button>').join('')+'</div>'+
+   '<div class="row"><button class="btn pri" data-act="paper" data-t="'+t+'">'+(ui.paper?'換一份（重排選項）':'產生練習卷')+'</button></div></div>'+
+   (ui.paper?'<div class="row" style="margin-top:14px"><button class="btn sun" data-act="pdf" data-w="q">⬇ 下載題目卷 PDF</button><button class="btn" data-act="pdf" data-w="a">⬇ 下載解析 PDF</button></div>'+
+     '<p class="note" style="margin-top:12px">'+(ui.pmsg?esc(ui.pmsg):'題目卷 '+ui.paper.q.length+' 頁、解析 '+ui.paper.a.length+' 頁。列印時選 A4 橫向。')+'</p>'+
+     '<h2>題目卷預覽</h2><div class="pages">'+ui.paper.q.map((u,i)=>'<img alt="題目卷第 '+(i+1)+' 頁" src="'+u+'">').join('')+'</div>'+
+     '<h2>解析預覽</h2><div class="pages">'+ui.paper.a.map((u,i)=>'<img alt="解析第 '+(i+1)+' 頁" src="'+u+'">').join('')+'</div>':'');
+}
+const PW=1123,PH=794,MR=44,ML=44,MT=44,MB=52,PK=2;
+const PF='"BiauKai","DFKai-SB","標楷體","TW-Kai","Kaiti TC","LXGW WenKai TC","PingFang TC",serif';
+const VMAP={'（':'︵','）':'︶','「':'﹁','」':'﹂','『':'﹃','』':'﹄','【':'︻','】':'︼','〔':'︹','〕':'︺','《':'︽','》':'︾'};
+const VMID='，。、；：！？',VROT='～—…─－-';
+function cnNum(n){const d='零一二三四五六七八九';if(n<10)return d[n];if(n<20)return '十'+(n%10?d[n%10]:'');return d[Math.floor(n/10)]+'十'+(n%10?d[n%10]:'');}
+class VPaper{
+  constructor(){this.pages=[];this.newPage();}
+  newPage(){const c=document.createElement('canvas');c.width=PW*PK;c.height=PH*PK;const x=c.getContext('2d');x.scale(PK,PK);x.fillStyle='#fff';x.fillRect(0,0,PW,PH);x.fillStyle='#000';x.strokeStyle='#000';x.textBaseline='middle';x.textAlign='center';this.x=x;this.left=PW-MR;this.y=MT;this.pages.push(c);}
+  font(sz,b){this.x.font=(b?'bold ':'')+sz+'px '+PF;}
+  col(w,gap){let right=this.left-(gap||0);if(right-w<ML){this.newPage();right=this.left;}this.left=right-w;this.cxm=this.left+w/2;this.y=MT;}
+  glyph(ch,cx,y,sz){const x=this.x,cy=y+sz*0.56;
+    if(VMAP[ch])x.fillText(VMAP[ch],cx,cy);
+    else if(VMID.includes(ch)){const m=x.measureText(ch);x.fillText(ch,cx-(m.actualBoundingBoxRight-m.actualBoundingBoxLeft)/2,cy-(m.actualBoundingBoxDescent-m.actualBoundingBoxAscent)/2);}
+    else if(VROT.includes(ch)){x.save();x.translate(cx,cy);x.rotate(Math.PI/2);x.fillText(ch,0,0);x.restore();}
+    else if(ch==='＿'){x.lineWidth=1;x.beginPath();x.moveTo(cx+sz*0.45,y);x.lineTo(cx+sz*0.45,y+sz*1.12);x.stroke();}
+    else x.fillText(ch,cx,cy);}
+  num(tk,cx,y,sz){const x=this.x,f=x.font;x.font=Math.round(sz*0.62)+'px '+PF;x.fillText(tk,cx,y+sz*0.45);x.font=f;}
+  zyH(z,sz){const k=this.zk||0.62;return (z.replace(/[˙ˊˇˋ]/g,'').length+(z[0]==='˙'?0.6:0))*sz*k+sz*0.24;}
+  zy(z,cx,y,sz){const x=this.x,f=x.font,s=sz*(this.zk||0.62),syms=Array.from(z.replace(/[˙ˊˇˋ]/g,'')),tone=(z.match(/[ˊˇˋ]/)||[''])[0];x.font=s+'px '+PF;let yy=y+sz*0.12;
+    if(z[0]==='˙'){x.fillText('˙',cx,yy+s*0.45);yy+=s*0.6;}
+    syms.forEach((c,i)=>x.fillText(c,cx,yy+s*(i+0.5)));if(tone)x.fillText(tone,cx+s*0.82,yy+s*(syms.length-0.3));x.font=f;}
+  vtext(str,o){const sz=o.size,w=o.w;this.zk=o.zk||0.62;this.col(w,o.gap||0);this.y=MT+(o.top||0);this.font(sz,o.b);
+    const toks=str.match(/\d+\.?|˙?[ㄅ-ㄩ]+[ˊˇˋ]?| |[\s\S]/gu)||[];
+    for(const tk of toks){const isNum=/^\d/.test(tk),isZy=/^˙?[ㄅ-ㄩ]/.test(tk),h=tk===' '?sz*0.3:isNum?sz*0.95:isZy?this.zyH(tk,sz):/[①②③④]/.test(tk)?sz*1.3:sz*1.12;
+      if(this.y+h>PH-MB&&!/^[，。、；：？！）」』】〕]$/.test(tk)){this.col(w,0);this.y=MT+(o.hang||0);this.font(sz,o.b);}
+      if(tk===' '){}else if(isNum)this.num(tk,this.cxm,this.y,sz);else if(isZy)this.zy(tk,this.cxm,this.y,sz);else this.glyph(tk,this.cxm,this.y,sz);
+      this.y+=h;}}
+  footer(label){const n=this.pages.length;this.pages.forEach((c,i)=>{const x=c.getContext('2d');x.font='12px '+PF;x.fillStyle='#444';x.fillText(label+'　第 '+(i+1)+' / '+n+' 頁',PW/2,PH-22);x.fillStyle='#000';});}
+}
+const CN='①②③④';
+function paperItems(t){
+  const both=ui.pk.f&&ui.pk.m,F=[],M=[];
+  for(let r=ui.pf;r<=ui.pt;r++){const R=D[t][r-1];
+    const order=both?shuffle(R.q.map((_,i)=>i)):R.q.map((_,i)=>i),half=Math.ceil(order.length/2);
+    order.forEach((i,k)=>{const isF=both?k<half:ui.pk.f;(isF?F:M).push({r,i});});}
+  const srt=a=>a.sort((x,y)=>x.r-y.r||x.i-y.i);srt(F);srt(M);
+  const item=(x,mc)=>{const R=D[t][x.r-1],q=R.q[x.i],o={r:x.r};
+    if(t==='I'){const w=R.w.find(y=>y.w===q.a);o.stem=q.s.replace('＿','（　　　　　　）');o.ans=q.a;o.exp=q.a+'　'+w.z+'　'+w.d;}
+    else if(t==='P'){const c=R.c.find(y=>y.c===q.c),rd=c.r.find(y=>y.z===q.z);o.stem=q.t+(mc?'':'（　　　　）');o.ans=q.z;o.exp=q.t+'　'+q.z+'　'+(rd?rd.d:'');}
+    else{const G=R.g[q.g],inf=G.r.find(y=>y.c===q.a);o.stem=q.s.replace(/＿/g,'（　）');o.ans=q.a;o.exp=q.s.replace(/＿/g,q.a)+'　'+q.a+'　'+inf.z+'　'+inf.d;}
+    if(mc){const b=build(t,x.r,x.i);o.opts=b.opts;o.k=b.opts.indexOf(b.ans);}
+    return o;};
+  return {F:F.map(x=>item(x,false)),M:M.map(x=>item(x,true))};
+}
+function drawPaper(t,it,isA){
+  const P=new VPaper(),AV=PH-MT-MB,multi=ui.pf!==ui.pt;
+  const scope='範圍：第'+cnNum(ui.pf)+'回'+(multi?'至第'+cnNum(ui.pt)+'回':'');
+  const title=isA?'字音字形　'+T[t].name+'　解析':'字音字形練習卷　'+T[t].name;
+  P.vtext(title,{size:28,b:true,w:46,top:Math.max(0,(AV-title.length*28*1.12)/2)});
+  P.vtext(isA?scope:scope+'　　班級：＿＿＿　座號：＿＿＿　姓名：＿＿＿＿＿＿　扣分：＿＿＿＿',{size:17,w:30,gap:4});
+  const head=s=>P.vtext(s,{size:19,b:true,w:34,gap:14});
+  const sub=r=>{if(multi)P.vtext('〔第'+cnNum(r)+'回〕',{size:16,b:true,w:26,gap:8});};
+  const sec=[];
+  if(it.F.length)sec.push(['F',t==='I'?'成語填空：從詞庫中選出適合的成語，填入括號中':t==='P'?'寫出注音：寫出「」中國字的讀音':'寫出國字：在括號中填入正確的國字']);
+  if(it.M.length)sec.push(['M',t==='I'?'選擇題：選出最適合填入括號的成語':t==='P'?'選擇題：選出「」中國字正確的讀音':'選擇題：選出應填入括號的正確國字']);
+  sec.forEach((sc,si)=>{
+    const list=it[sc[0]],mc=sc[0]==='M';
+    head(cnNum(si+1)+'、'+sc[1]+(isA?'':'（每錯一題扣二分）'));
+    if(t==='I'&&!mc&&!isA){const bank=shuffle(list.map(o=>o.ans));P.vtext('【詞庫】'+bank.join('、'),{size:19,w:34,hang:64,gap:8});}
+    let last=0;
+    list.forEach((o,i)=>{if(o.r!==last){sub(o.r);last=o.r;}
+      if(isA)P.vtext((i+1)+'.'+(mc?CN[o.k]:'')+o.exp,{size:18,w:31,hang:30,gap:10,zk:0.8});
+      else if(mc)P.vtext('（　　）'+(i+1)+'.'+o.stem+'　'+o.opts.map((x,k)=>CN[k]+x).join('　'),{size:20,w:38,hang:96,gap:4,zk:0.85});
+      else P.vtext((i+1)+'.'+o.stem,{size:21,w:38,hang:28,gap:4});});
+  });
+  P.footer(isA?'字音字形解析':'字音字形練習卷');
+  return P.pages;
+}
+let paperData=null;
+async function genPaper(t){
+  ui.pmsg='產生中…';render();
+  try{const it=paperItems(t);
+    if(document.fonts&&document.fonts.load){const txt=JSON.stringify(it)+'字音字形練習卷解析成語形音義多音字形似字範圍第至回班級座號姓名扣分填空詞庫寫出注音國字括號選擇題每錯一題扣二分一二三四五六七八九十①②③④';
+      try{await Promise.race([Promise.all([document.fonts.load('20px "LXGW WenKai TC"',txt),document.fonts.load('bold 20px "LXGW WenKai TC"',txt)]),new Promise(r=>setTimeout(r,6000))]);}catch(_){}}
+    const q=drawPaper(t,it,false),a=drawPaper(t,it,true);
+    ui.paper={t,q:q.map(c=>c.toDataURL('image/jpeg',0.9)),a:a.map(c=>c.toDataURL('image/jpeg',0.9))};ui.pmsg='';}
+  catch(e){ui.paper=null;ui.pmsg='產生失敗，請再按一次。';}
+  render();}
+function b64bytes(u){const s=atob(u.split(',')[1]),b=new Uint8Array(s.length);for(let i=0;i<s.length;i++)b[i]=s.charCodeAt(i);return b;}
+function buildPdf(imgs){
+  const enc=new TextEncoder(),parts=[],offs=[];let off=0;
+  const push=v=>{const b=typeof v==='string'?enc.encode(v):v;parts.push(b);off+=b.length;};
+  const obj=(n,fn)=>{offs[n]=off;push(n+' 0 obj\n');fn();push('\nendobj\n');};
+  push('%PDF-1.4\n');const N=imgs.length;
+  obj(1,()=>push('<< /Type /Catalog /Pages 2 0 R >>'));
+  obj(2,()=>push('<< /Type /Pages /Count '+N+' /Kids ['+imgs.map((_,i)=>(3+i*3)+' 0 R').join(' ')+'] >>'));
+  imgs.forEach((im,i)=>{const p=3+i*3,cs='q 841.89 0 0 595.28 0 0 cm /Im0 Do Q';
+    obj(p,()=>push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 841.89 595.28] /Resources << /XObject << /Im0 '+(p+2)+' 0 R >> >> /Contents '+(p+1)+' 0 R >>'));
+    obj(p+1,()=>push('<< /Length '+cs.length+' >>\nstream\n'+cs+'\nendstream'));
+    obj(p+2,()=>{push('<< /Type /XObject /Subtype /Image /Width '+im.w+' /Height '+im.h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+im.b.length+' >>\nstream\n');push(im.b);push('\nendstream');});});
+  const xref=off,total=3+N*3;let x='xref\n0 '+total+'\n0000000000 65535 f \n';for(let n=1;n<total;n++)x+=String(offs[n]).padStart(10,'0')+' 00000 n \n';
+  push(x+'trailer\n<< /Size '+total+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF\n');
+  return new Blob(parts,{type:'application/pdf'});}
+function savePdf(w){
+  if(!ui.paper)return;
+  try{const imgs=ui.paper[w],blob=buildPdf(imgs.map(u=>({b:b64bytes(u),w:PW*PK,h:PH*PK})));
+    const name='字音字形'+(w==='a'?'解析':'練習卷')+'-'+T[ui.paper.t].name+'-第'+ui.pf+(ui.pf!==ui.pt?'至'+ui.pt:'')+'回.pdf';
+    const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);
+    ui.pmsg=(w==='a'?'解析':'題目卷')+' PDF 已下載，打開後選 A4 橫向列印。iPad 會先開預覽，按分享鍵就能列印或存到檔案。';}
+  catch(e){ui.pmsg='下載沒有成功，可以再按一次，或長按預覽圖片儲存後列印。';}
+  render();}
 
 /* ---------- 流程 ---------- */
 function start(ids,mode,meta){
@@ -324,6 +449,11 @@ function finish(){
   else if(sess.stars>=2)SFX.good();
 }
 const A={
+  'to-print'(el){ui.pf=+el.dataset.a;ui.pt=+el.dataset.b;ui.paper=null;ui.pmsg='';location.hash='#/p/'+el.dataset.t;},
+  'pk'(el){const k=el.dataset.k;ui.pk[k]=!ui.pk[k];if(!ui.pk.f&&!ui.pk.m)ui.pk[k==='f'?'m':'f']=true;ui.paper=null;render();},
+  'prng'(el){ui.pf=+el.dataset.a;ui.pt=+el.dataset.b;ui.paper=null;render();},
+  'paper'(el){genPaper(el.dataset.t);},
+  'pdf'(el){savePdf(el.dataset.w);},
   mute(){S.mute=!S.mute;save();if(!S.mute)SFX.ok();drawTop();},
   quit(){if(sess&&!sess.done&&sess.i>0&&!confirm('要離開這次練習嗎？'))return;sess=null;stopFx();render();window.scrollTo(0,0);},
   rng(el){ui.from=+el.dataset.a;ui.to=+el.dataset.b;render();},
@@ -350,7 +480,9 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('change',e=>{
   const k=e.target.dataset&&e.target.dataset.sel;if(!k)return;ui[k]=+e.target.value;
-  if(ui.from>ui.to){if(k==='from')ui.to=ui.from;else ui.from=ui.to;}render();
+  if(ui.from>ui.to){if(k==='from')ui.to=ui.from;else ui.from=ui.to;}
+  if(ui.pf>ui.pt){if(k==='pf')ui.pt=ui.pf;else ui.pf=ui.pt;}
+  if(k==='pf'||k==='pt')ui.paper=null;render();
 });
 window.addEventListener('hashchange',()=>{if(sess&&!sess.done){/* 作答中不切換 */}else sess=null;render();window.scrollTo(0,0);});
 render();
