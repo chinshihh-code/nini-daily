@@ -463,7 +463,8 @@ function vHome(){
    '<button class="card tile t2" data-act="mock-home"><i>考</i><b>段考模擬考</b><span>25 題計時，滿分 100</span></button>'+
    '<button class="card tile t3" data-act="go" data-to="cards"><i>卡</i><b>字卡複習</b><span>生字和語詞翻翻看</span></button>'+
    '<button class="card tile t5" data-act="trial-home"><i>字</i><b>生字關卡</b><span>'+(S.trial?'還有 '+S.trial.q.length+' 個字沒過':'每個字寫到對才過關')+'</span></button>'+
-   '<button class="card tile t4" data-act="go" data-to="mistakes"><i>錯</i><b>錯題本</b><span>目前 '+mc+' 題</span></button></div>'+
+   '<button class="card tile t4" data-act="go" data-to="mistakes"><i>錯</i><b>錯題本</b><span>目前 '+mc+' 題</span></button>'+
+   '<button class="card tile t2" data-act="ziyin"><i>音</i><b>字音字形訓練</b><span>成語・多音字・形似字 32 回</span></button></div>'+
   '<h2>各課精熟度</h2><div class="grid lessons">'+D.L.map(l=>{const m=mastery(l.n),cv=cover(l.n);return '<button class="lesson" data-act="pick-lesson" data-n="'+l.n+'"><small>'+lessonName(l.n)+'</small><b>'+esc(l.name)+'</b><div class="meter'+meterCls(m)+'"><i style="width:'+m+'%"></i></div><small>精熟 '+m+'%・語詞 '+cv.w+'/'+cv.wn+'</small>'+(S.passed[l.n]?'<small class="pass">✓ 生字已過關</small>':'')+'</button>';}).join('')+'</div>'+
   '<h2>徽章</h2><div class="badges">'+BADGES.map(b=>'<div class="badge'+(S.badges[b[0]]?' got':'')+'"><i>'+b[1]+'</i>'+b[2]+'</div>').join('')+'</div>';}
 function lessonPicker(sel,scope){
@@ -776,6 +777,7 @@ const scopeSel=s=>s==='pref'?S.pref.lessons:ui.printL;
 const A={
   go(el){if(sess&&sess.stage==='result')sess=null;if(location.hash==='#'+el.dataset.to)render();else location.hash=el.dataset.to;window.scrollTo(0,0);},
   home(){sess=null;location.hash='home';},
+  ziyin(){location.href='ziyin/';},
   'pick-lesson'(el){S.pref.lessons=[+el.dataset.n];save();sess=null;location.hash='practice';},
   'tog-lesson'(el){const a=scopeSel(el.dataset.scope),n=+el.dataset.n,i=a.indexOf(n);if(i>=0)a.splice(i,1);else a.push(n);a.sort((x,y)=>x-y);if(el.dataset.scope==='pref')save();render();},
   'set-range'(el){const a=scopeSel(el.dataset.scope);a.length=0;el.dataset.ns.split(',').forEach(n=>a.push(+n));if(el.dataset.scope==='pref')save();else ui.paper=null;render();},
