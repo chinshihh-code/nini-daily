@@ -87,6 +87,8 @@ main{width:100%;max-width:760px;margin:0 auto;padding:4px 16px calc(40px + env(s
 .qsent u{text-decoration:none;display:inline-block;min-width:2.2em;border-bottom:3px solid var(--coral);margin:0 3px;text-align:center;color:var(--bad-ink);font-weight:700}
 .qsent u.w4{min-width:4.6em}
 .qword{font-size:46px;line-height:1.3;text-align:center;font-weight:700;padding:6px 0}
+.qword u.bk{text-decoration:none;display:inline-block;width:1.15em;height:1.15em;line-height:1.15em;border:3px dashed var(--coral);border-radius:12px;margin:0 3px;vertical-align:-.12em;color:var(--mint-ink)}
+.qword u.bk.ok{border-style:solid;border-color:var(--mint);background:var(--mint-soft)}
 .qword em{font-style:normal;color:var(--bad-ink);border-bottom:5px solid var(--coral)}
 .qask{text-align:center;font-weight:700;color:var(--ink2);font-size:16px}
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -129,7 +131,7 @@ main{width:100%;max-width:760px;margin:0 auto;padding:4px 16px calc(40px + env(s
 <main id="app"></main>
 <div id="toast" role="status"></div>
 <canvas id="fx" aria-hidden="true"></canvas>
-<script src="data.js?v=1"></script>
+<script src="data.js?v=2"></script>
 <script>
 'use strict';
 const D=window.ZY, LS='ziyin-v1', PER=2; /* 每錯一題扣 2 分 */
@@ -139,12 +141,14 @@ const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(M
 const uniq=a=>Array.from(new Set(a));
 const T={I:{name:'成語形音義',icon:'成',desc:'看例句，選出正確的成語',q:'選出最適合的成語'},
          P:{name:'多音字',icon:'音',desc:'看詞語，選出正確的讀音',q:'「」裡的字怎麼讀？'},
-         X:{name:'形似字',icon:'形',desc:'看句子，選出正確的字',q:'選出正確的字'}};
+         X:{name:'形似字',icon:'形',desc:'看詞語，選出正確的字',q:'空格裡要填哪一個字？'}};
 const TK=['I','P','X'];
 
 /* ---------- 紀錄 ---------- */
 let S={best:{},mist:{},mute:false};
 try{const o=JSON.parse(localStorage.getItem(LS)||'null');if(o&&o.best)S=Object.assign(S,o);}catch(e){}
+/* 形似字換成新資料：清掉舊的形似字紀錄 */
+if(S.xv!==D.v){Object.keys(S.best).forEach(k=>{if(k[0]==='X')delete S.best[k];});Object.keys(S.mist).forEach(k=>{if(k[0]==='X')delete S.mist[k];});S.xv=D.v;try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}}
 const save=()=>{try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}};
 const starsOf=(t,r)=>(S.best[t+r]||{}).s||0;
 const topicStars=t=>D[t].reduce((n,_,i)=>n+starsOf(t,i+1),0);
@@ -154,9 +158,6 @@ const starStr=n=>'<s>'+'★'.repeat(n)+'</s>'+'★'.repeat(3-n);
 
 /* ---------- 出題 ---------- */
 const tones=z=>{const b=z.replace(/[ˊˇˋ˙]/g,'');return [b,b+'ˊ',b+'ˇ',b+'ˋ'];};
-const famOf={};D.F.forEach(f=>Array.from(f).forEach(c=>famOf[c]=f));
-const xInfo={};D.X.forEach(R=>{R.c.forEach(r=>r.c.split('/').forEach(c=>{if(!xInfo[c])xInfo[c]=r;}));});
-const hInfo={};D.X.forEach(R=>R.h.forEach(h=>{if(!hInfo[h.c])hInfo[h.c]=h;}));
 function build(t,r,i){
   const R=D[t][r-1],q=R.q[i],o={id:t+'|'+r+'|'+i,t,r};
   if(t==='I'){
@@ -179,17 +180,17 @@ function build(t,r,i){
     o.exp='「'+esc(q.c)+'」在「'+esc(q.t.replace(/[「」]/g,''))+'」讀 <span class="zy">'+esc(q.z)+'</span>'+(rd?'<br>'+esc(rd.d)+'<span class="ex">　'+esc(rd.w)+'</span>':'');
     o.plain=q.t;
   }else{
-    o.html='<p class="qsent">'+esc(q.s).replace('＿','<u>&nbsp;</u>')+'</p>';
-    o.fill=s=>esc(q.s).replace('＿','<u>'+esc(s)+'</u>');
+    const G=R.g[q.g],row=G.r.find(x=>x.c===q.a&&x.w.replace(/＿/g,'')!==null)||G.r[0];
+    const info=G.r.find(x=>x.c===q.a);
+    o.html='<p class="qword">'+esc(q.s).replace(/＿/g,'<u class="bk">&nbsp;</u>')+'</p>';
+    o.fill=a=>'<p class="qword">'+esc(q.s).replace(/＿/g,'<u class="bk ok">'+esc(a)+'</u>')+'</p>';
     o.ans=q.a;
-    const here=R.c.map(x=>x.c.split('/')[0]).concat(R.h.map(h=>h.c));
-    const fam=Array.from(famOf[q.a]||'').filter(c=>c!==q.a);
-    let pool=shuffle(fam.filter(c=>here.includes(c))).concat(shuffle(fam.filter(c=>!here.includes(c))));
-    pool=uniq(pool.concat(shuffle(here.filter(c=>c!==q.a)))).slice(0,3);
-    o.opts=shuffle([q.a].concat(pool));
-    const inf=R.c.find(x=>x.c.split('/').includes(q.a))||R.h.find(h=>h.c===q.a)||xInfo[q.a]||hInfo[q.a];
-    o.exp='<b>'+esc(q.a)+'</b>'+(inf?'　<span class="zy">'+esc(inf.z)+'</span><br>'+esc(inf.d)+(inf.w?'<span class="ex">　'+esc(inf.w)+'</span>':''):'');
-    o.plain=q.s.replace('＿','（　）');
+    const mates=uniq(G.r.map(x=>x.c)).filter(c=>c!==q.a);
+    const others=uniq(R.g.filter((g,gi)=>gi!==q.g&&!g.h).map(g=>g.r.map(x=>x.c)).flat()).filter(c=>c!==q.a&&!mates.includes(c));
+    o.opts=shuffle([q.a].concat(shuffle(mates).concat(shuffle(others)).slice(0,3)));
+    o.exp='<b>'+esc(q.a)+'</b>　<span class="zy">'+esc(info.z)+'</span>'+(G.h?'　<span class="tag">同音字</span>':'')+'<br>'+esc(info.d)+
+      '<br><span class="muted">同組：'+G.r.map(x=>esc(x.c)+'<span class="zy" style="font-size:13px">'+esc(x.z)+'</span>').filter((v,i,a)=>a.indexOf(v)===i).join('　')+'</span>';
+    o.plain=q.s.replace(/＿/g,'（　）');
   }
   return o;
 }
@@ -261,8 +262,9 @@ function vRound(t,r){
   const R=D[t][r-1],b=S.best[t+r];let body='';
   if(t==='I')body=R.w.map(w=>'<div class="lc" style="grid-template-columns:1fr"><div><span class="wd">'+esc(w.w)+'</span>　<span class="zy">'+esc(w.z)+'</span></div><div>'+esc(w.d)+'</div></div>').join('');
   else if(t==='P')body=R.c.map(c=>'<div class="lc"><div class="hz">'+esc(c.c)+'</div><div>'+c.r.map(x=>'<div class="rr"><span class="zy">'+esc(x.z)+'</span><span>'+esc(x.d)+'<br><span class="ex">'+esc(x.w)+'</span></span></div>').join('')+'</div></div>').join('');
-  else body=R.c.map(c=>'<div class="lc"><div class="hz">'+esc(c.c.split('/')[0])+'</div><div><span class="zy">'+esc(c.z)+'</span>'+(c.c.includes('/')?'　<span class="muted">也寫作「'+esc(c.c.split('/')[1])+'」</span>':'')+'</div><div>'+esc(c.d)+'</div><div class="ex">'+esc(c.w)+'</div></div>').join('')+
-    '<h2>同音字辨析</h2>'+R.h.map(h=>'<div class="lc"><div class="hz">'+esc(h.c)+'</div><div><span class="zy">'+esc(h.z)+'</span></div><div>'+esc(h.d)+'</div></div>').join('');
+  else body=R.g.map(g=>'<div class="lc" style="grid-template-columns:1fr">'+(g.h?'<span class="tag" style="justify-self:start">同音字</span>':'')+
+    g.r.filter((x,i,a)=>a.findIndex(y=>y.c===x.c)===i).map(x=>'<div class="rr" style="grid-template-columns:auto 1fr;align-items:center"><span class="hz" style="font-size:36px;font-weight:700;min-width:1.2em;text-align:center">'+esc(x.c)+'</span><span><span class="zy">'+esc(x.z)+'</span>　'+esc(x.d)+'<br><span class="ex">'+
+      g.r.filter(y=>y.c===x.c).map(y=>esc(y.w)).join('、')+'</span></span></div>').join('')+'</div>').join('');
   return '<div class="stickybar"><div class="row" style="justify-content:space-between"><div><b style="font-size:20px">'+T[t].name+'・第 '+r+' 回</b><br><span class="muted">'+(b?'最佳成績：扣 '+b.d+' 分　<span style="color:var(--star)">'+'★'.repeat(b.s)+'</span>':'共 '+R.q.length+' 題，還沒測驗過')+'</span></div>'+
     '<button class="btn pri" data-act="start-round" data-t="'+t+'" data-r="'+r+'">開始測驗</button></div></div><div class="learn">'+body+'</div>'+
     '<div class="row" style="margin-top:16px;justify-content:space-between">'+(r>1?'<a class="btn sm" href="#/r/'+t+'/'+(r-1)+'">‹ 第 '+(r-1)+' 回</a>':'<span></span>')+(r<32?'<a class="btn sm" href="#/r/'+t+'/'+(r+1)+'">第 '+(r+1)+' 回 ›</a>':'')+'</div>';
@@ -280,7 +282,7 @@ function vQuiz(){
   const cls=q.t==='X'?' han':'';
   const opts=q.opts.map((o,i)=>'<button class="opt'+cls+(done?(o===q.ans?' ok':(i===sess.picked?' no':'')):'')+'" data-act="pick" data-i="'+i+'"'+(done?' disabled':'')+'>'+esc(o)+'</button>').join('');
   const right=done&&q.opts[sess.picked]===q.ans;
-  const prompt=done&&q.fill?'<p class="qsent">'+q.fill(q.ans)+'</p>':q.html;
+  const prompt=done&&q.fill?(q.t==='X'?q.fill(q.ans):'<p class="qsent">'+q.fill(q.ans)+'</p>'):q.html;
   return '<div class="qtop"><span class="qcount">'+(sess.i+1)+' / '+n+'</span><div class="qbar"><u style="width:'+Math.round((sess.i+(done?1:0))/n*100)+'%"></u></div><span class="fire">'+(sess.streak>=2?'連對 '+sess.streak:'')+'</span></div>'+
    '<div class="card qcard"><span class="qtype">'+T[q.t].name+'・第 '+q.r+' 回</span>'+prompt+'<p class="qask">'+T[q.t].q+'</p><div class="opts">'+opts+'</div>'+
    (done?'<div class="fb '+(right?'ok':'no')+'"><b class="h">'+(right?'答對了！':'答錯了，正確答案是「'+esc(q.ans)+'」')+'</b>'+q.exp+'</div>':'')+'</div>'+
