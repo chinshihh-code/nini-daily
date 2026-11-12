@@ -4,9 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>六上國語字詞闖關</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/edukai-5.1.ttf" as="font" type="font/ttf" crossorigin>
 <style>
+@font-face{font-family:"TW-MOE-Std-Kai";src:url("fonts/edukai-5.1.ttf") format("truetype");font-display:swap;}
+.credit{text-align:center;font-size:12px;color:#8583a3;margin:0;padding:0 20px calc(110px + env(safe-area-inset-bottom,0px))}
 :root{
   /* 版面想法：柔和的粉彩文具感——圓角白卡、淡淡陰影、粉圓字體 */
   --ink:#4b4a6b; --ink2:#8583a3; --bg:#f8f4fc; --card:#ffffff; --line:#ebe5f5; --edge:#e7e0f4;
@@ -14,9 +15,9 @@
   --sun:#ffdc85; --sun-soft:#fff7e0; --mint:#56c8a7; --mint-soft:#e2f7ef; --bad:#f07a8a;
   --mint-ink:#1c8f72; --bad-ink:#d04a60;
   --soft:0 6px 18px rgba(123,110,170,.13); --press:0 3px 0 rgba(123,110,170,.16),0 6px 16px rgba(123,110,170,.12);
-  --display:"BiauKai","DFKai-SB","標楷體","TW-Kai","Kaiti TC","LXGW WenKai TC","PingFang TC",serif;
-  --body:"BiauKai","DFKai-SB","標楷體","TW-Kai","Kaiti TC","LXGW WenKai TC","PingFang TC",serif;
-  --kai:"BiauKai","DFKai-SB","標楷體","TW-Kai","Kaiti TC","LXGW WenKai TC","PingFang TC",serif;
+  --display:"TW-MOE-Std-Kai","BiauKai","DFKai-SB","標楷體","TW-Kai","Kaiti TC","PingFang TC",serif;
+  --body:"TW-MOE-Std-Kai","BiauKai","DFKai-SB","標楷體","TW-Kai","Kaiti TC","PingFang TC",serif;
+  --kai:"TW-MOE-Std-Kai","BiauKai","DFKai-SB","標楷體","TW-Kai","Kaiti TC","PingFang TC",serif;
   color-scheme:light;
 }
 *{box-sizing:border-box}
@@ -237,6 +238,7 @@ nav.tabs button.on i{background:var(--sun);border-color:transparent;box-shadow:v
 <div id="shell">
   <header class="top" id="top"></header>
   <main id="app"></main>
+  <p class="credit">字型：教育部標準楷書（中華民國教育部，CC BY-ND 3.0 臺灣版）</p>
   <nav class="tabs" id="tabs" aria-label="主選單"></nav>
 </div>
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -602,6 +604,7 @@ function vPrint(){
   (ui.printSrc==='rand'?'<h2>出題範圍</h2>'+lessonPicker(ui.printL,'print'):'<p class="muted" style="margin-top:12px">把錯題本裡的題目排成考卷，印出來重寫一次。</p>')+
   '<div class="row" style="margin-top:20px"><button class="btn pri" data-act="paper"'+((ui.printSrc==='rand'?ui.printL.length:mc)?'':' disabled')+'>'+(ui.paper?'換一份新的':'產生測驗卷')+'</button>'+
   (ui.paper?'<button class="btn hot" data-act="pdf">下載 PDF 來列印</button>':'')+'</div>'+
+  (ui.gen?'<p class="note" style="margin-top:14px">產生中…第一次使用要先下載楷書字型，可能需要十幾秒。</p>':'')+
   (ui.paper?'<p class="note" style="margin-top:14px">'+(ui.msg?esc(ui.msg):'共 '+ui.paper.length+' 頁，最後是解答頁。按「下載 PDF 來列印」，列印時選 A4 橫向。')+'</p><div class="pages">'+ui.paper.map((u,i)=>'<img alt="測驗卷第 '+(i+1)+' 頁" src="'+u+'">').join('')+'</div>':'');}
 function vParent(){
   const tq=totalQ(),tr=totalRight(),days=Object.keys(S.days).length;
@@ -618,7 +621,7 @@ function vParent(){
 
 /* ---------- A4 測驗卷（Canvas 繪製 → JPEG → PDF） ---------- */
 const PW=1123,PH=794,MR=44,ML=44,MT=44,MB=52,PK=2;
-const PF='"BiauKai","DFKai-SB","標楷體","TW-Kai","Kaiti TC","LXGW WenKai TC","PingFang TC",serif';
+const PF='"TW-MOE-Std-Kai","BiauKai","DFKai-SB","標楷體","TW-Kai","Kaiti TC","PingFang TC",serif';
 const VMAP={'（':'︵','）':'︶','「':'﹁','」':'﹂','『':'﹃','』':'﹄','【':'︻','】':'︼','〔':'︹','〕':'︺','《':'︽','》':'︾'};
 const VMID='，。、；：',VROT='～—…─－-';
 function cnNum(n){const d='零一二三四五六七八九',i=Math.floor(n);let s;
@@ -736,12 +739,13 @@ function drawPaper(itIn){
   return P.pages;}
 let paperCanvases=null;
 async function genPaper(){
+  ui.gen=true;render();
   try{const it=paperItems();
     if(document.fonts&&document.fonts.load){const txt=JSON.stringify([it.hz,it.zy,it.grp.map(g=>[g.g.items,g.row]),it.fill,it.mc.map(q=>[q.w,q.def,q.opts])])+'康軒六上國語字音字形與語詞測驗卷範圍第至十二課全冊班級座號姓名扣分寫出國字或注音每錯一格題扣二分形近字選填語詞選擇哪一個的意思是什麼解答頁一二三四五六七八九零點①②③④';
-      try{await Promise.race([Promise.all([document.fonts.load('20px "LXGW WenKai TC"',txt),document.fonts.load('bold 20px "LXGW WenKai TC"',txt)]),new Promise(r=>setTimeout(r,6000))]);}catch(_){}}
+      try{await Promise.race([document.fonts.load('20px "TW-MOE-Std-Kai"',txt),new Promise(r=>setTimeout(r,45000))]);}catch(_){}}
     paperCanvases=drawPaper(it);ui.paper=paperCanvases.map(c=>c.toDataURL('image/jpeg',0.9));ui.msg='';}
   catch(e){ui.paper=null;ui.msg='';}
-  render();}
+  ui.gen=false;render();}
 function b64bytes(u){const s=atob(u.split(',')[1]),b=new Uint8Array(s.length);for(let i=0;i<s.length;i++)b[i]=s.charCodeAt(i);return b;}
 function buildPdf(imgs){
   const enc=new TextEncoder(),parts=[],offs=[];let off=0;
