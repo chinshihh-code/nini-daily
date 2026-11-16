@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weekly Kids International News | 2026 Week 47 (Lexile 500L-700L)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background-color: #f1f5f9;
+      color: #1e293b;
+    }
+
+    /* iPad Landscape Optimization */
+    @media (min-width: 900px) {
+      .ipad-workspace {
+        display: grid;
+        grid-template-columns: 44% 56%;
+        gap: 1.25rem;
+        height: calc(100vh - 88px);
+        overflow: hidden;
+      }
+      .ipad-scroll-pane {
+        height: 100%;
+        overflow-y: auto;
+        padding-right: 0.35rem;
+      }
+      .ipad-scroll-pane::-webkit-scrollbar {
+        width: 6px;
+      }
+      .ipad-scroll-pane::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 9999px;
+      }
+    }
+
+    .sentence-highlight {
+      background-color: #fef08a !important;
+      border-radius: 4px;
+      padding: 1px 3px;
+      transition: background-color 0.25s ease;
+    }
+
+    .clickable-word {
+      cursor: pointer;
+      border-bottom: 1px dashed transparent;
+      transition: all 0.15s ease;
+      display: inline-block;
+    }
+    .clickable-word:hover {
+      color: #0284c7;
+      border-bottom-color: #0284c7;
+      background-color: #e0f2fe;
+      border-radius: 3px;
+    }
+
+    /* Printable A4 Worksheet Layout (1-2 Pages Max) */
+    #print-worksheet {
+      display: none;
+    }
+
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 12mm 15mm;
+      }
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+      #app-shell {
+        display: none !important;
+      }
+      #print-worksheet {
+        display: block !important;
+      }
+      .note-line {
+        border-bottom: 1px dashed #94a3b8;
+        height: 26px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== INTERACTIVE WEB APP ==================== -->
+<div id="app-shell" class="min-h-screen flex flex-col">
+  <!-- Top Bar -->
+  <header class="bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="bg-sky-600 text-white text-xs font-extrabold px-2.5 py-1 rounded-lg tracking-wide">WEEK 47 · 2026</span>
+        <div>
+          <h1 class="text-base md:text-lg font-extrabold text-slate-800 leading-tight">Global Kids News Lab</h1>
+          <p class="text-xs text-slate-500">Lexile 500L–700L · 10-Sentence Guided Reading & Shadowing</p>
+        </div>
+      </div>
+
+      <!-- Story Tabs -->
+      <div id="story-tabs" class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl"></div>
+
+      <!-- Right Controls: Speed + Print -->
+      <div class="flex items-center gap-2">
+        <label class="text-xs font-semibold text-slate-600 hidden sm:inline">語速:</label>
+        <select id="speech-rate" class="text-xs font-semibold bg-slate-100 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          <option value="0.75">0.75x 慢速</option>
+          <option value="0.9" selected>0.90x 適中</option>
+          <option value="1.0">1.00x 標準</option>
+          <option value="1.15">1.15x 進階</option>
+        </select>
+
+        <button onclick="prepareAndPrint()" class="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          列印本篇學習單
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace (iPad Landscape 2-Column) -->
+  <main class="max-w-7xl w-full mx-auto px-4 py-3 flex-1">
+    <div class="ipad-workspace">
+
+      <!-- LEFT COLUMN: Media + Audio Controls + Collapsible Vocab + Full Article -->
+      <section class="ipad-scroll-pane space-y-3 pb-6">
+        <!-- Hero Image Card with Source Link -->
+        <div class="relative rounded-2xl overflow-hidden shadow-sm border border-slate-200 bg-slate-900">
+          <img id="story-image" src="" alt="" class="w-full h-48 object-cover opacity-95" />
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/20 to-transparent"></div>
+          <div class="absolute top-3 left-3 flex items-center gap-2">
+            <span id="story-category" class="bg-sky-500/90 backdrop-blur text-white text-xs font-bold px-2.5 py-0.5 rounded-full"></span>
+            <span id="story-lexile" class="bg-white/90 text-slate-800 text-xs font-bold px-2.5 py-0.5 rounded-full"></span>
+          </div>
+          <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2">
+            <div>
+              <h2 id="story-title" class="text-white font-extrabold text-lg leading-snug"></h2>
+              <p id="story-subtitle" class="text-slate-200 text-xs mt-0.5"></p>
+            </div>
+            <a id="story-source-link" href="#" target="_blank" rel="noopener noreferrer"
+               class="shrink-0 inline-flex items-center gap-1 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border border-white/25 transition">
+              <span>來源：<span id="story-source-name"></span></span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Full Article Audio & Shadowing Bar -->
+        <div class="bg-white rounded-2xl p-3 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <button id="btn-play-all" onclick="togglePlayAll()" class="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-sm">
+              <span id="play-all-icon">▶</span>
+              <span id="play-all-label">播放整篇朗讀</span>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="btn-record-all" onclick="toggleRecordFull()" class="flex items-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold px-3 py-2 rounded-xl transition">
+              <span id="rec-all-dot" class="w-2 h-2 rounded-full bg-rose-500"></span>
+              <span id="rec-all-label">整篇跟讀錄音</span>
+            </button>
+            <button id="btn-playback-all" onclick="playFullRecording()" disabled class="disabled:opacity-40 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-2 rounded-xl transition">
+              🎧 回放錄音
+            </button>
+          </div>
+        </div>
+
+        <!-- Option C: Collapsible Core Vocabulary Drawer -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <button onclick="toggleVocabDrawer()" class="w-full px-4 py-2.5 bg-amber-50/80 hover:bg-amber-100/70 flex items-center justify-between text-left transition">
+            <div class="flex items-center gap-2">
+              <span class="text-amber-600 font-extrabold text-sm">📚 本篇精選單字庫 (4 Words · 點擊發音與跟讀)</span>
+            </div>
+            <span id="vocab-toggle-icon" class="text-xs font-bold text-amber-700 bg-amber-200/70 px-2 py-0.5 rounded-md">收合 ▲</span>
+          </button>
+          <div id="vocab-drawer-body" class="p-3 grid grid-cols-1 sm:grid-cols-2 gap-2.5 border-t border-amber-100"></div>
+        </div>
+
+        <!-- Bottom-Left Full Paragraph Reading Box -->
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Full Article · 整段完整閱讀</h3>
+            <button onclick="toggleFullTranslation()" id="btn-toggle-zh" class="text-xs font-semibold text-sky-600 hover:text-sky-800 bg-sky-50 px-2.5 py-1 rounded-lg transition">
+              顯示中文對照
+            </button>
+          </div>
+          <p id="full-article-en" class="text-sm leading-relaxed text-slate-800 font-medium"></p>
+          <p id="full-article-zh" class="hidden mt-3 pt-3 border-t border-slate-100 text-xs leading-relaxed text-slate-600"></p>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: 10-Sentence Shadowing + 3 Quizzes + Discussion -->
+      <section class="ipad-scroll-pane space-y-4 pb-8">
+        <!-- 10-Sentence Line-by-Line Shadowing -->
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h3 class="text-sm font-extrabold text-slate-800">🎙️ 逐句點讀與跟讀練習 (10 Sentences)</h3>
+              <p class="text-xs text-slate-500">點擊句中任意單字可單獨發音；點擊麥克風可錄製單句跟讀</p>
+            </div>
+          </div>
+          <div id="sentence-list" class="space-y-2"></div>
+        </div>
+
+        <!-- Integrated 3-Question Reading Comprehension Quiz -->
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-extrabold text-slate-800">✅ 閱讀理解小測驗 (3 Questions)</h3>
+            <span id="quiz-score-badge" class="text-xs font-bold bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full">得分：0 / 3</span>
+          </div>
+          <div id="quiz-container" class="space-y-3"></div>
+        </div>
+
+        <!-- Integrated Critical Thinking & Speaking Prompt -->
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-2xl p-4 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-sky-300 uppercase tracking-wider">💬 Think & Speak · 思辨與口說表達</span>
+            <button onclick="speakDiscussionSample()" class="text-xs bg-white/15 hover:bg-white/25 px-2.5 py-1 rounded-lg font-semibold transition">
+              🔊 聽示範回答
+            </button>
+          </div>
+          <p id="discussion-prompt" class="text-sm font-bold text-white mb-2"></p>
+          <div class="bg-white/10 rounded-xl p-3 text-xs text-slate-200 leading-relaxed">
+            <span class="text-amber-300 font-bold">表達句型參考：</span>
+            <span id="discussion-sample"></span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- ==================== PRINTABLE A4 WORKSHEET (1-2 PAGES) ==================== -->
+<div id="print-worksheet" class="max-w-3xl mx-auto">
+  <div class="border-b-2 border-slate-800 pb-2 mb-3 flex items-end justify-between">
+    <div>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Global Kids Weekly News Worksheet · 2026 Week 47 · Lexile 500L–700L</p>
+      <h1 id="ws-title" class="text-xl font-extrabold text-slate-900 mt-0.5"></h1>
+      <p id="ws-subtitle" class="text-xs text-slate-600"></p>
+    </div>
+    <div class="text-right text-xs text-slate-600">
+      <p>Name: ______________________</p>
+      <p class="mt-1">Date: ______________________</p>
+    </div>
+  </div>
+
+  <!-- Top Section: Image + Source + Full Article -->
+  <div class="grid grid-cols-3 gap-4 mb-4 items-start">
+    <div class="col-span-1">
+      <img id="ws-image" src="" alt="" class="w-full h-36 object-cover rounded-lg border border-slate-300" />
+      <p id="ws-source" class="text-[10px] text-slate-500 mt-1 break-all"></p>
+    </div>
+    <div class="col-span-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+      <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-1.5">Full Article 完整新聞閱讀</h2>
+      <p id="ws-article" class="text-[13px] leading-relaxed text-slate-900"></p>
+    </div>
+  </div>
+
+  <!-- Middle Section: 4 Key Vocabulary -->
+  <div class="mb-4">
+    <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2 border-b border-slate-300 pb-1">Key Vocabulary 核心單字</h2>
+    <div id="ws-vocab-grid" class="grid grid-cols-2 gap-2.5"></div>
+  </div>
+
+  <!-- Bottom Section: Blank Handwritten Notes Area -->
+  <div>
+    <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-1 border-b border-slate-300 pb-1">My Reading Notes & Sentence Practice 閱讀筆記與造句練習</h2>
+    <div class="mt-1">
+      <div class="note-line"></div>
+      <div class="note-line"></div>
+      <div class="note-line"></div>
+      <div class="note-line"></div>
+      <div class="note-line"></div>
+      <div class="note-line"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const stories = [
+  {
+    id: 0,
+    category: "海洋生態 · Marine Science",
+    lexile: "Lexile 580L",
+    title: "Coral Gardens Grow Under the Sea",
+    subtitle: "海底珊瑚花園：科學家用「微碎片技術」加速復育大堡礁",
+    image: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcRS4Hz23bTk2nKdeBZQ1C6BOOpTH1XN40M3C9WKK6A5hIQ4ZMIUNHvi4p5s2ddvafdtUm0dTxixS0ptmLg",
+    sourceName: "Great Barrier Reef Foundation",
+    sourceUrl: "https://www.barrierreef.org/what-we-do/projects/coral-nurseries",
+    sentences: [
+      { en: "Coral reefs are colorful underwater cities that give homes to thousands of ocean animals.", zh: "珊瑚礁是色彩繽紛的水下城市，為成千上萬種海洋動物提供家園。" },
+      { en: "However, warmer ocean water has caused many corals to turn white and lose their strength.", zh: "然而，變暖的海水導致許多珊瑚白化並失去活力。" },
+      { en: "To solve this problem, marine scientists in Australia created special underwater coral nurseries.", zh: "為了解決這個問題，澳洲海洋科學家建立了特別的水下珊瑚苗圃。" },
+      { en: "First, divers carefully collect small broken pieces of healthy coral from the ocean floor.", zh: "首先，潛水員小心地從海床上收集健康珊瑚的小碎塊。" },
+      { en: "Next, they cut these pieces into tiny fragments and attach them to underwater frames.", zh: "接著，他們將這些碎塊切成更小的碎片，並固定在水下支架上。" },
+      { en: "Surprisingly, small coral pieces grow up to twenty times faster than large coral colonies.", zh: "令人驚訝的是，小珊瑚碎片的生長速度比大型珊瑚群快達二十倍。" },
+      { en: "When the young corals grow strong enough, divers plant them back onto damaged reefs.", zh: "當幼年珊瑚長得足夠強壯時，潛水員會將它們重新種回受損的珊瑚礁上。" },
+      { en: "Scientists also select heat-tolerant corals that can survive better in warmer seas.", zh: "科學家也挑選耐熱珊瑚，讓它們在較溫暖的海域中能更順利存活。" },
+      { en: "Within just a few years, new fish, crabs, and sea turtles return to these restored gardens.", zh: "短短幾年內，新的魚群、螃蟹和海龜就會回到這些復育好的花園。" },
+      { en: "This clever gardening method gives hope for protecting our oceans around the world.", zh: "這種聰明的園藝方法為保護全球海洋帶來了希望。" }
+    ],
+    vocab: [
+      { word: "fragment", phonetic: "/ˈfræɡ.mənt/", pos: "n.", meaning: "碎片；小塊", example: "Divers attach each small coral fragment to a safe frame." },
+      { word: "nursery", phonetic: "/ˈnɜː.sər.i/", pos: "n.", meaning: "苗圃；培育場", example: "Young corals grow safely inside an underwater nursery." },
+      { word: "tolerant", phonetic: "/ˈtɒl.ər.ənt/", pos: "adj.", meaning: "耐受的；能適應的", example: "Heat-tolerant corals can survive in warmer ocean water." },
+      { word: "restore", phonetic: "/rɪˈstɔːr/", pos: "v.", meaning: "修復；使復原", example: "Scientists work hard to restore damaged coral reefs." }
+    ],
+    quizzes: [
+      {
+        q: "1. Why did many corals turn white and become weak?",
+        options: ["Because divers cut them into pieces", "Because the ocean water became warmer", "Because too many turtles ate them"],
+        answer: 1,
+        explanation: "文中第 2 句提到：warmer ocean water has caused many corals to turn white（海水變暖導致珊瑚白化）。"
+      },
+      {
+        q: "2. How fast can small coral fragments grow compared to large colonies?",
+        options: ["Twice as fast", "Ten times faster", "Up to twenty times faster"],
+        answer: 2,
+        explanation: "文中第 6 句指出，微小的珊瑚碎片生長速度可達大型珊瑚群的 20 倍（twenty times faster）。"
+      },
+      {
+        q: "3. Why do scientists choose heat-tolerant corals for replanting?",
+        options: ["They are brighter in color", "They can survive better in warmer seas", "They do not need sunlight"],
+        answer: 1,
+        explanation: "文中第 8 句說明科學家挑選耐熱珊瑚是為了讓它們在暖化的海洋中更容易存活。"
+      }
+    ],
+    discussion: {
+      prompt: "Besides scientists, what can students do in daily life to help protect coral reefs?",
+      sample: "I believe students can help protect coral reefs by reducing plastic waste and saving energy at home, which helps slow down ocean warming."
+    }
+  },
+  {
+    id: 1,
+    category: "綠色科技 · Clean Aviation",
+    lexile: "Lexile 620L",
+    title: "Clean Planes Fly Without Fuel",
+    subtitle: "無燃油太陽能電動飛機：零碳排綠色航空邁向新時代",
+    image: "https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcTuPbyo2ZzT_gSvoMWOeS7AN58OZ1G2q29rqOTFveM0b4kVe1Tm-bVPy_N4hYz3ZQgbPb8elMwQhkn_7xc",
+    sourceName: "NASA Aeronautics Research",
+    sourceUrl: "https://www.nasa.gov/directorates/armd/sustainable-aviation/",
+    sentences: [
+      { en: "Traditional airplanes burn fossil fuels and release large amounts of carbon into the sky.", zh: "傳統飛機燃燒化石燃料，並向天空排放大量的碳。" },
+      { en: "Now, engineers are testing clean airplanes powered by electricity and sunlight instead.", zh: "現在，工程師正在測試改用電力和陽光驅動的潔淨飛機。" },
+      { en: "These eco-friendly aircraft carry lightweight batteries and thin solar panels on their wings.", zh: "這些環保飛機在機翼上裝載輕量化電池和超薄太陽能板。" },
+      { en: "During sunny flights, the solar panels capture energy from the sun to charge the batteries.", zh: "在晴朗的飛行途中，太陽能板會收集太陽能量為電池充電。" },
+      { en: "Electric motors also run much more quietly than noisy jet engines.", zh: "電動馬達的運轉聲音也比吵雜的噴射引擎安靜許多。" },
+      { en: "Recently, several small electric planes successfully completed test flights between nearby cities.", zh: "最近，幾架小型電動飛機成功完成了鄰近城市之間的測試飛行。" },
+      { en: "However, heavy batteries still make it difficult for electric planes to fly across wide oceans.", zh: "然而，沉重的電池仍然讓電動飛機難以飛越寬廣的海洋。" },
+      { en: "To fix this, researchers are designing stronger batteries that store more power with less weight.", zh: "為了解決這個問題，研究人員正在設計重量更輕但能儲存更多電力的強效電池。" },
+      { en: "In the future, short regional flights could become completely clean and pollution-free.", zh: "未來，短程區域航班有望變得完全潔淨且零污染。" },
+      { en: "Green aviation shows how smart engineering can make travel safer for our planet.", zh: "綠色航空展現了聰明的工程設計如何讓旅行對地球更友善。" }
+    ],
+    vocab: [
+      { word: "aviation", phonetic: "/ˌeɪ.viˈeɪ.ʃən/", pos: "n.", meaning: "航空；飛行", example: "Green aviation aims to reduce air pollution from planes." },
+      { word: "lightweight", phonetic: "/ˈlaɪt.weɪt/", pos: "adj.", meaning: "輕量化的", example: "Airplanes need lightweight batteries to fly longer distances." },
+      { word: "capture", phonetic: "/ˈkæp.tʃər/", pos: "v.", meaning: "捕獲；收集", example: "Solar panels capture sunlight and turn it into electricity." },
+      { word: "regional", phonetic: "/ˈriː.dʒən.əl/", pos: "adj.", meaning: "區域性的；短程的", example: "Electric planes work well for short regional trips." }
+    ],
+    quizzes: [
+      {
+        q: "1. What powers the new eco-friendly airplanes described in the article?",
+        options: ["Wind and ocean waves", "Electricity and sunlight", "Natural gas and coal"],
+        answer: 1,
+        explanation: "文中第 2 句提到：clean airplanes powered by electricity and sunlight（由電力與陽光驅動）。"
+      },
+      {
+        q: "2. Why can't electric planes easily cross wide oceans yet?",
+        options: ["Because solar panels block the pilot's view", "Because heavy batteries limit long-distance flight", "Because electric motors are too loud"],
+        answer: 1,
+        explanation: "文中第 7 句指出，沉重的電池（heavy batteries）限制了電動飛機跨越寬廣海洋的能力。"
+      },
+      {
+        q: "3. What is another advantage of electric motors besides zero carbon?",
+        options: ["They run much more quietly", "They fly twice as fast as rockets", "They never need maintenance"],
+        answer: 0,
+        explanation: "文中第 5 句提到：Electric motors also run much more quietly than noisy jet engines（運轉安靜許多）。"
+      }
+    ],
+    discussion: {
+      prompt: "If you could take a silent electric plane on a short trip, where would you like to visit and why?",
+      sample: "If I could fly on a silent electric plane, I would visit an island nature reserve because a quiet, clean plane would not disturb the wildlife."
+    }
+  },
+  {
+    id: 2,
+    category: "野生動物保育 · Wildlife Conservation",
+    lexile: "Lexile 550L",
+    title: "Bamboo Highways Help Giant Pandas",
+    subtitle: "大熊貓的竹林高速公路：生態走廊串聯棲地守護國寶",
+    image: "https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcQLkhp1x3MJXoTA6B6zBSRuIx7sMZEtkNNJ9Ljqpuqyp-xFGB5ATwXJlu_0zAtzvftVa7uK-iYSs1-H8z8",
+    sourceName: "WWF Giant Panda Program",
+    sourceUrl: "https://www.worldwildlife.org/species/giant-panda",
+    sentences: [
+      { en: "Giant pandas live in misty bamboo forests high in the mountains of southwest China.", zh: "大熊貓生活在中國西南方高山雲霧繚繞的竹林中。" },
+      { en: "In the past, roads and farms divided these forests into small, separate islands.", zh: "過去，道路和農田將這些森林分割成一個個孤立的小島。" },
+      { en: "Because the forests were separated, pandas struggled to find enough bamboo or new mates.", zh: "由於森林被隔開，大熊貓很難找到足夠的竹子或新的伴侶。" },
+      { en: "To reconnect their homes, conservationists built wide green corridors filled with fresh bamboo.", zh: "為了重新連接牠們的家園，保育人員建造了種滿新鮮竹子的寬闊綠色走廊。" },
+      { en: "Workers planted native trees and removed old fences along mountain ridges.", zh: "工作人員沿著山脊種植原生樹木並拆除了舊圍籬。" },
+      { en: "Some highways were even moved into underground tunnels so pandas could cross safely above.", zh: "部分公路甚至改建為地下隧道，讓大熊貓能安全地從上方穿越。" },
+      { en: "Hidden infrared cameras now capture wild pandas walking happily through these bamboo bridges.", zh: "隱藏的紅外線攝影機現在拍到野生大熊貓開心地走過這些竹林橋樑。" },
+      { en: "Thanks to these connected parks, the wild giant panda population has grown steadily.", zh: "多虧了這些相連的國家公園，野生大熊貓的數量穩定成長。" },
+      { en: "Other rare animals, such as golden monkeys and red pandas, also use the same safe paths.", zh: "其他稀有動物，如金絲猴和小熊貓，也使用同樣的安全通道。" },
+      { en: "Building wildlife corridors proves that humans and wild animals can share the land peacefully.", zh: "建造野生動物走廊證明了人類與野生動物可以和平共享土地。" }
+    ],
+    vocab: [
+      { word: "corridor", phonetic: "/ˈkɒr.ɪ.dɔːr/", pos: "n.", meaning: "走廊；生態廊道", example: "A green corridor connects two separate mountain forests." },
+      { word: "native", phonetic: "/ˈneɪ.tɪv/", pos: "adj.", meaning: "原生的；本土的", example: "Workers planted native bamboo and trees for the pandas." },
+      { word: "infrared", phonetic: "/ˌɪn.frəˈred/", pos: "adj.", meaning: "紅外線的", example: "Infrared cameras take clear photos of animals at night." },
+      { word: "steadily", phonetic: "/ˈsted.əl.i/", pos: "adv.", meaning: "穩定地；持續地", example: "The number of wild pandas has increased steadily." }
+    ],
+    quizzes: [
+      {
+        q: "1. What problem did roads and farms cause for giant pandas in the past?",
+        options: ["They made the mountains too cold", "They divided forests into separate areas", "They brought too many tourists"],
+        answer: 1,
+        explanation: "文中第 2 句提到道路與農田將森林分割成孤立的小區域（small, separate islands）。"
+      },
+      {
+        q: "2. How did engineers help pandas cross busy highways safely?",
+        options: ["By moving some roads into underground tunnels", "By teaching pandas to look for traffic lights", "By closing all mountain towns"],
+        answer: 0,
+        explanation: "文中第 6 句說明部分公路改建為地下隧道（underground tunnels），讓熊貓從上方安全通行。"
+      },
+      {
+        q: "3. Which other animals also benefit from these bamboo corridors?",
+        options: ["Polar bears and penguins", "Golden monkeys and red pandas", "African lions and zebras"],
+        answer: 1,
+        explanation: "文中第 9 句提到金絲猴（golden monkeys）與小熊貓（red pandas）也共用這些安全廊道。"
+      }
+    ],
+    discussion: {
+      prompt: "Why is it important for wild animals to travel between different forests instead of staying in one small area?",
+      sample: "Traveling between forests helps wild animals find more food during different seasons and meet new mates to keep their population healthy."
+    }
+  }
+];
+
+let currentStoryIdx = 0;
+let isPlayingAll = false;
+let showTranslation = false;
+let vocabOpen = true;
+let quizAnswers = [{}, {}, {}];
+
+// MediaRecorder state
+let mediaRecorder = null;
+let audioChunks = [];
+let fullAudioUrl = null;
+let sentenceAudioUrls = {};
+let activeRecordingTarget = null; // 'all' or sentence index
+
+function init() {
+  renderTabs();
+  loadStory(0);
+}
+
+function renderTabs() {
+  const container = document.getElementById('story-tabs');
+  container.innerHTML = stories.map((s, idx) => `
+    <button onclick="loadStory(${idx})"
+      class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${idx === currentStoryIdx ? 'bg-white text-sky-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}">
+      第 ${idx + 1} 篇
+    </button>
+  `).join('');
+}
+
+function loadStory(idx) {
+  stopSpeech();
+  currentStoryIdx = idx;
+  renderTabs();
+  const s = stories[idx];
+
+  // Left hero & source
+  document.getElementById('story-image').src = s.image;
+  document.getElementById('story-image').alt = s.title;
+  document.getElementById('story-category').textContent = s.category;
+  document.getElementById('story-lexile').textContent = s.lexile;
+  document.getElementById('story-title').textContent = s.title;
+  document.getElementById('story-subtitle').textContent = s.subtitle;
+  document.getElementById('story-source-name').textContent = s.sourceName;
+  document.getElementById('story-source-link').href = s.sourceUrl;
+
+  // Reset full playback button
+  fullAudioUrl = null;
+  sentenceAudioUrls = {};
+  document.getElementById('btn-playback-all').disabled = true;
+
+  // Full Article (bottom-left) with sentence spans for live highlight
+  const fullEnEl = document.getElementById('full-article-en');
+  fullEnEl.innerHTML = s.sentences.map((item, sIdx) =>
+    `<span id="full-sent-${sIdx}" class="transition-colors">${wrapClickableWords(item.en)}</span>`
+  ).join(' ');
+
+  document.getElementById('full-article-zh').textContent = s.sentences.map(item => item.zh).join('');
+
+  // Collapsible Vocab Drawer
+  renderVocabDrawer(s.vocab);
+
+  // Right 10 Sentences
+  renderSentenceList(s.sentences);
+
+  // Right 3 Quizzes
+  renderQuizzes(s.quizzes);
+
+  // Discussion
+  document.getElementById('discussion-prompt').textContent = s.discussion.prompt;
+  document.getElementById('discussion-sample').textContent = s.discussion.sample;
+}
+
+function wrapClickableWords(sentence) {
+  return sentence.split(' ').map(token => {
+    const clean = token.replace(/[^a-zA-Z'-]/g, '');
+    if (!clean) return token;
+    return `<span class="clickable-word" onclick="speakWord('${clean.replace(/'/g, "\\'")}', event)" title="點擊聽單字發音">${token}</span>`;
+  }).join(' ');
+}
+
+function renderVocabDrawer(vocabList) {
+  const container = document.getElementById('vocab-drawer-body');
+  container.innerHTML = vocabList.map((v, vIdx) => `
+    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between gap-1">
+          <div class="flex items-baseline gap-1.5">
+            <span class="font-extrabold text-sm text-sky-800">${v.word}</span>
+            <span class="text-[11px] text-slate-400 font-mono">${v.phonetic}</span>
+            <span class="text-[10px] font-bold bg-slate-200 text-slate-700 px-1.5 rounded">${v.pos}</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="speakText('${v.word}', 0.8)" class="p-1 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-700 text-xs" title="單字發音">🔊</button>
+            <button onclick="speakText('${v.example.replace(/'/g, "\\'")}', 0.85)" class="p-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 text-[10px] font-bold px-1.5" title="例句發音">例句</button>
+          </div>
+        </div>
+        <p class="text-xs font-bold text-slate-700 mt-1">${v.meaning}</p>
+      </div>
+      <p class="text-[11px] text-slate-500 italic mt-1 leading-snug">"${v.example}"</p>
+    </div>
+  `).join('');
+}
+
+function toggleVocabDrawer() {
+  vocabOpen = !vocabOpen;
+  const body = document.getElementById('vocab-drawer-body');
+  const icon = document.getElementById('vocab-toggle-icon');
+  body.classList.toggle('hidden', !vocabOpen);
+  icon.textContent = vocabOpen ? '收合 ▲' : '展開 ▼';
+}
+
+function toggleFullTranslation() {
+  showTranslation = !showTranslation;
+  const zhEl = document.getElementById('full-article-zh');
+  const btn = document.getElementById('btn-toggle-zh');
+  zhEl.classList.toggle('hidden', !showTranslation);
+  btn.textContent = showTranslation ? '隱藏中文對照' : '顯示中文對照';
+}
+
+function renderSentenceList(sentences) {
+  const container = document.getElementById('sentence-list');
+  container.innerHTML = sentences.map((item, idx) => `
+    <div id="row-sent-${idx}" class="p-2.5 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-sky-50/40 transition flex items-start justify-between gap-2.5">
+      <div class="flex items-start gap-2.5 flex-1">
+        <span class="shrink-0 w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-[11px] font-bold flex items-center justify-center mt-0.5">${idx + 1}</span>
+        <div>
+          <p class="text-sm font-medium text-slate-800 leading-relaxed">${wrapClickableWords(item.en)}</p>
+          <p class="text-xs text-slate-500 mt-0.5">${item.zh}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1 shrink-0">
+        <button onclick="speakSingleSentence(${idx})" class="p-1.5 rounded-lg bg-white border border-slate-200 hover:border-sky-400 text-sky-600 text-xs shadow-sm" title="單句朗讀">
+          🔊
+        </button>
+        <button id="rec-btn-${idx}" onclick="toggleRecordSentence(${idx})" class="p-1.5 rounded-lg bg-white border border-slate-200 hover:border-rose-400 text-rose-600 text-xs shadow-sm" title="單句跟讀錄音">
+          🎙️
+        </button>
+        <button id="play-rec-${idx}" onclick="playSentenceRecording(${idx})" disabled class="disabled:opacity-30 p-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs" title="回放我的跟讀">
+          ▶
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderQuizzes(quizzes) {
+  const container = document.getElementById('quiz-container');
+  const saved = quizAnswers[currentStoryIdx] || {};
+
+  container.innerHTML = quizzes.map((qItem, qIdx) => {
+    const chosen = saved[qIdx];
+    const isAnswered = chosen !== undefined;
+    return `
+      <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60">
+        <p class="text-xs font-extrabold text-slate-800 mb-2">${qItem.q}</p>
+        <div class="space-y-1.5">
+          ${qItem.options.map((opt, oIdx) => {
+            let btnClass = "bg-white border-slate-200 text-slate-700 hover:bg-sky-50";
+            if (isAnswered) {
+              if (oIdx === qItem.answer) {
+                btnClass = "bg-emerald-50 border-emerald-500 text-emerald-900 font-bold";
+              } else if (oIdx === chosen) {
+                btnClass = "bg-rose-50 border-rose-500 text-rose-900";
+              } else {
+                btnClass = "bg-white border-slate-200 text-slate-400";
+              }
+            }
+            return `
+              <button onclick="selectQuizOption(${qIdx}, ${oIdx})"
+                class="w-full text-left text-xs px-3 py-2 rounded-lg border transition flex items-center justify-between ${btnClass}">
+                <span>${String.fromCharCode(65 + oIdx)}. ${opt}</span>
+                ${isAnswered && oIdx === qItem.answer ? '<span>✔</span>' : ''}
+                ${isAnswered && oIdx === chosen && oIdx !== qItem.answer ? '<span>✘</span>' : ''}
+              </button>
+            `;
+          }).join('')}
+        </div>
+        ${isAnswered ? `<p class="mt-2 text-[11px] text-slate-600 bg-white p-2 rounded-lg border border-slate-200">💡 ${qItem.explanation}</p>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  updateScoreBadge();
+}
+
+function selectQuizOption(qIdx, oIdx) {
+  quizAnswers[currentStoryIdx][qIdx] = oIdx;
+  renderQuizzes(stories[currentStoryIdx].quizzes);
+}
+
+function updateScoreBadge() {
+  const s = stories[currentStoryIdx];
+  const saved = quizAnswers[currentStoryIdx] || {};
+  let score = 0;
+  s.quizzes.forEach((q, idx) => {
+    if (saved[idx] === q.answer) score++;
+  });
+  document.getElementById('quiz-score-badge').textContent = `得分：${score} / ${s.quizzes.length}`;
+}
+
+// ==================== SPEECH SYNTHESIS (TTS) ====================
+function getRate() {
+  return parseFloat(document.getElementById('speech-rate').value) || 0.9;
+}
+
+function clearHighlights() {
+  document.querySelectorAll('.sentence-highlight').forEach(el => el.classList.remove('sentence-highlight'));
+}
+
+function highlightSentence(idx) {
+  clearHighlights();
+  const fullSpan = document.getElementById(`full-sent-${idx}`);
+  const rowDiv = document.getElementById(`row-sent-${idx}`);
+  if (fullSpan) fullSpan.classList.add('sentence-highlight');
+  if (rowDiv) {
+    rowDiv.classList.add('sentence-highlight');
+    rowDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function stopSpeech() {
+  window.speechSynthesis.cancel();
+  isPlayingAll = false;
+  clearHighlights();
+  document.getElementById('play-all-icon').textContent = '▶';
+  document.getElementById('play-all-label').textContent = '播放整篇朗讀';
+}
+
+function speakWord(word, event) {
+  if (event) event.stopPropagation();
+  stopSpeech();
+  const utter = new SpeechSynthesisUtterance(word);
+  utter.lang = 'en-US';
+  utter.rate = 0.78;
+  window.speechSynthesis.speak(utter);
+}
+
+function speakText(text, customRate) {
+  stopSpeech();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'en-US';
+  utter.rate = customRate || getRate();
+  window.speechSynthesis.speak(utter);
+}
+
+function speakSingleSentence(idx) {
+  stopSpeech();
+  const sentence = stories[currentStoryIdx].sentences[idx].en;
+  highlightSentence(idx);
+  const utter = new SpeechSynthesisUtterance(sentence);
+  utter.lang = 'en-US';
+  utter.rate = getRate();
+  utter.onend = () => clearHighlights();
+  window.speechSynthesis.speak(utter);
+}
+
+function togglePlayAll() {
+  if (isPlayingAll) {
+    stopSpeech();
+    return;
+  }
+  isPlayingAll = true;
+  document.getElementById('play-all-icon').textContent = '⏹';
+  document.getElementById('play-all-label').textContent = '停止朗讀';
+  playSentenceChain(0);
+}
+
+function playSentenceChain(idx) {
+  const sentences = stories[currentStoryIdx].sentences;
+  if (!isPlayingAll || idx >= sentences.length) {
+    stopSpeech();
+    return;
+  }
+  highlightSentence(idx);
+  const utter = new SpeechSynthesisUtterance(sentences[idx].en);
+  utter.lang = 'en-US';
+  utter.rate = getRate();
+  utter.onend = () => {
+    if (!isPlayingAll) return;
+    setTimeout(() => playSentenceChain(idx + 1), 550);
+  };
+  window.speechSynthesis.speak(utter);
+}
+
+function speakDiscussionSample() {
+  speakText(stories[currentStoryIdx].discussion.sample, getRate());
+}
+
+// ==================== SHADOWING RECORDING (MediaRecorder) ====================
+async function startRecording(target) {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    activeRecordingTarget = target;
+    mediaRecorder = new MediaRecorder(stream);
+
+    mediaRecorder.ondataavailable = e => {
+      if (e.data.size > 0) audioChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const url = URL.createObjectURL(blob);
+      if (activeRecordingTarget === 'all') {
+        fullAudioUrl = url;
+        document.getElementById('btn-playback-all').disabled = false;
+        document.getElementById('rec-all-label').textContent = '整篇跟讀錄音';
+      } else if (typeof activeRecordingTarget === 'number') {
+        const idx = activeRecordingTarget;
+        sentenceAudioUrls[idx] = url;
+        document.getElementById(`play-rec-${idx}`).disabled = false;
+        document.getElementById(`rec-btn-${idx}`).textContent = '🎙️';
+      }
+      stream.getTracks().forEach(t => t.stop());
+      activeRecordingTarget = null;
+    };
+
+    mediaRecorder.start();
+    if (target === 'all') {
+      document.getElementById('rec-all-label').textContent = '錄音中...點擊停止';
+    } else {
+      document.getElementById(`rec-btn-${target}`).textContent = '⏹';
+    }
+  } catch (err) {
+    alert('請允許瀏覽器使用麥克風權限，即可進行跟讀錄音練習！');
+  }
+}
+
+function toggleRecordFull() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+  } else {
+    stopSpeech();
+    startRecording('all');
+  }
+}
+
+function playFullRecording() {
+  if (fullAudioUrl) new Audio(fullAudioUrl).play();
+}
+
+function toggleRecordSentence(idx) {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+  } else {
+    stopSpeech();
+    startRecording(idx);
+  }
+}
+
+function playSentenceRecording(idx) {
+  if (sentenceAudioUrls[idx]) new Audio(sentenceAudioUrls[idx]).play();
+}
+
+// ==================== A4 PRINT WORKSHEET ====================
+function prepareAndPrint() {
+  const s = stories[currentStoryIdx];
+  document.getElementById('ws-title').textContent = s.title;
+  document.getElementById('ws-subtitle').textContent = s.subtitle;
+  document.getElementById('ws-image').src = s.image;
+  document.getElementById('ws-source').textContent = `Source: ${s.sourceName} (${s.sourceUrl})`;
+  document.getElementById('ws-article').textContent = s.sentences.map(item => item.en).join(' ');
+
+  document.getElementById('ws-vocab-grid').innerHTML = s.vocab.map(v => `
+    <div class="border border-slate-300 rounded-md p-2 bg-white">
+      <div class="flex items-baseline justify-between">
+        <span class="font-bold text-sm text-slate-900">${v.word} <span class="text-xs font-normal text-slate-500">${v.phonetic} (${v.pos})</span></span>
+        <span class="text-xs font-bold text-slate-800">${v.meaning}</span>
+      </div>
+      <p class="text-[11px] text-slate-600 italic mt-0.5">"${v.example}"</p>
+    </div>
+  `).join('');
+
+  window.print();
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+  <script>window.KWN_ARTICLES=["Coral Gardens Grow Under the Sea", "Clean Planes Fly Without Fuel", "Bamboo Highways Help Giant Pandas"]</script>
+  <script src="../stars.js"></script>
+  <script src="../rec-save.js"></script>
+</body>
+</html>
