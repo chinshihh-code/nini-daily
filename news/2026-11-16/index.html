@@ -96,7 +96,7 @@
         <span class="bg-sky-600 text-white text-xs font-extrabold px-2.5 py-1 rounded-lg tracking-wide">WEEK 47 · 2026</span>
         <div>
           <h1 class="text-base md:text-lg font-extrabold text-slate-800 leading-tight">Global Kids News Lab</h1>
-          <p class="text-xs text-slate-500">Lexile 500L–700L · 10-Sentence Guided Reading & Shadowing</p>
+          <p class="text-xs text-slate-500">Lexile 500L–700L · Science · World Culture · Fashion Trends</p>
         </div>
       </div>
 
@@ -284,11 +284,12 @@
 const stories = [
   {
     id: 0,
-    category: "海洋生態 · Marine Science",
+    tabLabel: "1. 科普探索",
+    category: "科普探索 · Marine Science",
     lexile: "Lexile 580L",
     title: "Coral Gardens Grow Under the Sea",
     subtitle: "海底珊瑚花園：科學家用「微碎片技術」加速復育大堡礁",
-    image: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcRS4Hz23bTk2nKdeBZQ1C6BOOpTH1XN40M3C9WKK6A5hIQ4ZMIUNHvi4p5s2ddvafdtUm0dTxixS0ptmLg",
+    image: "https://cdn.shopify.com/s/files/1/0024/1788/5284/files/clown-fish.jpg",
     sourceName: "Great Barrier Reef Foundation",
     sourceUrl: "https://www.barrierreef.org/what-we-do/projects/coral-nurseries",
     sentences: [
@@ -336,106 +337,108 @@ const stories = [
   },
   {
     id: 1,
-    category: "綠色科技 · Clean Aviation",
-    lexile: "Lexile 620L",
-    title: "Clean Planes Fly Without Fuel",
-    subtitle: "無燃油太陽能電動飛機：零碳排綠色航空邁向新時代",
-    image: "https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcTuPbyo2ZzT_gSvoMWOeS7AN58OZ1G2q29rqOTFveM0b4kVe1Tm-bVPy_N4hYz3ZQgbPb8elMwQhkn_7xc",
-    sourceName: "NASA Aeronautics Research",
-    sourceUrl: "https://www.nasa.gov/directorates/armd/sustainable-aviation/",
+    tabLabel: "2. 國家人文",
+    category: "國家人文小知識 · World Culture (Finland)",
+    lexile: "Lexile 590L",
+    title: "Finland's Cozy Sauna & Winter Culture",
+    subtitle: "千湖之國芬蘭：走進冰天雪地裡的國民桑拿與極光生活",
+    image: "https://www.visitrovaniemi.fi/wp-content/uploads/e73097c5-508e-4a4a-b7cb-53a0fa74bae5.jpg",
+    sourceName: "Visit Finland Official",
+    sourceUrl: "https://www.visitfinland.com/en/articles/finnish-sauna-culture/",
     sentences: [
-      { en: "Traditional airplanes burn fossil fuels and release large amounts of carbon into the sky.", zh: "傳統飛機燃燒化石燃料，並向天空排放大量的碳。" },
-      { en: "Now, engineers are testing clean airplanes powered by electricity and sunlight instead.", zh: "現在，工程師正在測試改用電力和陽光驅動的潔淨飛機。" },
-      { en: "These eco-friendly aircraft carry lightweight batteries and thin solar panels on their wings.", zh: "這些環保飛機在機翼上裝載輕量化電池和超薄太陽能板。" },
-      { en: "During sunny flights, the solar panels capture energy from the sun to charge the batteries.", zh: "在晴朗的飛行途中，太陽能板會收集太陽能量為電池充電。" },
-      { en: "Electric motors also run much more quietly than noisy jet engines.", zh: "電動馬達的運轉聲音也比吵雜的噴射引擎安靜許多。" },
-      { en: "Recently, several small electric planes successfully completed test flights between nearby cities.", zh: "最近，幾架小型電動飛機成功完成了鄰近城市之間的測試飛行。" },
-      { en: "However, heavy batteries still make it difficult for electric planes to fly across wide oceans.", zh: "然而，沉重的電池仍然讓電動飛機難以飛越寬廣的海洋。" },
-      { en: "To fix this, researchers are designing stronger batteries that store more power with less weight.", zh: "為了解決這個問題，研究人員正在設計重量更輕但能儲存更多電力的強效電池。" },
-      { en: "In the future, short regional flights could become completely clean and pollution-free.", zh: "未來，短程區域航班有望變得完全潔淨且零污染。" },
-      { en: "Green aviation shows how smart engineering can make travel safer for our planet.", zh: "綠色航空展現了聰明的工程設計如何讓旅行對地球更友善。" }
+      { en: "Finland is a northern European country famous for its snowy winters and nearly 188,000 lakes.", zh: "芬蘭是一個北歐國家，以白雪皚皚的冬天和近十八萬八千座湖泊聞名。" },
+      { en: "Although winter temperatures often drop far below freezing, Finns know how to stay warm and happy.", zh: "雖然冬季氣溫經常降到冰點以下許多，但芬蘭人懂得如何保持溫暖與快樂。" },
+      { en: "One of the most important parts of Finnish daily life is relaxing inside a wooden sauna.", zh: "芬蘭人日常生活中最重要的部分之一，就是在木造桑拿房裡放鬆。" },
+      { en: "In fact, Finland has over three million saunas for a population of just five million people!", zh: "事實上，芬蘭僅有五百萬人口，全國卻擁有超過三百萬間桑拿房！" },
+      { en: "Inside the hot sauna, people pour water over heated stones to create soothing steam.", zh: "在炎熱的桑拿房裡，人們將水潑在燒熱的石頭上，製造出舒緩身心的蒸氣。" },
+      { en: "After warming up, brave locals often run outside to jump into an icy lake or roll in fresh snow.", zh: "身體暖和之後，勇敢的當地人常會跑到戶外跳進冰冷的湖水，或在鬆軟的新雪中打滾。" },
+      { en: "In northern Finland, winter nights are very long, and green northern lights dance across the sky.", zh: "在芬蘭北部，冬夜非常漫長，翠綠色的北極光會在夜空中翩翩起舞。" },
+      { en: "Finnish children also enjoy outdoor sports like cross-country skiing and ice skating right after school.", zh: "芬蘭孩童放學後也喜歡從事越野滑雪和溜冰等戶外運動。" },
+      { en: "By embracing nature in every season, Finland has been named the world's happiest country many times.", zh: "透過在每個季節擁抱大自然，芬蘭已多次被評為全球最幸福的國家。" },
+      { en: "This unique culture teaches us that cold weather can still bring warmth, friendship, and joy.", zh: "這種獨特的文化告訴我們，寒冷的天氣依然能帶來溫暖、友誼與快樂。" }
     ],
     vocab: [
-      { word: "aviation", phonetic: "/ˌeɪ.viˈeɪ.ʃən/", pos: "n.", meaning: "航空；飛行", example: "Green aviation aims to reduce air pollution from planes." },
-      { word: "lightweight", phonetic: "/ˈlaɪt.weɪt/", pos: "adj.", meaning: "輕量化的", example: "Airplanes need lightweight batteries to fly longer distances." },
-      { word: "capture", phonetic: "/ˈkæp.tʃər/", pos: "v.", meaning: "捕獲；收集", example: "Solar panels capture sunlight and turn it into electricity." },
-      { word: "regional", phonetic: "/ˈriː.dʒən.əl/", pos: "adj.", meaning: "區域性的；短程的", example: "Electric planes work well for short regional trips." }
+      { word: "population", phonetic: "/ˌpɒp.jəˈleɪ.ʃən/", pos: "n.", meaning: "人口；族群數量", example: "Finland has a population of about five million people." },
+      { word: "soothing", phonetic: "/ˈsuː.ðɪŋ/", pos: "adj.", meaning: "舒緩的；令人放鬆的", example: "The warm steam inside the sauna feels very soothing." },
+      { word: "embrace", phonetic: "/ɪmˈbreɪs/", pos: "v.", meaning: "擁抱；欣然接受", example: "Finnish people embrace winter by enjoying outdoor snow sports." },
+      { word: "unique", phonetic: "/juːˈniːk/", pos: "adj.", meaning: "獨特的；獨一無二的", example: "Every country has its own unique traditions and festivals." }
     ],
     quizzes: [
       {
-        q: "1. What powers the new eco-friendly airplanes described in the article?",
-        options: ["Wind and ocean waves", "Electricity and sunlight", "Natural gas and coal"],
+        q: "1. Roughly how many saunas are there in Finland?",
+        options: ["About 188,000 saunas", "Over three million saunas", "Exactly five million saunas"],
         answer: 1,
-        explanation: "文中第 2 句提到：clean airplanes powered by electricity and sunlight（由電力與陽光驅動）。"
+        explanation: "文中第 4 句提到芬蘭有超過三百萬間桑拿房（over three million saunas），而湖泊數量才是約 188,000 座。"
       },
       {
-        q: "2. Why can't electric planes easily cross wide oceans yet?",
-        options: ["Because solar panels block the pilot's view", "Because heavy batteries limit long-distance flight", "Because electric motors are too loud"],
+        q: "2. What do brave Finnish locals often do right after sitting in a hot sauna?",
+        options: ["Drink hot chocolate indoors", "Jump into an icy lake or roll in snow", "Go to sleep immediately"],
         answer: 1,
-        explanation: "文中第 7 句指出，沉重的電池（heavy batteries）限制了電動飛機跨越寬廣海洋的能力。"
+        explanation: "文中第 6 句指出，他們常會跑到戶外跳進冰湖或在新雪裡打滾（jump into an icy lake or roll in fresh snow）。"
       },
       {
-        q: "3. What is another advantage of electric motors besides zero carbon?",
-        options: ["They run much more quietly", "They fly twice as fast as rockets", "They never need maintenance"],
-        answer: 0,
-        explanation: "文中第 5 句提到：Electric motors also run much more quietly than noisy jet engines（運轉安靜許多）。"
+        q: "3. What can people see dancing in the night sky in northern Finland during winter?",
+        options: ["Fireworks every evening", "Green northern lights", "Hot air balloons"],
+        answer: 1,
+        explanation: "文中第 7 句提到：green northern lights dance across the sky（綠色北極光在夜空舞動）。"
       }
     ],
     discussion: {
-      prompt: "If you could take a silent electric plane on a short trip, where would you like to visit and why?",
-      sample: "If I could fly on a silent electric plane, I would visit an island nature reserve because a quiet, clean plane would not disturb the wildlife."
+      prompt: "Would you dare to jump into an icy lake after a hot sauna? What is your favorite way to stay cozy in winter?",
+      sample: "I might be too shy to jump into an icy lake, so I prefer staying cozy in winter by drinking warm cocoa and reading a good book under a blanket."
     }
   },
   {
     id: 2,
-    category: "野生動物保育 · Wildlife Conservation",
-    lexile: "Lexile 550L",
-    title: "Bamboo Highways Help Giant Pandas",
-    subtitle: "大熊貓的竹林高速公路：生態走廊串聯棲地守護國寶",
-    image: "https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcQLkhp1x3MJXoTA6B6zBSRuIx7sMZEtkNNJ9Ljqpuqyp-xFGB5ATwXJlu_0zAtzvftVa7uK-iYSs1-H8z8",
-    sourceName: "WWF Giant Panda Program",
-    sourceUrl: "https://www.worldwildlife.org/species/giant-panda",
+    tabLabel: "3. 時尚流行",
+    category: "時尚流行 · Sustainable Fashion",
+    lexile: "Lexile 610L",
+    title: "Mushroom Leather Enters Youth Fashion",
+    subtitle: "蘑菇菌絲純素皮革：席捲青少年球鞋與背包的綠色潮流",
+    image: "https://static.tildacdn.com/tild3534-3362-4636-a166-393363373339/Screenshot_2026-01-0.png",
+    sourceName: "Ellen MacArthur Foundation",
+    sourceUrl: "https://www.ellenmacarthurfoundation.org/topics/fashion/overview",
     sentences: [
-      { en: "Giant pandas live in misty bamboo forests high in the mountains of southwest China.", zh: "大熊貓生活在中國西南方高山雲霧繚繞的竹林中。" },
-      { en: "In the past, roads and farms divided these forests into small, separate islands.", zh: "過去，道路和農田將這些森林分割成一個個孤立的小島。" },
-      { en: "Because the forests were separated, pandas struggled to find enough bamboo or new mates.", zh: "由於森林被隔開，大熊貓很難找到足夠的竹子或新的伴侶。" },
-      { en: "To reconnect their homes, conservationists built wide green corridors filled with fresh bamboo.", zh: "為了重新連接牠們的家園，保育人員建造了種滿新鮮竹子的寬闊綠色走廊。" },
-      { en: "Workers planted native trees and removed old fences along mountain ridges.", zh: "工作人員沿著山脊種植原生樹木並拆除了舊圍籬。" },
-      { en: "Some highways were even moved into underground tunnels so pandas could cross safely above.", zh: "部分公路甚至改建為地下隧道，讓大熊貓能安全地從上方穿越。" },
-      { en: "Hidden infrared cameras now capture wild pandas walking happily through these bamboo bridges.", zh: "隱藏的紅外線攝影機現在拍到野生大熊貓開心地走過這些竹林橋樑。" },
-      { en: "Thanks to these connected parks, the wild giant panda population has grown steadily.", zh: "多虧了這些相連的國家公園，野生大熊貓的數量穩定成長。" },
-      { en: "Other rare animals, such as golden monkeys and red pandas, also use the same safe paths.", zh: "其他稀有動物，如金絲猴和小熊貓，也使用同樣的安全通道。" },
-      { en: "Building wildlife corridors proves that humans and wild animals can share the land peacefully.", zh: "建造野生動物走廊證明了人類與野生動物可以和平共享土地。" }
+      { en: "Many teenagers today care deeply about both personal style and protecting our planet.", zh: "現今許多青少年既在乎個人風格，也十分關心保護地球。" },
+      { en: "Because traditional leather requires raising cattle, fashion designers are searching for greener choices.", zh: "由於傳統皮革需要飼養牛隻，時尚設計師正積極尋找更環保的替代方案。" },
+      { en: "One of the coolest new materials in streetwear is soft vegan leather grown from mushrooms!", zh: "街頭潮流中最酷的新材質之一，就是由蘑菇培育而成的柔軟純素皮革！" },
+      { en: "Scientists grow dense underground mushroom roots, called mycelium, on trays of agricultural waste.", zh: "科學家在裝有農業廢棄物的托盤上，培育濃密的地下蘑菇根系（稱為菌絲體）。" },
+      { en: "In less than two weeks, these roots weave together into a thick, flexible mat.", zh: "不到兩週的時間，這些根系就會交織成一張厚實且具彈性的墊子。" },
+      { en: "Designers then dye and press the material so it looks and feels just like real leather.", zh: "接著，設計師將材質染色並壓製，使其外觀和觸感都與真皮一模一樣。" },
+      { en: "Major sneaker brands and backpack makers now use mushroom leather in their youth collections.", zh: "大型運動鞋品牌與背包製造商現在都在青少年系列中使用蘑菇皮革。" },
+      { en: "Unlike plastic-based fake leather, mushroom leather is biodegradable and breaks down naturally.", zh: "與塑膠製成的人造皮不同，蘑菇皮革可生物分解，並能自然降解。" },
+      { en: "Young shoppers love wearing stylish sneakers that tell an inspiring story about science and nature.", zh: "年輕消費者喜歡穿著能訴說科學與自然啟發故事的時尚球鞋。" },
+      { en: "This creative trend proves that future fashion can be bold, comfortable, and kind to Earth.", zh: "這股創意潮流證明了未來的時尚可以大膽、舒適，同時對地球友善。" }
     ],
     vocab: [
-      { word: "corridor", phonetic: "/ˈkɒr.ɪ.dɔːr/", pos: "n.", meaning: "走廊；生態廊道", example: "A green corridor connects two separate mountain forests." },
-      { word: "native", phonetic: "/ˈneɪ.tɪv/", pos: "adj.", meaning: "原生的；本土的", example: "Workers planted native bamboo and trees for the pandas." },
-      { word: "infrared", phonetic: "/ˌɪn.frəˈred/", pos: "adj.", meaning: "紅外線的", example: "Infrared cameras take clear photos of animals at night." },
-      { word: "steadily", phonetic: "/ˈsted.əl.i/", pos: "adv.", meaning: "穩定地；持續地", example: "The number of wild pandas has increased steadily." }
+      { word: "flexible", phonetic: "/ˈflek.sə.bəl/", pos: "adj.", meaning: "有彈性的；柔韌的", example: "Mushroom roots form a strong and flexible sheet for shoes." },
+      { word: "biodegradable", phonetic: "/ˌbaɪ.əʊ.dɪˈɡreɪ.də.bəl/", pos: "adj.", meaning: "可生物分解的", example: "Biodegradable materials break down safely in nature." },
+      { word: "collection", phonetic: "/kəˈlek.ʃən/", pos: "n.", meaning: "（時尚）系列作品；收藏", example: "The brand launched a new eco-friendly sneaker collection." },
+      { word: "inspiring", phonetic: "/ɪnˈspaɪə.rɪŋ/", pos: "adj.", meaning: "鼓舞人心的；啟發性的", example: "Turning mushrooms into fashion is an inspiring idea." }
     ],
     quizzes: [
       {
-        q: "1. What problem did roads and farms cause for giant pandas in the past?",
-        options: ["They made the mountains too cold", "They divided forests into separate areas", "They brought too many tourists"],
+        q: "1. What part of the mushroom is used to make this new vegan leather?",
+        options: ["The colorful mushroom cap", "The underground roots called mycelium", "Dried mushroom powder"],
         answer: 1,
-        explanation: "文中第 2 句提到道路與農田將森林分割成孤立的小區域（small, separate islands）。"
+        explanation: "文中第 4 句說明科學家培育濃密的地下蘑菇根系——菌絲體（mycelium）來製作皮革。"
       },
       {
-        q: "2. How did engineers help pandas cross busy highways safely?",
-        options: ["By moving some roads into underground tunnels", "By teaching pandas to look for traffic lights", "By closing all mountain towns"],
+        q: "2. How long does it take for mushroom roots to weave into a thick mat?",
+        options: ["Less than two weeks", "About six months", "More than two years"],
         answer: 0,
-        explanation: "文中第 6 句說明部分公路改建為地下隧道（underground tunnels），讓熊貓從上方安全通行。"
+        explanation: "文中第 5 句指出：In less than two weeks, these roots weave together into a thick, flexible mat（不到兩週）。"
       },
       {
-        q: "3. Which other animals also benefit from these bamboo corridors?",
-        options: ["Polar bears and penguins", "Golden monkeys and red pandas", "African lions and zebras"],
+        q: "3. Why is mushroom leather better for the environment than plastic fake leather?",
+        options: ["It is much heavier", "It is biodegradable and breaks down naturally", "It never changes color"],
         answer: 1,
-        explanation: "文中第 9 句提到金絲猴（golden monkeys）與小熊貓（red pandas）也共用這些安全廊道。"
+        explanation: "文中第 8 句提到蘑菇皮革可生物分解（biodegradable），能自然回歸大地，不像塑膠人造皮會造成污染。"
       }
     ],
     discussion: {
-      prompt: "Why is it important for wild animals to travel between different forests instead of staying in one small area?",
-      sample: "Traveling between forests helps wild animals find more food during different seasons and meet new mates to keep their population healthy."
+      prompt: "When you buy new shoes or clothes, what matters most to you: price, style, comfort, or eco-friendly materials?",
+      sample: "When I choose new sneakers, comfort and eco-friendly materials matter most to me because I want shoes that feel great and help protect the planet."
     }
   }
 ];
@@ -451,7 +454,7 @@ let mediaRecorder = null;
 let audioChunks = [];
 let fullAudioUrl = null;
 let sentenceAudioUrls = {};
-let activeRecordingTarget = null; // 'all' or sentence index
+let activeRecordingTarget = null;
 
 function init() {
   renderTabs();
@@ -463,7 +466,7 @@ function renderTabs() {
   container.innerHTML = stories.map((s, idx) => `
     <button onclick="loadStory(${idx})"
       class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${idx === currentStoryIdx ? 'bg-white text-sky-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}">
-      第 ${idx + 1} 篇
+      ${s.tabLabel}
     </button>
   `).join('');
 }
@@ -474,7 +477,6 @@ function loadStory(idx) {
   renderTabs();
   const s = stories[idx];
 
-  // Left hero & source
   document.getElementById('story-image').src = s.image;
   document.getElementById('story-image').alt = s.title;
   document.getElementById('story-category').textContent = s.category;
@@ -484,12 +486,10 @@ function loadStory(idx) {
   document.getElementById('story-source-name').textContent = s.sourceName;
   document.getElementById('story-source-link').href = s.sourceUrl;
 
-  // Reset full playback button
   fullAudioUrl = null;
   sentenceAudioUrls = {};
   document.getElementById('btn-playback-all').disabled = true;
 
-  // Full Article (bottom-left) with sentence spans for live highlight
   const fullEnEl = document.getElementById('full-article-en');
   fullEnEl.innerHTML = s.sentences.map((item, sIdx) =>
     `<span id="full-sent-${sIdx}" class="transition-colors">${wrapClickableWords(item.en)}</span>`
@@ -497,16 +497,10 @@ function loadStory(idx) {
 
   document.getElementById('full-article-zh').textContent = s.sentences.map(item => item.zh).join('');
 
-  // Collapsible Vocab Drawer
   renderVocabDrawer(s.vocab);
-
-  // Right 10 Sentences
   renderSentenceList(s.sentences);
-
-  // Right 3 Quizzes
   renderQuizzes(s.quizzes);
 
-  // Discussion
   document.getElementById('discussion-prompt').textContent = s.discussion.prompt;
   document.getElementById('discussion-sample').textContent = s.discussion.sample;
 }
@@ -521,7 +515,7 @@ function wrapClickableWords(sentence) {
 
 function renderVocabDrawer(vocabList) {
   const container = document.getElementById('vocab-drawer-body');
-  container.innerHTML = vocabList.map((v, vIdx) => `
+  container.innerHTML = vocabList.map(v => `
     <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 flex flex-col justify-between">
       <div>
         <div class="flex items-center justify-between gap-1">
@@ -817,7 +811,7 @@ function prepareAndPrint() {
 
 window.addEventListener('DOMContentLoaded', init);
 </script>
-  <script>window.KWN_ARTICLES=["Coral Gardens Grow Under the Sea", "Clean Planes Fly Without Fuel", "Bamboo Highways Help Giant Pandas"]</script>
+  <script>window.KWN_ARTICLES=["Coral Gardens Grow Under the Sea", "Finland's Cozy Sauna & Winter Culture", "Mushroom Leather Enters Youth Fashion"]</script>
   <script src="../stars.js"></script>
   <script src="../rec-save.js"></script>
 </body>
