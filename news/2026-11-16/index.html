@@ -200,7 +200,7 @@
         <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
           <div class="flex items-center justify-between mb-3">
             <div>
-              <h3 class="text-sm font-extrabold text-slate-800">🎙️ 逐句點讀與跟讀練習 (12 Sentences)</h3>
+              <h3 class="text-sm font-extrabold text-slate-800">🎙️ 逐句點讀與跟讀練習 (<span id="sentence-count">12</span> Sentences)</h3>
               <p class="text-xs text-slate-500">點擊句中任意單字可單獨發音；點擊麥克風可錄製單句跟讀</p>
             </div>
           </div>
@@ -511,6 +511,7 @@ function loadStory(idx) {
 
   renderVocabDrawer(s.vocab);
   renderSentenceList(s.sentences);
+  document.getElementById('sentence-count').textContent = s.sentences.length;
   renderQuizzes(s.quizzes);
 
   document.getElementById('discussion-prompt').textContent = s.discussion.prompt;
