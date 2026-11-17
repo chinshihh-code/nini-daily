@@ -96,7 +96,7 @@
         <span class="bg-sky-600 text-white text-xs font-extrabold px-2.5 py-1 rounded-lg tracking-wide">WEEK 47 · 2026</span>
         <div>
           <h1 class="text-base md:text-lg font-extrabold text-slate-800 leading-tight">Global Kids News Lab</h1>
-          <p class="text-xs text-slate-500">Lexile 500L–700L · Science · World Culture · Fashion Trends</p>
+          <p class="text-xs text-slate-500">Lexile 500L–700L · Space Tech · Animal Science · Smart Fashion</p>
         </div>
       </div>
 
@@ -135,6 +135,8 @@
             <span id="story-category" class="bg-sky-500/90 backdrop-blur text-white text-xs font-bold px-2.5 py-0.5 rounded-full"></span>
             <span id="story-lexile" class="bg-white/90 text-slate-800 text-xs font-bold px-2.5 py-0.5 rounded-full"></span>
           </div>
+          <a id="story-image-credit" href="#" target="_blank" rel="noopener noreferrer"
+             class="absolute top-3 right-3 bg-black/40 hover:bg-black/60 text-white/90 text-[10px] px-2 py-0.5 rounded-full transition">圖片：Wikimedia Commons</a>
           <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2">
             <div>
               <h2 id="story-title" class="text-white font-extrabold text-lg leading-snug"></h2>
@@ -284,161 +286,164 @@
 const stories = [
   {
     id: 0,
-    tabLabel: "1. 科普探索",
-    category: "科普探索 · Marine Science",
-    lexile: "Lexile 580L",
-    title: "Coral Gardens Grow Under the Sea",
-    subtitle: "海底珊瑚花園：科學家用「微碎片技術」加速復育大堡礁",
-    image: "https://cdn.shopify.com/s/files/1/0024/1788/5284/files/clown-fish.jpg",
-    sourceName: "Great Barrier Reef Foundation",
-    sourceUrl: "https://www.barrierreef.org/what-we-do/projects/coral-nurseries",
+    tabLabel: "1. 月球 3D 基地",
+    category: "太空建築科技 · Space Architecture",
+    lexile: "Lexile 600L",
+    title: "3D-Printed Moon Houses for Future Astronauts",
+    subtitle: "月球 3D 列印基地：NASA 攜手建築團隊研究用月壤打造太空家園",
+    image: "https://commons.wikimedia.org/wiki/Special:FilePath/CHAPEA_habitat_(1).jpg?width=1200",
+    imageCreditUrl: "https://commons.wikimedia.org/wiki/File:CHAPEA_habitat_(1).jpg",
+    sourceName: "NASA & ICON",
+    sourceUrl: "https://www.nasa.gov/directorates/stmd/nasa-enables-construction-technology-for-moon-and-mars-exploration/",
     sentences: [
-      { en: "Coral reefs are colorful underwater cities that give homes to thousands of ocean animals.", zh: "珊瑚礁是色彩繽紛的水下城市，為成千上萬種海洋動物提供家園。" },
-      { en: "However, warmer ocean water has caused many corals to turn white and lose their strength.", zh: "然而，變暖的海水導致許多珊瑚白化並失去活力。" },
-      { en: "To solve this problem, marine scientists in Australia created special underwater coral nurseries.", zh: "為了解決這個問題，澳洲海洋科學家建立了特別的水下珊瑚苗圃。" },
-      { en: "First, divers carefully collect small broken pieces of healthy coral from the ocean floor.", zh: "首先，潛水員小心地從海床上收集健康珊瑚的小碎塊。" },
-      { en: "Next, they cut these pieces into tiny fragments and attach them to underwater frames.", zh: "接著，他們將這些碎塊切成更小的碎片，並固定在水下支架上。" },
-      { en: "Surprisingly, small coral pieces grow up to twenty times faster than large coral colonies.", zh: "令人驚訝的是，小珊瑚碎片的生長速度比大型珊瑚群快達二十倍。" },
-      { en: "When the young corals grow strong enough, divers plant them back onto damaged reefs.", zh: "當幼年珊瑚長得足夠強壯時，潛水員會將它們重新種回受損的珊瑚礁上。" },
-      { en: "Scientists also select heat-tolerant corals that can survive better in warmer seas.", zh: "科學家也挑選耐熱珊瑚，讓它們在較溫暖的海域中能更順利存活。" },
-      { en: "Within just a few years, new fish, crabs, and sea turtles return to these restored gardens.", zh: "短短幾年內，新的魚群、螃蟹和海龜就會回到這些復育好的花園。" },
-      { en: "This clever gardening method gives hope for protecting our oceans around the world.", zh: "這種聰明的園藝方法為保護全球海洋帶來了希望。" }
+      { en: "Sending heavy bricks and cement from Earth to the Moon is far too expensive for space missions.", zh: "從地球運送沉重的磚塊和水泥到月球，對太空任務來說實在太昂貴了。" },
+      { en: "To solve this challenge, NASA is working with engineers to design 3D-printed houses for the Moon.", zh: "為了解決這個挑戰，NASA 正與工程師合作，設計可以在月球上 3D 列印的房屋。" },
+      { en: "Instead of bringing building supplies, giant robotic printers could use gray lunar soil and rocks.", zh: "大型機器人印表機不必從地球帶建材，而是可以就地取材，使用灰色的月壤與岩石。" },
+      { en: "First, robots collect loose moon dust and melt it with strong lasers or microwaves.", zh: "首先，機器人收集鬆散的月塵，並用強力雷射或微波將其熔化。" },
+      { en: "Next, the printer nozzle squeezes out the melted material layer by layer to form thick walls.", zh: "接著，印表機噴嘴將熔化的材料一層一層擠出，堆疊成厚實的牆壁。" },
+      { en: "These curved dome-shaped shelters can protect astronauts from harmful space radiation and extreme cold.", zh: "這些圓弧拱頂狀的庇護所能夠保護太空人免受有害太空輻射與極端低溫的侵襲。" },
+      { en: "Engineers have already tested a similar 3D-printed habitat right here on Earth in Texas.", zh: "工程師已經在地球上的德州測試過類似的 3D 列印棲息地。" },
+      { en: "During that test, four crew members lived inside the printed building for more than a year to practice life on Mars.", zh: "在那次測試中，四名組員在列印建築內生活了一年多，練習在火星上的生活。" },
+      { en: "Solar panels placed outside the lunar homes will provide clean electricity for lights and air systems.", zh: "安裝在月球房屋外部的太陽能板，將為照明與維生空氣系統提供潔淨電力。" },
+      { en: "One day, astronauts may live and work comfortably inside neighborhoods printed from moon dust.", zh: "有朝一日，太空人或許就能在由月塵列印而成的社區裡舒適地生活與工作。" }
     ],
     vocab: [
-      { word: "fragment", phonetic: "/ˈfræɡ.mənt/", pos: "n.", meaning: "碎片；小塊", example: "Divers attach each small coral fragment to a safe frame." },
-      { word: "nursery", phonetic: "/ˈnɜː.sər.i/", pos: "n.", meaning: "苗圃；培育場", example: "Young corals grow safely inside an underwater nursery." },
-      { word: "tolerant", phonetic: "/ˈtɒl.ər.ənt/", pos: "adj.", meaning: "耐受的；能適應的", example: "Heat-tolerant corals can survive in warmer ocean water." },
-      { word: "restore", phonetic: "/rɪˈstɔːr/", pos: "v.", meaning: "修復；使復原", example: "Scientists work hard to restore damaged coral reefs." }
+      { word: "lunar", phonetic: "/ˈluː.nər/", pos: "adj.", meaning: "月球的；月亮的", example: "Robots will mix lunar soil to print strong walls on the Moon." },
+      { word: "shelter", phonetic: "/ˈʃel.tər/", pos: "n.", meaning: "庇護所；遮蔽處", example: "Astronauts need a safe shelter from space radiation." },
+      { word: "habitat", phonetic: "/ˈhæb.ɪ.tæt/", pos: "n.", meaning: "棲息地；居住環境", example: "Scientists built a practice Mars habitat in Texas." },
+      { word: "simulate", phonetic: "/ˈsɪm.jə.leɪt/", pos: "v.", meaning: "模擬；模仿", example: "The crew stayed indoors for over a year to simulate a Mars mission." }
     ],
     quizzes: [
       {
-        q: "1. Why did many corals turn white and become weak?",
-        options: ["Because divers cut them into pieces", "Because the ocean water became warmer", "Because too many turtles ate them"],
+        q: "1. What material could robotic printers use to build houses on the Moon?",
+        options: ["Bricks shipped from Earth", "Lunar soil and rocks on the Moon", "Frozen ice from craters"],
         answer: 1,
-        explanation: "文中第 2 句提到：warmer ocean water has caused many corals to turn white（海水變暖導致珊瑚白化）。"
+        explanation: "文中第 3 句提到機器人印表機可以就地使用月壤與岩石（gray lunar soil and rocks），省去高昂運費。"
       },
       {
-        q: "2. How fast can small coral fragments grow compared to large colonies?",
-        options: ["Twice as fast", "Ten times faster", "Up to twenty times faster"],
+        q: "2. How do the 3D-printed shelters protect astronauts?",
+        options: ["They keep out space radiation and extreme cold", "They float above the lunar ground", "They make artificial gravity"],
+        answer: 0,
+        explanation: "文中第 6 句指出，圓頂庇護所可阻擋有害太空輻射與極端低溫（harmful space radiation and extreme cold）。"
+      },
+      {
+        q: "3. How long did crew members live inside the test habitat in Texas?",
+        options: ["One month", "Six months", "More than a year"],
         answer: 2,
-        explanation: "文中第 6 句指出，微小的珊瑚碎片生長速度可達大型珊瑚群的 20 倍（twenty times faster）。"
-      },
-      {
-        q: "3. Why do scientists choose heat-tolerant corals for replanting?",
-        options: ["They are brighter in color", "They can survive better in warmer seas", "They do not need sunlight"],
-        answer: 1,
-        explanation: "文中第 8 句說明科學家挑選耐熱珊瑚是為了讓它們在暖化的海洋中更容易存活。"
+        explanation: "文中第 8 句提到組員在德州的模擬建築內生活了一年多（for more than a year），為的是練習火星生活。"
       }
     ],
     discussion: {
-      prompt: "Besides scientists, what can students do in daily life to help protect coral reefs?",
-      sample: "I believe students can help protect coral reefs by reducing plastic waste and saving energy at home, which helps slow down ocean warming."
+      prompt: "If you could stay in a 3D-printed Moon house for one week, what personal item would you bring from Earth and why?",
+      sample: "If I stayed in a Moon house, I would bring my sketchbook and colored pencils so I could draw the Earth rising over the lunar mountains."
     }
   },
   {
     id: 1,
-    tabLabel: "2. 國家人文",
-    category: "國家人文小知識 · World Culture (Finland)",
-    lexile: "Lexile 590L",
-    title: "Finland's Cozy Sauna & Winter Culture",
-    subtitle: "千湖之國芬蘭：走進冰天雪地裡的國民桑拿與極光生活",
-    image: "https://www.visitrovaniemi.fi/wp-content/uploads/e73097c5-508e-4a4a-b7cb-53a0fa74bae5.jpg",
-    sourceName: "Visit Finland Official",
-    sourceUrl: "https://www.visitfinland.com/en/articles/finnish-sauna-culture/",
+    tabLabel: "2. 狗狗讀心術",
+    category: "動物行為科學 · Animal Cognition",
+    lexile: "Lexile 570L",
+    title: "Dogs Can Understand Feelings on Our Faces",
+    subtitle: "狗狗讀懂你的喜怒哀樂：最新研究揭開毛孩辨識人類表情的秘密",
+    image: "https://commons.wikimedia.org/wiki/Special:FilePath/Smiling_Dog_Face.jpg?width=1200",
+    imageCreditUrl: "https://commons.wikimedia.org/wiki/File:Smiling_Dog_Face.jpg",
+    sourceName: "University of Vienna Research",
+    sourceUrl: "https://www.univie.ac.at/en/news/detail/brain-scans-show-that-dogs-can-distinguish-various-emotions-in-human-faces",
     sentences: [
-      { en: "Finland is a northern European country famous for its snowy winters and nearly 188,000 lakes.", zh: "芬蘭是一個北歐國家，以白雪皚皚的冬天和近十八萬八千座湖泊聞名。" },
-      { en: "Although winter temperatures often drop far below freezing, Finns know how to stay warm and happy.", zh: "雖然冬季氣溫經常降到冰點以下許多，但芬蘭人懂得如何保持溫暖與快樂。" },
-      { en: "One of the most important parts of Finnish daily life is relaxing inside a wooden sauna.", zh: "芬蘭人日常生活中最重要的部分之一，就是在木造桑拿房裡放鬆。" },
-      { en: "In fact, Finland has over three million saunas for a population of just five million people!", zh: "事實上，芬蘭僅有五百萬人口，全國卻擁有超過三百萬間桑拿房！" },
-      { en: "Inside the hot sauna, people pour water over heated stones to create soothing steam.", zh: "在炎熱的桑拿房裡，人們將水潑在燒熱的石頭上，製造出舒緩身心的蒸氣。" },
-      { en: "After warming up, brave locals often run outside to jump into an icy lake or roll in fresh snow.", zh: "身體暖和之後，勇敢的當地人常會跑到戶外跳進冰冷的湖水，或在鬆軟的新雪中打滾。" },
-      { en: "In northern Finland, winter nights are very long, and green northern lights dance across the sky.", zh: "在芬蘭北部，冬夜非常漫長，翠綠色的北極光會在夜空中翩翩起舞。" },
-      { en: "Finnish children also enjoy outdoor sports like cross-country skiing and ice skating right after school.", zh: "芬蘭孩童放學後也喜歡從事越野滑雪和溜冰等戶外運動。" },
-      { en: "By embracing nature in every season, Finland has been named the world's happiest country many times.", zh: "透過在每個季節擁抱大自然，芬蘭已多次被評為全球最幸福的國家。" },
-      { en: "This unique culture teaches us that cold weather can still bring warmth, friendship, and joy.", zh: "這種獨特的文化告訴我們，寒冷的天氣依然能帶來溫暖、友誼與快樂。" }
+      { en: "Many pet owners feel that their dogs know right away when they are happy or upset.", zh: "許多飼主都覺得，當自己開心或難過時，家裡的狗狗立刻就能察覺。" },
+      { en: "Recent scientific studies show that dogs truly can read emotions on human faces.", zh: "近期的科學研究證實，狗狗真的能夠解讀人類臉上的情緒。" },
+      { en: "Researchers used safe brain scans while showing awake, calm dogs photos of people.", zh: "研究人員讓清醒又放鬆的狗狗觀看人類照片，同時用安全的腦部掃描儀記錄牠們的大腦。" },
+      { en: "The photos showed different facial expressions, including smiling, angry, fearful, and sad faces.", zh: "照片中呈現了不同的臉部表情，包括微笑、生氣、恐懼以及悲傷的臉孔。" },
+      { en: "Surprisingly, the dogs' brains reacted differently to each emotion, even without hearing any voice.", zh: "令人驚訝的是，即使沒有聽到任何聲音，狗狗的大腦對每種情緒都有不同的反應。" },
+      { en: "Other studies with eye-tracking cameras found that dogs often look at a person's eyes and mouth to figure out their mood.", zh: "其他使用眼球追蹤攝影機的研究發現，狗狗常會觀察人類的眼睛和嘴巴，藉此判斷對方的心情。" },
+      { en: "In another study, dogs walked over to a crying person more often than to a person who was humming.", zh: "在另一項研究中，狗狗走向正在哭泣的人的次數，比走向哼歌的人更多。" },
+      { en: "Many of these dogs gently sniffed, nuzzled, or licked the crying person, as if they wanted to comfort them.", zh: "許多狗狗會輕輕嗅聞、用鼻子蹭或舔那位哭泣的人，好像想要安慰對方。" },
+      { en: "Many scientists believe thousands of years of friendship helped dogs learn human body language.", zh: "許多科學家認為，數千年來與人類的深厚友誼幫助狗狗學會了讀懂人類的肢體語言。" },
+      { en: "This discovery proves that the bond between humans and dogs goes much deeper than simple tricks.", zh: "這項發現證明了人類與狗狗之間的情感連結，遠比單純學會才藝指令更為深刻。" }
     ],
     vocab: [
-      { word: "population", phonetic: "/ˌpɒp.jəˈleɪ.ʃən/", pos: "n.", meaning: "人口；族群數量", example: "Finland has a population of about five million people." },
-      { word: "soothing", phonetic: "/ˈsuː.ðɪŋ/", pos: "adj.", meaning: "舒緩的；令人放鬆的", example: "The warm steam inside the sauna feels very soothing." },
-      { word: "embrace", phonetic: "/ɪmˈbreɪs/", pos: "v.", meaning: "擁抱；欣然接受", example: "Finnish people embrace winter by enjoying outdoor snow sports." },
-      { word: "unique", phonetic: "/juːˈniːk/", pos: "adj.", meaning: "獨特的；獨一無二的", example: "Every country has its own unique traditions and festivals." }
+      { word: "expression", phonetic: "/ɪkˈspreʃ.ən/", pos: "n.", meaning: "表情；表達", example: "A smiling expression shows that a person feels happy." },
+      { word: "distinguish", phonetic: "/dɪˈstɪŋ.ɡwɪʃ/", pos: "v.", meaning: "區分；辨別", example: "Dogs can distinguish between happy and angry human faces." },
+      { word: "comfort", phonetic: "/ˈkʌm.fərt/", pos: "v.", meaning: "安慰；撫慰", example: "My dog sits beside me to comfort me when I feel sad." },
+      { word: "bond", phonetic: "/bɒnd/", pos: "n.", meaning: "紐帶；深厚的情感連結", example: "Spending time together builds a strong bond with pets." }
     ],
     quizzes: [
       {
-        q: "1. Roughly how many saunas are there in Finland?",
-        options: ["About 188,000 saunas", "Over three million saunas", "Exactly five million saunas"],
-        answer: 1,
-        explanation: "文中第 4 句提到芬蘭有超過三百萬間桑拿房（over three million saunas），而湖泊數量才是約 188,000 座。"
+        q: "1. How did researchers study how dogs' brains react to human emotions?",
+        options: ["By using safe brain scans", "By teaching dogs to press computer buttons", "By recording dogs barking at mirrors"],
+        answer: 0,
+        explanation: "文中第 3 句提到研究人員在狗狗看照片時，使用了安全的腦部掃描儀（safe brain scans）。"
       },
       {
-        q: "2. What do brave Finnish locals often do right after sitting in a hot sauna?",
-        options: ["Drink hot chocolate indoors", "Jump into an icy lake or roll in snow", "Go to sleep immediately"],
+        q: "2. Which parts of a human face do dogs often look at to read moods?",
+        options: ["The ears and hair", "The eyes and mouth", "The nose and chin"],
         answer: 1,
-        explanation: "文中第 6 句指出，他們常會跑到戶外跳進冰湖或在新雪裡打滾（jump into an icy lake or roll in fresh snow）。"
+        explanation: "文中第 6 句指出，眼球追蹤研究發現狗狗常會觀察人類的眼睛和嘴巴（eyes and mouth）來判斷情緒。"
       },
       {
-        q: "3. What can people see dancing in the night sky in northern Finland during winter?",
-        options: ["Fireworks every evening", "Green northern lights", "Hot air balloons"],
+        q: "3. What helped dogs develop the ability to read human body language?",
+        options: ["Watching television every day", "Thousands of years of friendship with humans", "Eating special brain-boosting food"],
         answer: 1,
-        explanation: "文中第 7 句提到：green northern lights dance across the sky（綠色北極光在夜空舞動）。"
+        explanation: "文中第 9 句說明許多科學家認為，數千年來與人類相處的友誼（thousands of years of friendship）讓狗狗學會理解人類。"
       }
     ],
     discussion: {
-      prompt: "Would you dare to jump into an icy lake after a hot sauna? What is your favorite way to stay cozy in winter?",
-      sample: "I might be too shy to jump into an icy lake, so I prefer staying cozy in winter by drinking warm cocoa and reading a good book under a blanket."
+      prompt: "How do pets or animals show care when people around them feel stressed or lonely?",
+      sample: "Pets often show care by sitting quietly next to us, resting their head on our lap, or bringing over their favorite toy to cheer us up."
     }
   },
   {
     id: 2,
-    tabLabel: "3. 時尚流行",
-    category: "時尚流行 · Sustainable Fashion",
+    tabLabel: "3. 變色智慧衣",
+    category: "未來時尚科技 · Interactive Fashion",
     lexile: "Lexile 610L",
-    title: "Mushroom Leather Enters Youth Fashion",
-    subtitle: "蘑菇菌絲純素皮革：席捲青少年球鞋與背包的綠色潮流",
-    image: "https://static.tildacdn.com/tild3534-3362-4636-a166-393363373339/Screenshot_2026-01-0.png",
-    sourceName: "Ellen MacArthur Foundation",
-    sourceUrl: "https://www.ellenmacarthurfoundation.org/topics/fashion/overview",
+    title: "Color-Changing Smart Fabrics Enter Fashion",
+    subtitle: "會變色的智慧變色龍衣服：未來手機一按就能切換穿搭風格",
+    image: "https://commons.wikimedia.org/wiki/Special:FilePath/Parson%27s_Chameleon.jpg?width=1200",
+    imageCreditUrl: "https://commons.wikimedia.org/wiki/File:Parson%27s_Chameleon.jpg",
+    sourceName: "AATCC Interactive Textile Insights",
+    sourceUrl: "https://www.aatcc.org/2025_aatccnews_color-changing-textiles-the-next-frontier-in-interactive-fashion/",
     sentences: [
-      { en: "Many teenagers today care deeply about both personal style and protecting our planet.", zh: "現今許多青少年既在乎個人風格，也十分關心保護地球。" },
-      { en: "Because traditional leather requires raising cattle, fashion designers are searching for greener choices.", zh: "由於傳統皮革需要飼養牛隻，時尚設計師正積極尋找更環保的替代方案。" },
-      { en: "One of the coolest new materials in streetwear is soft vegan leather grown from mushrooms!", zh: "街頭潮流中最酷的新材質之一，就是由蘑菇培育而成的柔軟純素皮革！" },
-      { en: "Scientists grow dense underground mushroom roots, called mycelium, on trays of agricultural waste.", zh: "科學家在裝有農業廢棄物的托盤上，培育濃密的地下蘑菇根系（稱為菌絲體）。" },
-      { en: "In less than two weeks, these roots weave together into a thick, flexible mat.", zh: "不到兩週的時間，這些根系就會交織成一張厚實且具彈性的墊子。" },
-      { en: "Designers then dye and press the material so it looks and feels just like real leather.", zh: "接著，設計師將材質染色並壓製，使其外觀和觸感都與真皮一模一樣。" },
-      { en: "Major sneaker brands and backpack makers now use mushroom leather in their youth collections.", zh: "大型運動鞋品牌與背包製造商現在都在青少年系列中使用蘑菇皮革。" },
-      { en: "Unlike plastic-based fake leather, mushroom leather is biodegradable and breaks down naturally.", zh: "與塑膠製成的人造皮不同，蘑菇皮革可生物分解，並能自然降解。" },
-      { en: "Young shoppers love wearing stylish sneakers that tell an inspiring story about science and nature.", zh: "年輕消費者喜歡穿著能訴說科學與自然啟發故事的時尚球鞋。" },
-      { en: "This creative trend proves that future fashion can be bold, comfortable, and kind to Earth.", zh: "這股創意潮流證明了未來的時尚可以大膽、舒適，同時對地球友善。" }
+      { en: "Imagine owning a single jacket that can change from bright blue to neon pink in seconds.", zh: "想像一下擁有一件能在幾秒內從亮藍色變成霓虹粉紅色的外套。" },
+      { en: "Thanks to smart textile engineers, color-changing clothes are slowly moving from science labs toward real fashion.", zh: "多虧了智慧紡織工程師，會變色的衣服正慢慢從科學實驗室走向真正的時尚界。" },
+      { en: "Scientists weave ultra-thin conductive threads and special color-shifting dyes directly into soft fabric.", zh: "科學家將超細導電纖維與特殊變色染料直接織入柔軟的布料中。" },
+      { en: "When a tiny, safe electrical signal passes through the threads, the fabric changes its color or pattern.", zh: "當微弱且安全的電流訊號通過纖維時，布料就會改變顏色或圖案。" },
+      { en: "In some test designs, wearers can control their outfit's look using a smartphone app or a button on their sleeve.", zh: "在一些測試中的設計裡，穿著者只要透過手機應用程式或袖口上的按鈕，就能控制服裝外觀。" },
+      { en: "Some smart fabrics also react naturally to sunlight or body heat like a real chameleon.", zh: "有些智慧布料也會像真正的變色龍一樣，對陽光或體溫產生自然變色反應。" },
+      { en: "Many fashion designers are excited about this technology because one piece of clothing can match many different moods.", zh: "許多時尚設計師對這項技術感到興奮，因為單一件衣服就能搭配許多不同的心情。" },
+      { en: "Even better, customizable clothes could help reduce fast-fashion waste by encouraging people to buy less.", zh: "更棒的是，可客製化變色的衣服能鼓勵人們減少購買，進而降低快時尚浪費。" },
+      { en: "Researchers are now working to make these high-tech garments easier to wash in regular laundry machines.", zh: "研究人員目前正努力讓這些高科技服飾更容易放入一般洗衣機清洗。" },
+      { en: "One day, expressing your personal style might be as easy as tapping a color on your phone.", zh: "有朝一日，展現個人風格或許就像在手機上點選一個顏色一樣簡單。" }
     ],
     vocab: [
-      { word: "flexible", phonetic: "/ˈflek.sə.bəl/", pos: "adj.", meaning: "有彈性的；柔韌的", example: "Mushroom roots form a strong and flexible sheet for shoes." },
-      { word: "biodegradable", phonetic: "/ˌbaɪ.əʊ.dɪˈɡreɪ.də.bəl/", pos: "adj.", meaning: "可生物分解的", example: "Biodegradable materials break down safely in nature." },
-      { word: "collection", phonetic: "/kəˈlek.ʃən/", pos: "n.", meaning: "（時尚）系列作品；收藏", example: "The brand launched a new eco-friendly sneaker collection." },
-      { word: "inspiring", phonetic: "/ɪnˈspaɪə.rɪŋ/", pos: "adj.", meaning: "鼓舞人心的；啟發性的", example: "Turning mushrooms into fashion is an inspiring idea." }
+      { word: "textile", phonetic: "/ˈtek.staɪl/", pos: "n.", meaning: "紡織品；布料", example: "Smart textile designers combine electronics with soft cloth." },
+      { word: "conductive", phonetic: "/kənˈdʌk.tɪv/", pos: "adj.", meaning: "導電的", example: "Conductive threads carry tiny signals safely through the shirt." },
+      { word: "chameleon", phonetic: "/kəˈmiː.li.ən/", pos: "n.", meaning: "變色龍；善變者", example: "The jacket shifts colors in sunlight just like a chameleon." },
+      { word: "garment", phonetic: "/ˈɡɑː.mənt/", pos: "n.", meaning: "（一件）衣服；服裝", example: "A single color-changing garment can create many outfits." }
     ],
     quizzes: [
       {
-        q: "1. What part of the mushroom is used to make this new vegan leather?",
-        options: ["The colorful mushroom cap", "The underground roots called mycelium", "Dried mushroom powder"],
+        q: "1. What makes the smart fabric change its color or pattern?",
+        options: ["Spraying paint on it every morning", "A tiny electrical signal passing through conductive threads", "Putting the jacket in the freezer"],
         answer: 1,
-        explanation: "文中第 4 句說明科學家培育濃密的地下蘑菇根系——菌絲體（mycelium）來製作皮革。"
+        explanation: "文中第 4 句說明當微弱安全的電流通過導電纖維（conductive threads）時，布料就會改變顏色或圖案。"
       },
       {
-        q: "2. How long does it take for mushroom roots to weave into a thick mat?",
-        options: ["Less than two weeks", "About six months", "More than two years"],
-        answer: 0,
-        explanation: "文中第 5 句指出：In less than two weeks, these roots weave together into a thick, flexible mat（不到兩週）。"
+        q: "2. Besides smartphone apps, what else can trigger some smart fabrics to change color?",
+        options: ["Loud music", "Sunlight or body heat", "Drinking cold water"],
+        answer: 1,
+        explanation: "文中第 6 句提到有些智慧布料會對陽光或體溫（sunlight or body heat）產生變色反應。"
       },
       {
-        q: "3. Why is mushroom leather better for the environment than plastic fake leather?",
-        options: ["It is much heavier", "It is biodegradable and breaks down naturally", "It never changes color"],
+        q: "3. How can color-changing clothes help protect the environment?",
+        options: ["They are made from old tires", "They reduce fast-fashion waste because people can buy fewer clothes", "They clean polluted air"],
         answer: 1,
-        explanation: "文中第 8 句提到蘑菇皮革可生物分解（biodegradable），能自然回歸大地，不像塑膠人造皮會造成污染。"
+        explanation: "文中第 8 句指出一件衣服可變換多種造型，能減少購買需求並降低快時尚浪費（reduce fast-fashion waste）。"
       }
     ],
     discussion: {
-      prompt: "When you buy new shoes or clothes, what matters most to you: price, style, comfort, or eco-friendly materials?",
-      sample: "When I choose new sneakers, comfort and eco-friendly materials matter most to me because I want shoes that feel great and help protect the planet."
+      prompt: "If you had a color-changing T-shirt or backpack, what colors or patterns would you choose for school versus the weekend?",
+      sample: "For school, I would choose a calm navy blue or dark green, and on the weekend, I would switch it to bright yellow with cool geometric stripes!"
     }
   }
 ];
@@ -479,6 +484,7 @@ function loadStory(idx) {
 
   document.getElementById('story-image').src = s.image;
   document.getElementById('story-image').alt = s.title;
+  document.getElementById('story-image-credit').href = s.imageCreditUrl;
   document.getElementById('story-category').textContent = s.category;
   document.getElementById('story-lexile').textContent = s.lexile;
   document.getElementById('story-title').textContent = s.title;
@@ -507,7 +513,7 @@ function loadStory(idx) {
 
 function wrapClickableWords(sentence) {
   return sentence.split(' ').map(token => {
-    const clean = token.replace(/[^a-zA-Z'-]/g, '');
+    const clean = token.replace(/[^a-zA-Z0-9'-]/g, '');
     if (!clean) return token;
     return `<span class="clickable-word" onclick="speakWord('${clean.replace(/'/g, "\\'")}', event)" title="點擊聽單字發音">${token}</span>`;
   }).join(' ');
@@ -793,7 +799,7 @@ function prepareAndPrint() {
   document.getElementById('ws-title').textContent = s.title;
   document.getElementById('ws-subtitle').textContent = s.subtitle;
   document.getElementById('ws-image').src = s.image;
-  document.getElementById('ws-source').textContent = `Source: ${s.sourceName} (${s.sourceUrl})`;
+  document.getElementById('ws-source').textContent = `Source: ${s.sourceName} (${s.sourceUrl}) · Photo: Wikimedia Commons`;
   document.getElementById('ws-article').textContent = s.sentences.map(item => item.en).join(' ');
 
   document.getElementById('ws-vocab-grid').innerHTML = s.vocab.map(v => `
@@ -811,7 +817,7 @@ function prepareAndPrint() {
 
 window.addEventListener('DOMContentLoaded', init);
 </script>
-  <script>window.KWN_ARTICLES=["Coral Gardens Grow Under the Sea", "Finland's Cozy Sauna & Winter Culture", "Mushroom Leather Enters Youth Fashion"]</script>
+  <script>window.KWN_ARTICLES=["3D-Printed Moon Houses for Future Astronauts", "Dogs Can Understand Feelings on Our Faces", "Color-Changing Smart Fabrics Enter Fashion"]</script>
   <script src="../stars.js"></script>
   <script src="../rec-save.js"></script>
 </body>
