@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weekly Kids International News | 2026 Week 48 (Lexile 500L-700L)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background-color: #f1f5f9;
+      color: #1e293b;
+    }
+
+    /* iPad Landscape Optimization */
+    @media (min-width: 900px) {
+      .ipad-workspace {
+        display: grid;
+        grid-template-columns: 44% 56%;
+        gap: 1.25rem;
+        height: calc(100vh - 88px);
+        overflow: hidden;
+      }
+      .ipad-scroll-pane {
+        height: 100%;
+        overflow-y: auto;
+        padding-right: 0.35rem;
+      }
+      .ipad-scroll-pane::-webkit-scrollbar {
+        width: 6px;
+      }
+      .ipad-scroll-pane::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 9999px;
+      }
+    }
+
+    .sentence-highlight {
+      background-color: #fef08a !important;
+      border-radius: 4px;
+      padding: 1px 3px;
+      transition: background-color 0.25s ease;
+    }
+
+    .clickable-word {
+      cursor: pointer;
+      border-bottom: 1px dashed transparent;
+      transition: all 0.15s ease;
+      display: inline-block;
+    }
+    .clickable-word:hover {
+      color: #0284c7;
+      border-bottom-color: #0284c7;
+      background-color: #e0f2fe;
+      border-radius: 3px;
+    }
+
+    /* Printable A4 Worksheet Layout (1-2 Pages Max) */
+    #print-worksheet {
+      display: none;
+    }
+
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 12mm 15mm;
+      }
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+      #app-shell {
+        display: none !important;
+      }
+      #print-worksheet {
+        display: block !important;
+      }
+      .note-line {
+        border-bottom: 1px dashed #94a3b8;
+        height: 26px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== INTERACTIVE WEB APP ==================== -->
+<div id="app-shell" class="min-h-screen flex flex-col">
+  <!-- Top Bar -->
+  <header class="bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="bg-sky-600 text-white text-xs font-extrabold px-2.5 py-1 rounded-lg tracking-wide">WEEK 48 · 2026</span>
+        <div>
+          <h1 class="text-base md:text-lg font-extrabold text-slate-800 leading-tight">Global Kids News Lab</h1>
+          <p class="text-xs text-slate-500">Lexile 500L–700L · AI Ocean Tech · World Culture · Eco Fashion</p>
+        </div>
+      </div>
+
+      <!-- Story Tabs -->
+      <div id="story-tabs" class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl"></div>
+
+      <!-- Right Controls: Speed + Print -->
+      <div class="flex items-center gap-2">
+        <label class="text-xs font-semibold text-slate-600 hidden sm:inline">語速:</label>
+        <select id="speech-rate" class="text-xs font-semibold bg-slate-100 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+          <option value="0.75">0.75x 慢速</option>
+          <option value="0.9" selected>0.90x 適中</option>
+          <option value="1.0">1.00x 標準</option>
+          <option value="1.15">1.15x 進階</option>
+        </select>
+
+        <button onclick="prepareAndPrint()" class="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          列印本篇學習單
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace (iPad Landscape 2-Column) -->
+  <main class="max-w-7xl w-full mx-auto px-4 py-3 flex-1">
+    <div class="ipad-workspace">
+
+      <!-- LEFT COLUMN: Media + Audio Controls + Collapsible Vocab + Full Article -->
+      <section class="ipad-scroll-pane space-y-3 pb-6">
+        <!-- Hero Image Card with Source Link -->
+        <div class="relative rounded-2xl overflow-hidden shadow-sm border border-slate-200 bg-slate-900">
+          <img id="story-image" src="" alt="" class="w-full h-48 object-cover opacity-95" />
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/20 to-transparent"></div>
+          <div class="absolute top-3 left-3 flex items-center gap-2">
+            <span id="story-category" class="bg-sky-500/90 backdrop-blur text-white text-xs font-bold px-2.5 py-0.5 rounded-full"></span>
+            <span id="story-lexile" class="bg-white/90 text-slate-800 text-xs font-bold px-2.5 py-0.5 rounded-full"></span>
+          </div>
+          <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2">
+            <div>
+              <h2 id="story-title" class="text-white font-extrabold text-lg leading-snug"></h2>
+              <p id="story-subtitle" class="text-slate-200 text-xs mt-0.5"></p>
+            </div>
+            <a id="story-source-link" href="#" target="_blank" rel="noopener noreferrer"
+               class="shrink-0 inline-flex items-center gap-1 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border border-white/25 transition">
+              <span>來源：<span id="story-source-name"></span></span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Full Article Audio & Shadowing Bar -->
+        <div class="bg-white rounded-2xl p-3 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <button id="btn-play-all" onclick="togglePlayAll()" class="flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-sm">
+              <span id="play-all-icon">▶</span>
+              <span id="play-all-label">播放整篇朗讀</span>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="btn-record-all" onclick="toggleRecordFull()" class="flex items-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold px-3 py-2 rounded-xl transition">
+              <span id="rec-all-dot" class="w-2 h-2 rounded-full bg-rose-500"></span>
+              <span id="rec-all-label">整篇跟讀錄音</span>
+            </button>
+            <button id="btn-playback-all" onclick="playFullRecording()" disabled class="disabled:opacity-40 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-2 rounded-xl transition">
+              🎧 回放錄音
+            </button>
+          </div>
+        </div>
+
+        <!-- Option C: Collapsible Core Vocabulary Drawer -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <button onclick="toggleVocabDrawer()" class="w-full px-4 py-2.5 bg-amber-50/80 hover:bg-amber-100/70 flex items-center justify-between text-left transition">
+            <div class="flex items-center gap-2">
+              <span class="text-amber-600 font-extrabold text-sm">📚 本篇精選單字庫 (4 Words · 點擊發音與跟讀)</span>
+            </div>
+            <span id="vocab-toggle-icon" class="text-xs font-bold text-amber-700 bg-amber-200/70 px-2 py-0.5 rounded-md">收合 ▲</span>
+          </button>
+          <div id="vocab-drawer-body" class="p-3 grid grid-cols-1 sm:grid-cols-2 gap-2.5 border-t border-amber-100"></div>
+        </div>
+
+        <!-- Bottom-Left Full Paragraph Reading Box -->
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Full Article · 整段完整閱讀</h3>
+            <button onclick="toggleFullTranslation()" id="btn-toggle-zh" class="text-xs font-semibold text-sky-600 hover:text-sky-800 bg-sky-50 px-2.5 py-1 rounded-lg transition">
+              顯示中文對照
+            </button>
+          </div>
+          <p id="full-article-en" class="text-sm leading-relaxed text-slate-800 font-medium"></p>
+          <p id="full-article-zh" class="hidden mt-3 pt-3 border-t border-slate-100 text-xs leading-relaxed text-slate-600"></p>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: 10-Sentence Shadowing + 3 Quizzes + Discussion -->
+      <section class="ipad-scroll-pane space-y-4 pb-8">
+        <!-- 10-Sentence Line-by-Line Shadowing -->
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h3 class="text-sm font-extrabold text-slate-800">🎙️ 逐句點讀與跟讀練習 (10 Sentences)</h3>
+              <p class="text-xs text-slate-500">點擊句中任意單字可單獨發音；點擊麥克風可錄製單句跟讀</p>
+            </div>
+          </div>
+          <div id="sentence-list" class="space-y-2"></div>
+        </div>
+
+        <!-- Integrated 3-Question Reading Comprehension Quiz -->
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-extrabold text-slate-800">✅ 閱讀理解小測驗 (3 Questions)</h3>
+            <span id="quiz-score-badge" class="text-xs font-bold bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full">得分：0 / 3</span>
+          </div>
+          <div id="quiz-container" class="space-y-3"></div>
+        </div>
+
+        <!-- Integrated Critical Thinking & Speaking Prompt -->
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-2xl p-4 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-sky-300 uppercase tracking-wider">💬 Think & Speak · 思辨與口說表達</span>
+            <button onclick="speakDiscussionSample()" class="text-xs bg-white/15 hover:bg-white/25 px-2.5 py-1 rounded-lg font-semibold transition">
+              🔊 聽示範回答
+            </button>
+          </div>
+          <p id="discussion-prompt" class="text-sm font-bold text-white mb-2"></p>
+          <div class="bg-white/10 rounded-xl p-3 text-xs text-slate-200 leading-relaxed">
+            <span class="text-amber-300 font-bold">表達句型參考：</span>
+            <span id="discussion-sample"></span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- ==================== PRINTABLE A4 WORKSHEET (1-2 PAGES) ==================== -->
+<div id="print-worksheet" class="max-w-3xl mx-auto">
+  <div class="border-b-2 border-slate-800 pb-2 mb-3 flex items-end justify-between">
+    <div>
+      <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Global Kids Weekly News Worksheet · 2026 Week 48 · Lexile 500L–700L</p>
+      <h1 id="ws-title" class="text-xl font-extrabold text-slate-900 mt-0.5"></h1>
+      <p id="ws-subtitle" class="text-xs text-slate-600"></p>
+    </div>
+    <div class="text-right text-xs text-slate-600">
+      <p>Name: ______________________</p>
+      <p class="mt-1">Date: ______________________</p>
+    </div>
+  </div>
+
+  <!-- Top Section: Image + Source + Full Article -->
+  <div class="grid grid-cols-3 gap-4 mb-4 items-start">
+    <div class="col-span-1">
+      <img id="ws-image" src="" alt="" class="w-full h-36 object-cover rounded-lg border border-slate-300" />
+      <p id="ws-source" class="text-[10px] text-slate-500 mt-1 break-all"></p>
+    </div>
+    <div class="col-span-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+      <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-1.5">Full Article 完整新聞閱讀</h2>
+      <p id="ws-article" class="text-[13px] leading-relaxed text-slate-900"></p>
+    </div>
+  </div>
+
+  <!-- Middle Section: 4 Key Vocabulary -->
+  <div class="mb-4">
+    <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2 border-b border-slate-300 pb-1">Key Vocabulary 核心單字</h2>
+    <div id="ws-vocab-grid" class="grid grid-cols-2 gap-2.5"></div>
+  </div>
+
+  <!-- Bottom Section: Blank Handwritten Notes Area -->
+  <div>
+    <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-1 border-b border-slate-300 pb-1">My Reading Notes & Sentence Practice 閱讀筆記與造句練習</h2>
+    <div class="mt-1">
+      <div class="note-line"></div>
+      <div class="note-line"></div>
+      <div class="note-line"></div>
+      <div class="note-line"></div>
+      <div class="note-line"></div>
+      <div class="note-line"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const stories = [
+  {
+    id: 0,
+    tabLabel: "1. AI 淨海機器船",
+    category: "科技與環保 · AI Ocean Robotics",
+    lexile: "Lexile 590L",
+    title: "Solar Robot Boats Clean Plastic from Rivers",
+    subtitle: "AI 太陽能淨海小船：自動辨識並打撈河川塑膠垃圾",
+    image: "https://news.microsoft.com/source/asia/wp-content/uploads/2023/10/4A8A6012clearbot_copy_resize_main-1900x1268.jpg",
+    sourceName: "Microsoft Asia News & Clearbot",
+    sourceUrl: "https://news.microsoft.com/source/asia/features/this-ai-enabled-robotic-boat-cleans-up-harbors-and-rivers-to-keep-trash-out-of-the-ocean/",
+    sentences: [
+      { en: "Every year, millions of tons of plastic trash flow from city rivers into our oceans.", zh: "每年有數百萬噸的塑膠垃圾從城市河川流入海洋。" },
+      { en: "To stop ocean pollution at the source, engineers built autonomous solar-powered cleaning boats.", zh: "為了從源頭阻止海洋污染，工程師打造了全自動太陽能清潔小船。" },
+      { en: "These sleek robotic boats glide quietly across harbors and canals without burning any fuel.", zh: "這些流線型的機器人小船無需燃燒任何燃料，就能安靜地滑過港口與運河。" },
+      { en: "On the front of each boat, a conveyor belt scoops floating bottles and wrappers into a bin.", zh: "每艘船的前端都有一條輸送帶，能將漂浮的寶特瓶和包裝袋撈進收集箱。" },
+      { en: "Smart onboard cameras use artificial intelligence to tell the difference between trash and wildlife.", zh: "船上的智慧攝影機運用人工智慧，區分垃圾與野生動物的差異。" },
+      { en: "If a duck or fish swims nearby, the robot smoothly steers around it to keep animals safe.", zh: "如果附近有鴨子或魚游過，機器人會平順地繞開，確保動物安全。" },
+      { en: "The AI system also records the type and weight of every piece of garbage it collects.", zh: "AI 系統還會記錄每件收集到的垃圾種類與重量。" },
+      { en: "City planners use this helpful data to find out where the most litter comes from.", zh: "城市規劃人員利用這些有用的數據，找出最多垃圾的來源處。" },
+      { en: "A single robotic boat can gather up to one ton of floating waste in just one day.", zh: "單一艘機器人小船一天就能收集高達一噸的漂浮廢棄物。" },
+      { en: "By combining clean solar energy with AI, these boats help keep waterways clear for everyone.", zh: "透過結合潔淨太陽能與 AI，這些小船幫助大家維持水域清澈。" }
+    ],
+    vocab: [
+      { word: "autonomous", phonetic: "/ɔːˈtɒn.ə.məs/", pos: "adj.", meaning: "自動駕駛的；自主運作的", example: "An autonomous boat can navigate rivers without a human captain." },
+      { word: "conveyor", phonetic: "/kənˈveɪ.ər/", pos: "n.", meaning: "輸送帶；傳送裝置", example: "A moving conveyor lifts plastic bottles out of the water." },
+      { word: "steer", phonetic: "/stɪər/", pos: "v.", meaning: "駕駛；轉向避開", example: "The smart robot can steer safely around swimming ducks." },
+      { word: "waterway", phonetic: "/ˈwɔː.tə.weɪ/", pos: "n.", meaning: "水路；河道", example: "Clean waterways protect both marine animals and coastal cities." }
+    ],
+    quizzes: [
+      {
+        q: "1. What powers the robotic cleaning boats described in the article?",
+        options: ["Diesel fuel and batteries", "Solar energy from the sun", "Underwater wind turbines"],
+        answer: 1,
+        explanation: "文中第 2 句與第 3 句提到這是太陽能清潔船（solar-powered cleaning boats），完全不燃燒燃料。"
+      },
+      {
+        q: "2. How does the boat avoid harming ducks or fish in the water?",
+        options: ["It plays loud music to scare them away", "AI cameras recognize wildlife and steer around them", "It only works at midnight when animals sleep"],
+        answer: 1,
+        explanation: "文中第 5、6 句指出智慧攝影機運用 AI 辨識野生動物，遇到鴨子或魚會主動平順繞開。"
+      },
+      {
+        q: "3. How much floating waste can one robotic boat collect in a single day?",
+        options: ["Up to 10 kilograms", "Up to 100 kilograms", "Up to one ton"],
+        answer: 2,
+        explanation: "文中第 9 句提到單艘機器船一天最高可收集一噸（up to one ton）漂浮垃圾。"
+      }
+    ],
+    discussion: {
+      prompt: "Besides using robot boats, what habits can students practice at school to prevent plastic from reaching rivers?",
+      sample: "Students can bring reusable water bottles and lunchboxes to school every day so fewer single-use plastics end up in the trash."
+    }
+  },
+  {
+    id: 1,
+    tabLabel: "2. 日本膠囊文化",
+    category: "國家人文小知識 · World Culture (Japan)",
+    lexile: "Lexile 580L",
+    title: "Inside Japan's Clever Capsule Hotels",
+    subtitle: "日本膠囊旅館小知識：從建築創意到極致空間美學",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Capsule_hotel.jpg/1280px-Capsule_hotel.jpg",
+    sourceName: "Japan National Tourism Organization",
+    sourceUrl: "https://www.japan.travel/en/guide/capsule-hotels/",
+    sentences: [
+      { en: "In busy Japanese cities like Tokyo and Osaka, space is precious and hotel rooms can be pricey.", zh: "在東京和大阪等繁忙的日本城市，空間非常珍貴，飯店房間價格也往往不菲。" },
+      { en: "To offer travelers a smart and affordable place to sleep, Japan invented capsule hotels in 1979.", zh: "為了提供旅客聰明又實惠的住宿選擇，日本在 1979 年發明了膠囊旅館。" },
+      { en: "Instead of large separate bedrooms, guests sleep inside neat rows of cozy, futuristic pods.", zh: "旅客不是住在寬敞的獨立臥室，而是睡在整齊排列、充滿未來感的舒適睡艙裡。" },
+      { en: "Each pod is roughly the size of a single bed, measuring about two meters long and one meter high.", zh: "每個睡艙大約是一張單人床的大小，長約兩公尺、高約一公尺。" },
+      { en: "Inside this compact space, you can find soft lighting, power outlets, air vents, and a privacy shade.", zh: "在這個精巧的空間裡，配備了柔和燈光、電源插座、通風口以及隱私遮簾。" },
+      { en: "Guests store their suitcases in secure lockers and share spotless modern bathrooms and lounges.", zh: "旅客將行李箱存放在安全置物櫃中，並共用一塵不染的現代化浴室與交誼廳。" },
+      { en: "Today, some creative capsule hotels in Japan even double as giant libraries filled with thousands of books.", zh: "如今，日本一些創意膠囊旅館甚至兼具大型圖書館功能，擺滿了數千本書籍。" },
+      { en: "Visitors can curl up on a sofa to read late at night before climbing into a bookshelf bed.", zh: "房客可以在深夜窩在沙發上閱讀，然後爬進書架中的床鋪入睡。" },
+      { en: "Quiet etiquette is very important, so travelers speak softly and keep their phones on silent mode.", zh: "安靜的禮儀非常重要，因此旅客都會輕聲細語並將手機調成靜音模式。" },
+      { en: "Japan's capsule hotels show how thoughtful design can turn a tiny space into a memorable adventure.", zh: "日本的膠囊旅館展現了貼心的設計如何將微小空間變成難忘的冒險體驗。" }
+    ],
+    vocab: [
+      { word: "precious", phonetic: "/ˈpreʃ.əs/", pos: "adj.", meaning: "珍貴的；寶貴的", example: "Land is very precious in crowded modern cities." },
+      { word: "compact", phonetic: "/kəmˈpækt/", pos: "adj.", meaning: "小巧的；緊湊實用的", example: "A compact sleeping pod includes lights, a fan, and a charger." },
+      { word: "etiquette", phonetic: "/ˈet.ɪ.ket/", pos: "n.", meaning: "禮儀；規矩", example: "Good etiquette in shared spaces means keeping noise levels low." },
+      { word: "memorable", phonetic: "/ˈmem.ər.ə.bəl/", pos: "adj.", meaning: "難忘的；值得紀念的", example: "Staying inside a book-themed capsule hotel is a memorable trip." }
+    ],
+    quizzes: [
+      {
+        q: "1. When were capsule hotels first invented in Japan?",
+        options: ["In 1955", "In 1979", "In 2010"],
+        answer: 1,
+        explanation: "文中第 2 句提到日本於 1979 年（in 1979）發明了膠囊旅館。"
+      },
+      {
+        q: "2. Where do guests keep their large suitcases when staying at a capsule hotel?",
+        options: ["Inside the sleeping pod", "In secure shared lockers", "On the roof of the building"],
+        answer: 1,
+        explanation: "文中第 6 句指出旅客會將行李箱存放在安全置物櫃（secure lockers）中。"
+      },
+      {
+        q: "3. What special theme do some modern Japanese capsule hotels offer?",
+        options: ["Giant libraries with bookshelf beds", "Indoor roller coasters", "Underwater shark tanks"],
+        answer: 0,
+        explanation: "文中第 7、8 句提到有些創意膠囊旅館設計成大型圖書館，讓房客睡在書架床鋪裡。"
+      }
+    ],
+    discussion: {
+      prompt: "Would you enjoy sleeping in a cozy spaceship-style pod or a bookshelf bed for one night? Why or why not?",
+      sample: "I would love to try a bookshelf capsule bed for one night because it feels like a secret treehouse where I can read before going to sleep."
+    }
+  },
+  {
+    id: 2,
+    tabLabel: "3. 漁網變潮牌",
+    category: "永續時尚流行 · Circular Fashion",
+    lexile: "Lexile 610L",
+    title: "Old Fishing Nets Become Cool Sunglasses",
+    subtitle: "海洋廢棄漁網變身潮牌太陽眼鏡與滑板：年輕世代的循環時尚",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Port-Vendres_fishing_net.jpg/1280px-Port-Vendres_fishing_net.jpg",
+    sourceName: "Bureo NetPlus Circular Design",
+    sourceUrl: "https://bureo.co/pages/netplus",
+    sentences: [
+      { en: "Abandoned fishing nets drifting in the sea are one of the biggest dangers to marine animals.", zh: "漂流在海中的廢棄漁網是海洋動物面臨的最大危險之一。" },
+      { en: "Instead of letting these strong nylon nets pollute the ocean, creative designers found a stylish solution.", zh: "創意設計師沒有讓這些堅固的尼龍漁網繼續污染海洋，而是找到了時尚的解決方案。" },
+      { en: "Social enterprises now pay coastal fishermen to collect worn-out nets at local harbors.", zh: "社會企業現在付費請沿海漁民在當地港口收集破損的舊漁網。" },
+      { en: "Workers carefully sort, wash, and shred the rescued nets into tiny recycled plastic pellets.", zh: "工作人員仔細分類、清洗並將回收漁網切碎成微小的再生塑膠顆粒。" },
+      { en: "Fashion and outdoor brands then mold these durable pellets into trendy sunglasses and watch bands.", zh: "時尚與戶外品牌接著將這些耐用的顆粒塑造成潮流太陽眼鏡與錶帶。" },
+      { en: "Some companies even use the recycled net material to make colorful skateboards and hat brims.", zh: "有些公司甚至用這種再生漁網材料製作色彩繽紛的滑板和帽簷。" },
+      { en: "Because fishing nets are built to survive rough ocean storms, the finished accessories last for years.", zh: "由於漁網原本就是為了抵禦海上暴風雨而製造，製成的配件可以耐用好幾年。" },
+      { en: "Many young shoppers enjoy checking the tag to see which coastal town their sunglasses helped clean.", zh: "許多年輕消費者喜歡查看吊牌，看看自己的太陽眼鏡幫助清理了哪座沿海小鎮。" },
+      { en: "This circular fashion model creates extra income for fishing communities while saving sea turtles and seals.", zh: "這種循環時尚模式既為漁村社區創造額外收入，也拯救了海龜與海豹。" },
+      { en: "Upcycled ocean gear proves that everyday accessories can look great and protect marine life at the same time.", zh: "升級再造的海洋裝備證明了日常配件可以兼具帥氣外觀與守護海洋生命的價值。" }
+    ],
+    vocab: [
+      { word: "abandoned", phonetic: "/əˈbæn.dənd/", pos: "adj.", meaning: "被遺棄的；廢棄的", example: "Divers help remove abandoned fishing nets from coral reefs." },
+      { word: "pellet", phonetic: "/ˈpel.ɪt/", pos: "n.", meaning: "小顆粒；丸狀物", example: "Recycled nylon is melted into small pellets to make sunglasses." },
+      { word: "durable", phonetic: "/ˈdjʊə.rə.bəl/", pos: "adj.", meaning: "耐用的；持久的", example: "Strong ocean nets create very durable skateboards and frames." },
+      { word: "upcycle", phonetic: "/ˈʌpˌsaɪ.kəl/", pos: "v.", meaning: "升級再造（將廢棄物轉為更高價值物品）", example: "Designers upcycle old nets into fashionable summer eyewear." }
+    ],
+    quizzes: [
+      {
+        q: "1. How do social enterprises get the old fishing nets used for sunglasses?",
+        options: ["They buy brand-new nets from factories", "They pay coastal fishermen to collect worn-out nets", "They dig them up from desert sand"],
+        answer: 1,
+        explanation: "文中第 3 句提到社會企業付費請沿海漁民在港口收集破損舊漁網（pay coastal fishermen to collect worn-out nets）。"
+      },
+      {
+        q: "2. Why do accessories made from recycled fishing nets last for many years?",
+        options: ["They are coated in real gold", "Fishing nets are originally built to survive rough ocean storms", "They cannot be touched by sunlight"],
+        answer: 1,
+        explanation: "文中第 7 句說明漁網原本就是為了承受海上暴風雨而打造，因此製成的眼鏡和滑板非常耐用。"
+      },
+      {
+        q: "3. Besides sunglasses, what other items are made from these recycled nets?",
+        options: ["Skateboards, watch bands, and hat brims", "Glass windows and ceramic bowls", "Paper notebooks and wooden pencils"],
+        answer: 0,
+        explanation: "文中第 5、6 句提到再生漁網顆粒還被製成錶帶（watch bands）、滑板（skateboards）與帽簷（hat brims）。"
+      }
+    ],
+    discussion: {
+      prompt: "What everyday item would you like to see made from recycled ocean plastic, and how would you design it?",
+      sample: "I would love to design a waterproof school backpack made from recycled ocean nets, with bright ocean-wave patterns and strong zippers."
+    }
+  }
+];
+
+let currentStoryIdx = 0;
+let isPlayingAll = false;
+let showTranslation = false;
+let vocabOpen = true;
+let quizAnswers = [{}, {}, {}];
+
+// MediaRecorder state
+let mediaRecorder = null;
+let audioChunks = [];
+let fullAudioUrl = null;
+let sentenceAudioUrls = {};
+let activeRecordingTarget = null;
+let pendingRecordingTarget = null; // 錄音中按了另一個麥克風：停掉目前的，接著錄新的
+
+function init() {
+  renderTabs();
+  loadStory(0);
+}
+
+function renderTabs() {
+  const container = document.getElementById('story-tabs');
+  container.innerHTML = stories.map((s, idx) => `
+    <button onclick="loadStory(${idx})"
+      class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${idx === currentStoryIdx ? 'bg-white text-sky-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}">
+      ${s.tabLabel}
+    </button>
+  `).join('');
+}
+
+function loadStory(idx) {
+  stopSpeech();
+  currentStoryIdx = idx;
+  renderTabs();
+  const s = stories[idx];
+
+  document.getElementById('story-image').src = s.image;
+  document.getElementById('story-image').alt = s.title;
+  document.getElementById('story-category').textContent = s.category;
+  document.getElementById('story-lexile').textContent = s.lexile;
+  document.getElementById('story-title').textContent = s.title;
+  document.getElementById('story-subtitle').textContent = s.subtitle;
+  document.getElementById('story-source-name').textContent = s.sourceName;
+  document.getElementById('story-source-link').href = s.sourceUrl;
+
+  fullAudioUrl = null;
+  sentenceAudioUrls = {};
+  document.getElementById('btn-playback-all').disabled = true;
+
+  const fullEnEl = document.getElementById('full-article-en');
+  fullEnEl.innerHTML = s.sentences.map((item, sIdx) =>
+    `<span id="full-sent-${sIdx}" class="transition-colors">${wrapClickableWords(item.en)}</span>`
+  ).join(' ');
+
+  document.getElementById('full-article-zh').textContent = s.sentences.map(item => item.zh).join('');
+
+  renderVocabDrawer(s.vocab);
+  renderSentenceList(s.sentences);
+  renderQuizzes(s.quizzes);
+
+  document.getElementById('discussion-prompt').textContent = s.discussion.prompt;
+  document.getElementById('discussion-sample').textContent = s.discussion.sample;
+}
+
+function wrapClickableWords(sentence) {
+  return sentence.split(' ').map(token => {
+    const clean = token.replace(/[^a-zA-Z'-]/g, '');
+    if (!clean) return token;
+    return `<span class="clickable-word" onclick="speakWord('${clean.replace(/'/g, "\\'")}', event)" title="點擊聽單字發音">${token}</span>`;
+  }).join(' ');
+}
+
+function renderVocabDrawer(vocabList) {
+  const container = document.getElementById('vocab-drawer-body');
+  container.innerHTML = vocabList.map(v => `
+    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between gap-1">
+          <div class="flex items-baseline gap-1.5">
+            <span class="font-extrabold text-sm text-sky-800">${v.word}</span>
+            <span class="text-[11px] text-slate-400 font-mono">${v.phonetic}</span>
+            <span class="text-[10px] font-bold bg-slate-200 text-slate-700 px-1.5 rounded">${v.pos}</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="speakText('${v.word}', 0.8)" class="p-1 rounded-lg bg-sky-100 hover:bg-sky-200 text-sky-700 text-xs" title="單字發音">🔊</button>
+            <button onclick="speakText('${v.example.replace(/'/g, "\\'")}', 0.85)" class="p-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 text-[10px] font-bold px-1.5" title="例句發音">例句</button>
+          </div>
+        </div>
+        <p class="text-xs font-bold text-slate-700 mt-1">${v.meaning}</p>
+      </div>
+      <p class="text-[11px] text-slate-500 italic mt-1 leading-snug">"${v.example}"</p>
+    </div>
+  `).join('');
+}
+
+function toggleVocabDrawer() {
+  vocabOpen = !vocabOpen;
+  const body = document.getElementById('vocab-drawer-body');
+  const icon = document.getElementById('vocab-toggle-icon');
+  body.classList.toggle('hidden', !vocabOpen);
+  icon.textContent = vocabOpen ? '收合 ▲' : '展開 ▼';
+}
+
+function toggleFullTranslation() {
+  showTranslation = !showTranslation;
+  const zhEl = document.getElementById('full-article-zh');
+  const btn = document.getElementById('btn-toggle-zh');
+  zhEl.classList.toggle('hidden', !showTranslation);
+  btn.textContent = showTranslation ? '隱藏中文對照' : '顯示中文對照';
+}
+
+function renderSentenceList(sentences) {
+  const container = document.getElementById('sentence-list');
+  container.innerHTML = sentences.map((item, idx) => `
+    <div id="row-sent-${idx}" class="p-2.5 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-sky-50/40 transition flex items-start justify-between gap-2.5">
+      <div class="flex items-start gap-2.5 flex-1">
+        <span class="shrink-0 w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-[11px] font-bold flex items-center justify-center mt-0.5">${idx + 1}</span>
+        <div>
+          <p class="text-sm font-medium text-slate-800 leading-relaxed">${wrapClickableWords(item.en)}</p>
+          <p class="text-xs text-slate-500 mt-0.5">${item.zh}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1 shrink-0">
+        <button onclick="speakSingleSentence(${idx})" class="p-1.5 rounded-lg bg-white border border-slate-200 hover:border-sky-400 text-sky-600 text-xs shadow-sm" title="單句朗讀">
+          🔊
+        </button>
+        <button id="rec-btn-${idx}" onclick="toggleRecordSentence(${idx})" class="p-1.5 rounded-lg bg-white border border-slate-200 hover:border-rose-400 text-rose-600 text-xs shadow-sm" title="單句跟讀錄音">
+          🎙️
+        </button>
+        <button id="play-rec-${idx}" onclick="playSentenceRecording(${idx})" disabled class="disabled:opacity-30 p-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs" title="回放我的跟讀">
+          ▶
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderQuizzes(quizzes) {
+  const container = document.getElementById('quiz-container');
+  const saved = quizAnswers[currentStoryIdx] || {};
+
+  container.innerHTML = quizzes.map((qItem, qIdx) => {
+    const chosen = saved[qIdx];
+    const isAnswered = chosen !== undefined;
+    return `
+      <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60">
+        <p class="text-xs font-extrabold text-slate-800 mb-2">${qItem.q}</p>
+        <div class="space-y-1.5">
+          ${qItem.options.map((opt, oIdx) => {
+            let btnClass = "bg-white border-slate-200 text-slate-700 hover:bg-sky-50";
+            if (isAnswered) {
+              if (oIdx === qItem.answer) {
+                btnClass = "bg-emerald-50 border-emerald-500 text-emerald-900 font-bold";
+              } else if (oIdx === chosen) {
+                btnClass = "bg-rose-50 border-rose-500 text-rose-900";
+              } else {
+                btnClass = "bg-white border-slate-200 text-slate-400";
+              }
+            }
+            return `
+              <button onclick="selectQuizOption(${qIdx}, ${oIdx})"
+                class="w-full text-left text-xs px-3 py-2 rounded-lg border transition flex items-center justify-between ${btnClass}">
+                <span>${String.fromCharCode(65 + oIdx)}. ${opt}</span>
+                ${isAnswered && oIdx === qItem.answer ? '<span>✔</span>' : ''}
+                ${isAnswered && oIdx === chosen && oIdx !== qItem.answer ? '<span>✘</span>' : ''}
+              </button>
+            `;
+          }).join('')}
+        </div>
+        ${isAnswered ? `<p class="mt-2 text-[11px] text-slate-600 bg-white p-2 rounded-lg border border-slate-200">💡 ${qItem.explanation}</p>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  updateScoreBadge();
+}
+
+function selectQuizOption(qIdx, oIdx) {
+  quizAnswers[currentStoryIdx][qIdx] = oIdx;
+  renderQuizzes(stories[currentStoryIdx].quizzes);
+}
+
+function updateScoreBadge() {
+  const s = stories[currentStoryIdx];
+  const saved = quizAnswers[currentStoryIdx] || {};
+  let score = 0;
+  s.quizzes.forEach((q, idx) => {
+    if (saved[idx] === q.answer) score++;
+  });
+  document.getElementById('quiz-score-badge').textContent = `得分：${score} / ${s.quizzes.length}`;
+}
+
+// ==================== SPEECH SYNTHESIS (TTS) ====================
+function getRate() {
+  return parseFloat(document.getElementById('speech-rate').value) || 0.9;
+}
+
+function clearHighlights() {
+  document.querySelectorAll('.sentence-highlight').forEach(el => el.classList.remove('sentence-highlight'));
+}
+
+function highlightSentence(idx) {
+  clearHighlights();
+  const fullSpan = document.getElementById(`full-sent-${idx}`);
+  const rowDiv = document.getElementById(`row-sent-${idx}`);
+  if (fullSpan) fullSpan.classList.add('sentence-highlight');
+  if (rowDiv) {
+    rowDiv.classList.add('sentence-highlight');
+    rowDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function stopSpeech() {
+  window.speechSynthesis.cancel();
+  isPlayingAll = false;
+  clearHighlights();
+  document.getElementById('play-all-icon').textContent = '▶';
+  document.getElementById('play-all-label').textContent = '播放整篇朗讀';
+}
+
+function speakWord(word, event) {
+  if (event) event.stopPropagation();
+  stopSpeech();
+  const utter = new SpeechSynthesisUtterance(word);
+  utter.lang = 'en-US';
+  utter.rate = 0.78;
+  window.speechSynthesis.speak(utter);
+}
+
+function speakText(text, customRate) {
+  stopSpeech();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'en-US';
+  utter.rate = customRate || getRate();
+  window.speechSynthesis.speak(utter);
+}
+
+function speakSingleSentence(idx) {
+  stopSpeech();
+  const sentence = stories[currentStoryIdx].sentences[idx].en;
+  highlightSentence(idx);
+  const utter = new SpeechSynthesisUtterance(sentence);
+  utter.lang = 'en-US';
+  utter.rate = getRate();
+  utter.onend = () => clearHighlights();
+  window.speechSynthesis.speak(utter);
+}
+
+function togglePlayAll() {
+  if (isPlayingAll) {
+    stopSpeech();
+    return;
+  }
+  isPlayingAll = true;
+  document.getElementById('play-all-icon').textContent = '⏹';
+  document.getElementById('play-all-label').textContent = '停止朗讀';
+  playSentenceChain(0);
+}
+
+function playSentenceChain(idx) {
+  const sentences = stories[currentStoryIdx].sentences;
+  if (!isPlayingAll || idx >= sentences.length) {
+    stopSpeech();
+    return;
+  }
+  highlightSentence(idx);
+  const utter = new SpeechSynthesisUtterance(sentences[idx].en);
+  utter.lang = 'en-US';
+  utter.rate = getRate();
+  utter.onend = () => {
+    if (!isPlayingAll) return;
+    setTimeout(() => playSentenceChain(idx + 1), 550);
+  };
+  window.speechSynthesis.speak(utter);
+}
+
+function speakDiscussionSample() {
+  speakText(stories[currentStoryIdx].discussion.sample, getRate());
+}
+
+// ==================== SHADOWING RECORDING (MediaRecorder) ====================
+async function startRecording(target) {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    activeRecordingTarget = target;
+    mediaRecorder = new MediaRecorder(stream);
+
+    mediaRecorder.ondataavailable = e => {
+      if (e.data.size > 0) audioChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || (audioChunks[0] && audioChunks[0].type) || 'audio/mp4' });
+      const url = URL.createObjectURL(blob);
+      if (activeRecordingTarget === 'all') {
+        fullAudioUrl = url;
+        document.getElementById('btn-playback-all').disabled = false;
+        document.getElementById('rec-all-label').textContent = '整篇跟讀錄音';
+      } else if (typeof activeRecordingTarget === 'number') {
+        const idx = activeRecordingTarget;
+        sentenceAudioUrls[idx] = url;
+        document.getElementById(`play-rec-${idx}`).disabled = false;
+        document.getElementById(`rec-btn-${idx}`).textContent = '🎙️';
+      }
+      stream.getTracks().forEach(t => t.stop());
+      activeRecordingTarget = null;
+      if (pendingRecordingTarget !== null) {
+        const next = pendingRecordingTarget;
+        pendingRecordingTarget = null;
+        startRecording(next);
+      }
+    };
+
+    mediaRecorder.start();
+    if (target === 'all') {
+      document.getElementById('rec-all-label').textContent = '錄音中...點擊停止';
+    } else {
+      document.getElementById(`rec-btn-${target}`).textContent = '⏹';
+    }
+  } catch (err) {
+    alert('請允許瀏覽器使用麥克風權限，即可進行跟讀錄音練習！');
+  }
+}
+
+function toggleRecordFull() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    if (activeRecordingTarget !== 'all') pendingRecordingTarget = 'all';
+    mediaRecorder.stop();
+  } else {
+    stopSpeech();
+    startRecording('all');
+  }
+}
+
+function playFullRecording() {
+  if (fullAudioUrl) new Audio(fullAudioUrl).play();
+}
+
+function toggleRecordSentence(idx) {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    if (activeRecordingTarget !== idx) pendingRecordingTarget = idx;
+    mediaRecorder.stop();
+  } else {
+    stopSpeech();
+    startRecording(idx);
+  }
+}
+
+function playSentenceRecording(idx) {
+  if (sentenceAudioUrls[idx]) new Audio(sentenceAudioUrls[idx]).play();
+}
+
+// ==================== A4 PRINT WORKSHEET ====================
+function prepareAndPrint() {
+  const s = stories[currentStoryIdx];
+  document.getElementById('ws-title').textContent = s.title;
+  document.getElementById('ws-subtitle').textContent = s.subtitle;
+  document.getElementById('ws-image').src = s.image;
+  document.getElementById('ws-source').textContent = `Source: ${s.sourceName} (${s.sourceUrl})`;
+  document.getElementById('ws-article').textContent = s.sentences.map(item => item.en).join(' ');
+
+  document.getElementById('ws-vocab-grid').innerHTML = s.vocab.map(v => `
+    <div class="border border-slate-300 rounded-md p-2 bg-white">
+      <div class="flex items-baseline justify-between">
+        <span class="font-bold text-sm text-slate-900">${v.word} <span class="text-xs font-normal text-slate-500">${v.phonetic} (${v.pos})</span></span>
+        <span class="text-xs font-bold text-slate-800">${v.meaning}</span>
+      </div>
+      <p class="text-[11px] text-slate-600 italic mt-0.5">"${v.example}"</p>
+    </div>
+  `).join('');
+
+  window.print();
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+  <script>window.KWN_ARTICLES=["Solar Robot Boats Clean Plastic from Rivers", "Inside Japan's Clever Capsule Hotels", "Old Fishing Nets Become Cool Sunglasses"]</script>
+  <script src="../stars.js"></script>
+  <script src="../rec-save.js"></script>
+</body>
+</html>

@@ -8,13 +8,21 @@
   var m = location.pathname.match(/(\d{4}-\d{2}-\d{2})/);
   var WEEK = m ? m[1] : 'news';
 
-  // 記住最後按下的錄音按鈕，用來幫錄音取名（整篇 / 第幾句）
+  // 記住最後按下的錄音按鈕，用來幫錄音取名（第幾篇 · 整篇 / 第幾句）
+  function storyPrefix() {
+    try { if (typeof currentStoryIdx === 'number') return '第' + (currentStoryIdx + 1) + '篇'; } catch (e) {}
+    return '';
+  }
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('button');
     if (!b) return;
-    var s = (b.id || '').match(/RecSentence-(\d+)/i);
-    if (s) lastLabel = '第' + (+s[1] + 1) + '句';
-    else if (/Record|Rec/i.test(b.id || '') || /錄音/.test(b.textContent)) lastLabel = /整篇|全篇|Full/i.test((b.id || '') + b.textContent) ? '整篇' : (b.textContent.trim().slice(0, 12) || '錄音');
+    var id = b.id || '', txt = (b.textContent || '').trim();
+    var s = id.match(/(?:RecSentence|rec-btn)-(\d+)/i);
+    var label = null;
+    if (s) label = '第' + (+s[1] + 1) + '句';
+    else if (/record-?all|RecordFull/i.test(id) || /整篇|全篇/.test(txt) && /錄音/.test(txt)) label = '整篇';
+    else if (/rec/i.test(id) || /錄音/.test(txt)) label = txt.slice(0, 12) || '錄音';
+    if (label) { var p = storyPrefix(); lastLabel = p ? p + '-' + label : label; }
   }, true);
 
   function Wrapped(stream, opts) {

@@ -466,6 +466,7 @@ let audioChunks = [];
 let fullAudioUrl = null;
 let sentenceAudioUrls = {};
 let activeRecordingTarget = null;
+let pendingRecordingTarget = null; // 錄音中按了另一個麥克風：停掉目前的，接著錄新的
 
 function init() {
   renderTabs();
@@ -747,7 +748,7 @@ async function startRecording(target) {
     };
 
     mediaRecorder.onstop = () => {
-      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || (audioChunks[0] && audioChunks[0].type) || 'audio/mp4' });
       const url = URL.createObjectURL(blob);
       if (activeRecordingTarget === 'all') {
         fullAudioUrl = url;
@@ -761,6 +762,11 @@ async function startRecording(target) {
       }
       stream.getTracks().forEach(t => t.stop());
       activeRecordingTarget = null;
+      if (pendingRecordingTarget !== null) {
+        const next = pendingRecordingTarget;
+        pendingRecordingTarget = null;
+        startRecording(next);
+      }
     };
 
     mediaRecorder.start();
@@ -776,6 +782,7 @@ async function startRecording(target) {
 
 function toggleRecordFull() {
   if (mediaRecorder && mediaRecorder.state === 'recording') {
+    if (activeRecordingTarget !== 'all') pendingRecordingTarget = 'all';
     mediaRecorder.stop();
   } else {
     stopSpeech();
@@ -789,6 +796,7 @@ function playFullRecording() {
 
 function toggleRecordSentence(idx) {
   if (mediaRecorder && mediaRecorder.state === 'recording') {
+    if (activeRecordingTarget !== idx) pendingRecordingTarget = idx;
     mediaRecorder.stop();
   } else {
     stopSpeech();
